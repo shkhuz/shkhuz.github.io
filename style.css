@@ -6,6 +6,7 @@
 	--a-color: var(--code-border-color);
 	--a-hover-color: red;
 	--a-visited-color: var(--a-color);
+	--aside-color: #777;
 }
 
 @media (prefers-color-scheme: dark) {
@@ -17,6 +18,7 @@
 		--a-color: var(--code-border-color);
 		--a-hover-color: #cfe;
 		--a-visited-color: var(--a-color);
+		--aside-color: #999;
 	}
 }
 
@@ -36,6 +38,19 @@ body {
 
 h1,h2,h3 {
 	line-height: 1.2;
+}
+
+h1 small {
+	color: var(--aside-color);
+	font-size: 0.8em;
+}
+
+h1 a {
+	text-decoration: none;
+}
+
+h1 a:hover {
+	text-decoration: underline;
 }
 
 code {

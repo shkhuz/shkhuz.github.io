@@ -1,5 +1,6 @@
 ---
-title: The Aria project
+pagetitle: The Aria project
+sitetitle: huzaifash
 subtitle: An experimental systems programming language.
 ---
 
