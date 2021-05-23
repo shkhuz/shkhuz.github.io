@@ -109,7 +109,7 @@ proc main() !void {
 <p>One thing Zig implemented perfectly is the error-handling mechanism. A small addition to the return type of a function makes it possible to handle errors in a clean and runtime-safe way.</p>
 <p>I decided to do the same in Aria, but felt the need of naming errors sets to be redundant.</p>
 <p>Rust had another syntactical element which hoped to increase developer productivity. As naming variables is hard, variables in Rust can be redeclared in the <em>same</em> scope—and with a different type too.</p>
-<p>As the compiler does not warn about this redeclaration (AFAIK), I worried about name collisions going unnoticed and creating hard-to-trace bugs. For this, I decided to introduce a keyword <code>redef</code> that redeclares something in the same scope, when the programmer consciously wants to do it. It might seem a naive design choice, but if it reduces bugs, I’m on it.</p>
+<p>As the compiler does not warn about this redeclaration (as far as I know), I worried about name collisions going unnoticed and creating hard-to-trace bugs. For this, I decided to introduce a keyword <code>redef</code> that redeclares something in the same scope, when the programmer consciously wants to do it. It might seem like a naive design choice, but if it reduces bugs, I’m on it.</p>
 <h2 id="building">Building</h2>
 <p>As the project is not fully mature yet, I have decided to build the compiler in private — once the compiler is able to bootstrap itself, I will release the repository online.</p>
 </article>
