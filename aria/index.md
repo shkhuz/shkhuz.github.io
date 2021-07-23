@@ -1,7 +1,7 @@
 ---
 pagetitle: The Aria project
-sitetitle: huzaifash
-subtitle: An experimental systems programming language.
+sitetitle: shkhuz
+subtitle: An experimental systems programming language. <a href="https://github.com/shkhuz/aria" class="button">GitHub</a>
 ---
 
 ## Sample Code 
@@ -133,6 +133,7 @@ like a naive design choice, but if it reduces bugs, I'm on it.
 
 ## Building
 
-As the project is not fully mature yet, I have decided to build the compiler in
-private — once the compiler is able to bootstrap itself, I will release the
-repository online.
+~~As the project is not fully mature yet, I have decided to build the compiler
+in private — once the compiler is able to bootstrap itself, I will release the
+repository online.~~ I have now decided to release the repository earlier than
+planned due to multiple collaborators working on it.

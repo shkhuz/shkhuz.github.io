@@ -1,11 +1,12 @@
 :root {
 	--primary-color: #000;
 	--bg-color: #fff;
+    --theme-color: #1a0dae;
 	--code-bg-color: #eee;
-	--code-border-color: #1a0dae;
-	--a-color: var(--code-border-color);
+	--code-border-color: var(--theme-color);
+	--a-color: var(--theme-color);
 	--a-hover-color: red;
-	--a-visited-color: var(--a-color);
+	--a-visited-color: var(--theme-color);
 	--aside-color: #777;
 }
 
@@ -13,11 +14,12 @@
 	:root {
 		--primary-color: #dde3dd;
 		--bg-color: #000;
+        --theme-color: #ccffa8;
 		--code-bg-color: #222;
-		--code-border-color: #ccffa8;
-		--a-color: var(--code-border-color);
+		--code-border-color: var(--theme-color);
+		--a-color: var(--theme-color);
 		--a-hover-color: #cfe;
-		--a-visited-color: var(--a-color);
+		--a-visited-color: var(--theme-color);
 		--aside-color: #888;
 	}
 }
@@ -80,8 +82,20 @@ pre {
 }
 
 hr {
-	border-top: 1px solid var(--a-color);
+	border-top: 1px solid var(--theme-color);
 } 
+
+a:visited.button,
+a:link.button,
+a:hover.button {
+    text-decoration: none;
+    background-color: var(--theme-color);
+    color: var(--bg-color);
+    border-radius: 5px;
+    padding: 2px 5px;
+    font-size: 0.8em;
+    font-weight: bold;
+}
 
 @media print {
 	body {
