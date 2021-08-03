@@ -7,7 +7,7 @@ run:
 	http-server -p 4000 ./
 
 %.html: %.md
-	pandoc -s $^ --template pandoc_template.html --toc -o $@
+	pandoc -s $^ --template pandoc_template.html -o $@
 
 clean: 
 	rm -f $(HTML_FILES)
