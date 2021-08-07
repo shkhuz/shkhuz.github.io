@@ -53,6 +53,7 @@ h1 a {
 
 h1 a:hover {
 	text-decoration: underline;
+    text-decoration-color: var(--aside-color);
 }
 
 code {
