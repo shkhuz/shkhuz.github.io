@@ -1,9 +1,4 @@
----
-pagetitle: 127.0.0.1
-sitetitle: shkhuz
-subtitle: Personal 127.0.0.1 on the web.
----
+# Huzaifa Shaikh's home on the internet.
 
-## Projects
+This is a dumping-ground for all my endeavours.
 
-- [The Aria project](aria/)
