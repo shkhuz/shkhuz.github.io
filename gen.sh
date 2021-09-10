@@ -44,9 +44,9 @@ build() {
         if [[ $md = "./index.md" ]]; then
             echo "<h2>Blog</h2>
     <ul>" >> $mdhtml
-            for year in `ls -d blog/*/`; do
-                for month in `ls -d $year*/`; do
-                    for day in `ls -d $month*/`; do
+            for year in `ls -d blog/*/ | sort -r`; do
+                for month in `ls -d $year*/ | sort -r`; do
+                    for day in `ls -d $month*/ | sort -r`; do
                         for post in `ls $day*.md`; do
                             postname=`sed -n -e 's/^# //p' $post`
                             echo "<li>`basename $year`/`basename $month`/`basename $day`: <a href=\"${post%.*}.html\">$postname</a>" >> $mdhtml
