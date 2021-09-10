@@ -58,6 +58,13 @@ pre {
     padding-right: 0;
     padding-left: 0; }
 
+.author {
+    font-weight: 400;
+    font-size: 22px;
+    color: #666;
+    font-style: italic;
+}
+
 /* ------------------------------------ */
 /* pre, */
 /* code { */
