@@ -16,10 +16,10 @@ build() {
 
         echo "<!DOCTYPE html>
 <html lang=\"en\">
+<head>
 <meta charset=\"utf-8\">
 <meta name=\"viewport\" content=\"width=device-width, initial-scale=1\">
 
-<head>
 <title>$mdtitle</title>
 <link href=\"https://fonts.googleapis.com/css2?family=Source+Code+Pro&display=swap\" rel=\"stylesheet\"> 
 <link rel=\"apple-touch-icon\" sizes=\"180x180\" href=\"/assets/apple-touch-icon.png\">
@@ -27,6 +27,8 @@ build() {
 <link rel=\"icon\" type=\"image/png\" sizes=\"16x16\" href=\"/assets/favicon-16x16.png\">
 <link rel=\"manifest\" href=\"/assets/site.webmanifest\">
 <link rel=stylesheet href=\"/style.css\">
+
+<script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js"></script>
 </head>
 
 <body>
@@ -36,9 +38,9 @@ build() {
             local tmp=${md#*/}; local tmp2=${tmp#*/}; local tmp3=${tmp2%/*}
             # 2013/07/05 +"%b %d, %Y"
             author="<br><span class='author'>By Huzaifa Shaikh, $(date -d $tmp3 +'%b %d, %Y')</span>"
-            cat $md | awk "NR==1{print \$\$1\"$author\"} NR!=1" | markdown -ffencedcode >> $mdhtml
+            cat $md | awk "NR==1{print \$\$1\"$author\"} NR!=1" | pandoc --from=markdown+tex_math_single_backslash+tex_math_dollars --to=html5 --mathjax >> $mdhtml
         else
-            markdown -ffencedcode $md >> $mdhtml
+            pandoc --from=markdown+tex_math_single_backslash+tex_math_dollars --to=html5 --mathjax $md >> $mdhtml
         fi
 
         if [[ $md = "./index.md" ]]; then

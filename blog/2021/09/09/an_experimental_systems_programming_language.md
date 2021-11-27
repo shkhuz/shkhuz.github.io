@@ -2,6 +2,16 @@
 
 ## Motivation
 
+The equation \(
+f(a)=\frac{1}{2πi}∮_γ\frac{f(z)}{z-a}\,dz.
+\tag{1}
+\label{eq:1}
+\) is not a derivative.
+\begin{align}
+    \dot{x} &amp; = \sigma(y-x) \\
+    \dot{y} &amp; = \rho x - y - xz \\
+    \dot{z} &amp; = -\beta z + xy
+    \end{align}
 A lot of the language features were inspired or taken over from Rust & Zig.
 However, both of them fill a niche of people that I am not a part of.
 
@@ -51,7 +61,7 @@ planned due to multiple collaborators working on it.
 
 ## Sample Code 
 
-```
+~~~
 module math {
 	struct Vector2 {
 		x, y: f32,
@@ -64,31 +74,31 @@ module math {
 		}
 	}
 }
-```
+~~~
 
 ### Generics
 
-```
+~~~
 proc max<T>(a: T, b: T) T {
 	if a > b { a }
 	else { b }
 }
-```
+~~~
 
 ### Errors
 
-```
+~~~
 @import("std");
 
 proc allocate_memory(n: usize) ![]u8 {
 	let mem = std::gp_allocator_mem(n)?;
 	std::slice::from_raw(mem, n)
 }
-```
+~~~
 
 ### Optionals
 
-```
+~~~
 @import("std");
 
 proc main() {
@@ -106,11 +116,11 @@ proc open_file(fpath: string) ?std::File {
 		none
 	}
 }
-```
+~~~
 
 ### Read User Input
 
-```
+~~~
 @import("std");
 
 proc main() !void {
@@ -118,11 +128,11 @@ proc main() !void {
 	defer free(input);
 	redef input = input as []const u8;
 }
-```
+~~~
 
 ### Conditional Compilation
 
-```
+~~~
 @import("std");
 
 proc main() !void {
@@ -132,5 +142,5 @@ proc main() !void {
 		else => "something else. hmm...",
 	});
 }
-```
+~~~
 
