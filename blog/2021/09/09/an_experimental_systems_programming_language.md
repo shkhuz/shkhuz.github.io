@@ -7,11 +7,14 @@ f(a)=\frac{1}{2πi}∮_γ\frac{f(z)}{z-a}\,dz.
 \tag{1}
 \label{eq:1}
 \) is not a derivative.
-\begin{align}
-    \dot{x} &amp; = \sigma(y-x) \\
-    \dot{y} &amp; = \rho x - y - xz \\
-    \dot{z} &amp; = -\beta z + xy
-    \end{align}
+
+\[
+\begin{align*}
+&a + bqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqi\\
+\text{where }&i = \sqrt{-1}
+\end{align*}
+\]
+
 A lot of the language features were inspired or taken over from Rust & Zig.
 However, both of them fill a niche of people that I am not a part of.
 

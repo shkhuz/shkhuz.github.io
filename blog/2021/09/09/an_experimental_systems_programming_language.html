@@ -19,11 +19,14 @@
 <article>
 <h1 id="an-experimental-systems-programming-language-by-huzaifa-shaikh-sep-09-2021">An experimental systems programming language<br><span class="author">By Huzaifa Shaikh, Sep 09, 2021</span></h1>
 <h2 id="motivation">Motivation</h2>
-<p>The equation <span class="math inline">\(f(a)=\frac{1}{2πi}∮_γ\frac{f(z)}{z-a}\,dz. \tag{1} \label{eq:1}\)</span> is not a derivative. <span class="math display">\[\begin{align}
-    \dot{x} &amp;amp; = \sigma(y-x) \\
-    \dot{y} &amp;amp; = \rho x - y - xz \\
-    \dot{z} &amp;amp; = -\beta z + xy
-    \end{align}\]</span> A lot of the language features were inspired or taken over from Rust &amp; Zig. However, both of them fill a niche of people that I am not a part of.</p>
+<p>The equation <span class="math inline">\(f(a)=\frac{1}{2πi}∮_γ\frac{f(z)}{z-a}\,dz. \tag{1} \label{eq:1}\)</span> is not a derivative.</p>
+<p><span class="math display">\[
+\begin{align*}
+&amp;a + bqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqi\\
+\text{where }&amp;i = \sqrt{-1}
+\end{align*}
+\]</span></p>
+<p>A lot of the language features were inspired or taken over from Rust &amp; Zig. However, both of them fill a niche of people that I am not a part of.</p>
 <p>Rust is over-engineered, and feels lile a feature-bloat now (some C++ developers might not agree). Zig came close, but I had <em>some</em> problems. After mailing Andrew about these nitpicks and never getting a reply back, I decided to implement a compiler — just for fun.</p>
 <p>One gripe I had about C was its header system: it was a mess. I decided to keep the basic feature set of C and add a tiny module system.</p>
 <p>As macros were a pain for debugging, I reiterated over the Zig’s <code>comptime</code> feature. In Zig, functions can accept types as arguments, but I didn’t like that idea because of <code>extern</code> functions and FFI stuff.</p>
