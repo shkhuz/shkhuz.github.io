@@ -1,6 +1,6 @@
 # Aria Programming Language
 
-Aria is an experimental general-purpose programming language built to improve
+Aria is an experimental low-level programming language built to improve
 on C. 
 
 <a class="button extern-link" target="_blank" href="https://github.com/shkhuz/aria">GitHub</a>
