@@ -21,7 +21,6 @@ build() {
 <meta name=\"viewport\" content=\"width=device-width, initial-scale=1\">
 
 <title>$mdtitle</title>
-<link href=\"https://fonts.googleapis.com/css2?family=Source+Code+Pro&display=swap\" rel=\"stylesheet\"> 
 <link rel=\"apple-touch-icon\" sizes=\"180x180\" href=\"/assets/apple-touch-icon.png\">
 <link rel=\"icon\" type=\"image/png\" sizes=\"32x32\" href=\"/assets/favicon-32x32.png\">
 <link rel=\"icon\" type=\"image/png\" sizes=\"16x16\" href=\"/assets/favicon-16x16.png\">
@@ -34,7 +33,7 @@ build() {
 <body>
 <article>" > $mdhtml
 
-        if [[ $md != "./index.md" ]]; then
+        if [[ $md == ./blog/* ]]; then
             local tmp=${md#*/}; local tmp2=${tmp#*/}; local tmp3=${tmp2%/*}
             # 2013/07/05 +"%b %d, %Y"
             author="<br><span class='author'>By Huzaifa Shaikh, $(date -d $tmp3 +'%b %d, %Y')</span>"
@@ -57,13 +56,15 @@ build() {
                 done
             done
             echo "</ul>" >> $mdhtml
-        else
+        elif [[ $md == ./blog/* ]]; then
             echo "<a href=\"/\">back to home page</a>" >> $mdhtml
         fi
 
         echo "</article>
 </body>
 </html>" >> $mdhtml
+    sed -i 's/\(<table.*>\)/<div class=\"table-wrapper\">\n\1/' $mdhtml
+        sed -i 's/<\/table>/<\/table>\n<\/div>/' $mdhtml
     done
     echo "Build successful"
 }
@@ -79,5 +80,5 @@ else
 fi
 
 if [[ $run_server -eq 1 ]]; then
-    http-server -p 4000 ./
+    http-server -p 8080 ./
 fi
