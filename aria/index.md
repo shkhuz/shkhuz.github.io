@@ -11,9 +11,9 @@ compiler apart from testing until it matures enough._
 Obligatory hello world code snippet:
 
 ```
-const std = @import("std");
+const std = @load("std");
 
-fn main() {
+def main() {
     std.write("Hello, World!");
 }
 ```

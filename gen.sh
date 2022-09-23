@@ -33,16 +33,24 @@ build() {
 <body>
 <article>" > $mdhtml
 
-        if [[ $md == ./blog/* ]]; then
+        if [[ "$md" == ./blog/* ]]; then
             local tmp=${md#*/}; local tmp2=${tmp#*/}; local tmp3=${tmp2%/*}
-            # 2013/07/05 +"%b %d, %Y"
             author="<br><span class='author'>By Huzaifa Shaikh, $(date -d $tmp3 +'%b %d, %Y')</span>"
-            cat $md | awk "NR==1{print \$\$1\"$author\"} NR!=1" | pandoc --from=markdown+tex_math_single_backslash+tex_math_dollars --to=html5 --mathjax >> $mdhtml
+            mdcontent=`cat $md | awk "NR==1{print \\\$0\"$author\"} NR!=1"`
+            echo "$mdcontent"
         else
-            pandoc --from=markdown+tex_math_single_backslash+tex_math_dollars --to=html5 --mathjax $md >> $mdhtml
+            mdcontent=`cat $md`
         fi
 
-        if [[ $md = "./index.md" ]]; then
+
+        # Add home anchor on title
+        if [[ "$md" != "./index.md" ]]; then
+            mdcontent=`echo -n "$mdcontent" | sed -e 's/^# \(.*\)$/# <a href="\/">huzaifa<\/a> \/ \1/'`
+        fi
+
+        echo -n "$mdcontent" | pandoc --from=markdown+tex_math_single_backslash+tex_math_dollars --to=html5 --mathjax >> $mdhtml
+
+        if [[ "$md" == "./index.md" ]]; then
             echo "<h2>Blog</h2>
     <ul>" >> $mdhtml
             for year in `ls -d blog/*/ | sort -r`; do
@@ -56,14 +64,12 @@ build() {
                 done
             done
             echo "</ul>" >> $mdhtml
-        elif [[ $md == ./blog/* ]]; then
-            echo "<a href=\"/\">back to home page</a>" >> $mdhtml
         fi
 
         echo "</article>
 </body>
 </html>" >> $mdhtml
-    sed -i 's/\(<table.*>\)/<div class=\"table-wrapper\">\n\1/' $mdhtml
+        sed -i 's/\(<table.*>\)/<div class=\"table-wrapper\">\n\1/' $mdhtml
         sed -i 's/<\/table>/<\/table>\n<\/div>/' $mdhtml
     done
     echo "Build successful"

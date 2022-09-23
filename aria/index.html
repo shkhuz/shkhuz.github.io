@@ -16,14 +16,14 @@
 
 <body>
 <article>
-<h1 id="aria-programming-language">Aria Programming Language</h1>
+<h1 id="huzaifa-aria-programming-language"><a href="/">huzaifa</a> / Aria Programming Language</h1>
 <p>Aria is an experimental low-level programming language built to improve on C.</p>
 <p><a class="button extern-link" target="_blank" href="https://github.com/shkhuz/aria">GitHub</a></p>
 <p><em>Note: Aria is in heavy development right now. Please refrain from using the compiler apart from testing until it matures enough.</em></p>
 <p>Obligatory hello world code snippet:</p>
-<pre><code>const std = @import(&quot;std&quot;);
+<pre><code>const std = @load(&quot;std&quot;);
 
-fn main() {
+def main() {
     std.write(&quot;Hello, World!&quot;);
 }</code></pre>
 <pre class="shell"><code>$ ariac main.ar
