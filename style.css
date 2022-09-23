@@ -129,7 +129,7 @@ a.button {
     text-align: center;
 
     color: black;
-    border: 1px solid #86033c;
+    border: 1px solid var(--a-color);
     background: rgb(191,180,168);
     background: -moz-linear-gradient(0deg, rgba(191,180,168,1) 0%, rgba(223,212,200,1) 100%);
     background: -webkit-linear-gradient(0deg, rgba(191,180,168,1) 0%, rgba(223,212,200,1) 100%);
@@ -137,8 +137,13 @@ a.button {
     filter: progid:DXImageTransform.Microsoft.gradient(startColorstr="#bfb4a8",endColorstr="#dfd4c8",GradientType=1); 
 }
 
-a.button:visited, a.button:hover, a.button:visited:hover{
+a.button:visited {
     color: black;
+}
+
+a.button:hover, a.button:visited:hover {
+    color: black;
+    border: 1px solid var(--a-hover-color);
 }
 
 .extern-link:after {
