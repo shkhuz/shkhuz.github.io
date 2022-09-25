@@ -21,14 +21,14 @@
 <p><a class="button extern-link" target="_blank" href="https://github.com/shkhuz/aria">GitHub</a></p>
 <p><em>Note: Aria is in heavy development right now. Please refrain from using the compiler apart from testing until it matures enough.</em></p>
 <p>Obligatory hello world code snippet:</p>
-<pre><code>const std = @load(&quot;std&quot;);
+<pre class="aria"><code>const std = @load(&quot;std.ar&quot;);
 
 def main() {
     std.write(&quot;Hello, World!&quot;);
 }</code></pre>
-<pre class="shell"><code>$ ariac main.ar
-$ ./a.out
-Hello, World!</code></pre>
+<div class="sourceCode" id="cb2"><pre class="sourceCode sh"><code class="sourceCode bash"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="ex">$</span> ariac main.ar</span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a><span class="ex">$</span> ./a.out</span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a><span class="ex">Hello,</span> World!</span></code></pre></div>
 <p>Aria is heavily inspired by C, Zig, Rust, Go, and others. Some neat features:</p>
 <ul>
 <li>No runtime or GC.</li>
@@ -43,8 +43,8 @@ Hello, World!</code></pre>
 <li>Unambiguous, readable code,</li>
 <li>Very close to bare-metal.</li>
 </ul>
-<p>Please see the <a href="doc.html">documentation</a> to learn more about the language.</p>
-<p>We hope you like what we have made ;)</p>
+<p>Please see the <a href="doc">documentation</a> to learn more about the language.</p>
+<p>Aria toolchain is GPLv3 licensed. See the <a class="extern-link" target="_blank" href="https://github.com/shkhuz/aria/blob/master/COPYING">COPYING</a> file for more details.</p>
 </article>
 </body>
 </html>

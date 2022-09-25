@@ -10,15 +10,15 @@ compiler apart from testing until it matures enough._
 
 Obligatory hello world code snippet:
 
-```
-const std = @load("std");
+```aria
+const std = @load("std.ar");
 
 def main() {
     std.write("Hello, World!");
 }
 ```
 
-```shell
+```sh
 $ ariac main.ar
 $ ./a.out
 Hello, World!
@@ -38,6 +38,6 @@ Aria's primary aim is to be _simple_. By simple, we mean:
 - Unambiguous, readable code,
 - Very close to bare-metal.
 
-Please see the [documentation](doc.html) to learn more about the language.
+Please see the [documentation](doc) to learn more about the language.
 
-We hope you like what we have made ;)
+Aria toolchain is GPLv3 licensed. See the <a class="extern-link" target="_blank" href="https://github.com/shkhuz/aria/blob/master/COPYING">COPYING</a> file for more details.
