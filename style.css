@@ -1,15 +1,33 @@
 :root {
-	--primary-color: #000;
-	--bg-color: #efe4d8;
-    --theme-color: #1a0dae;
+    /* light */
+	/* --primary-color: #000000; */
+	/* --bg-color: #efe4d8; */
+    /* --theme-color: #2a1dae; */
+   
+    /* --container-bg-color: #dbd0c4; */
+    
+    /* --button-start-color: rgba(191,180,168,1); */
+    /* --button-end-color: rgba(223,212,200,1); */
+    /* --button-inset-shadow-color: rgba(220, 220, 220, 0.4); */
 	
+    /* dark */
+    --primary-color: #e8e8e8;
+	--bg-color: #0f0f0f;
+    --theme-color: #6d7dee;
+    
+    --container-bg-color: #191919;
+	
+    --button-start-color: rgba(16,16,16,1);
+    --button-end-color: rgba(37,37,37,1);
+    --button-inset-shadow-color: rgba(120, 120, 120, 0.4);
+   
+    /* common */
     --a-color: var(--theme-color);
 	--a-visited-color: var(--theme-color);
 	--a-hover-color: red;
 
     --aside-color: #777;
 	
-    --container-bg-color: #dbd0c4;
 	--container-border-color: #828282;
 }
 
@@ -69,8 +87,9 @@ h1 a {
 }
 
 h1 a:hover {
-	text-decoration: underline;
-    text-decoration-color: var(--aside-color);
+	text-decoration: none;
+	/* text-decoration: underline; */
+    /* text-decoration-color: var(--aside-color); */
 }
 
 h2 {
@@ -120,29 +139,28 @@ a.button {
     display: block;
     padding: 3px 0;
     width: 100%;
-    box-shadow:inset 0 1px 1px rgba(255, 255, 255, 0.4);
-    -webkit-box-shadow:inset 0 1px 1px rgba(255, 255, 255, 0.4);
-    -moz-box-shadow:inset 0 1px 1px rgba(255, 255, 255, 0.4);
+    box-shadow:inset 0 1px 1px var(--button-inset-shadow-color);
+    /* -webkit-box-shadow:inset 0 1px 1px rgba(255, 255, 255, 0.4); */
+    /* -moz-box-shadow:inset 0 1px 1px rgba(255, 255, 255, 0.4); */
     text-decoration: none;
     border-radius: 3px;
     font-size: 0.9em;
     text-align: center;
 
-    color: black;
+    color: var(--primary-color);
     border: 1px solid var(--a-color);
-    background: rgb(191,180,168);
-    background: -moz-linear-gradient(0deg, rgba(191,180,168,1) 0%, rgba(223,212,200,1) 100%);
-    background: -webkit-linear-gradient(0deg, rgba(191,180,168,1) 0%, rgba(223,212,200,1) 100%);
-    background: linear-gradient(0deg, rgba(191,180,168,1) 0%, rgba(223,212,200,1) 100%);
-    filter: progid:DXImageTransform.Microsoft.gradient(startColorstr="#bfb4a8",endColorstr="#dfd4c8",GradientType=1); 
+    background: var(--button-start-color);
+    background: -moz-linear-gradient(0deg, var(--button-start-color) 0%, var(--button-end-color) 100%);
+    background: -webkit-linear-gradient(0deg, var(--button-start-color) 0%, var(--button-end-color) 100%);
+    background: linear-gradient(0deg, var(--button-start-color) 0%, var(--button-end-color) 100%);
 }
 
 a.button:visited {
-    color: black;
+    color: var(--primary-color);
 }
 
 a.button:hover, a.button:visited:hover {
-    color: black;
+    color: var(--primary-color);
     border: 1px solid var(--a-hover-color);
 }
 
