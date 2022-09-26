@@ -37,13 +37,43 @@ build() {
             local tmp=${md#*/}; local tmp2=${tmp#*/}; local tmp3=${tmp2%/*}
             author="<br><span class='author'>By Huzaifa Shaikh, $(date -d $tmp3 +'%b %d, %Y')</span>"
             mdcontent=`cat $md | awk "NR==1{print \\\$0\"$author\"} NR!=1"`
-            echo "$mdcontent"
         else
             mdcontent=`cat $md`
         fi
 
+        # Syntax highlight between {{{ and }}}
+        mdcontent=`echo "$mdcontent" | awk -v aria=0 -v console=0 \
+            '/\{\{\{aria/ { 
+                aria = 1 
+            }
+            aria { 
+                $0=gensub(/(".*")/, "<span class=\"s\">\\\1</span>", "g", $0);
+                $0=gensub(/(\\<@\w*)(\()/, "<span class=\"i\">\\\1</span>\\\2", "g", $0);
+                $0=gensub(/(\\<[0-9]+(\.[0-9]+)?\\>)/, "<span class=\"n\">\\\1</span>", "g", $0);
+                $0=gensub(/(\\<const\\>)/, "<span class=\"k\">\\\1</span>", "g", $0);
+                $0=gensub(/(\\<def\\>)/, "<span class=\"k\">\\\1</span>", "g", $0);
+                $0=gensub(/(\\<mut\\>)/, "<span class=\"k\">\\\1</span>", "g", $0);
+            }
+
+            /\{\{\{console/ { 
+                console = 1
+            }
+            console {
+                $0=gensub(/\\$\s+(.*)$/, "$ <span class=\"o\">\\\1</span>", "g", $0);
+            }
+
+            /\}\}\}/ { 
+                aria = 0 
+                console = 0
+            } 
+            1'`
+        
         # Code snippet filename format conversion
-        mdcontent=`echo "$mdcontent" | sed -e 's/^\`\`\`\/\(.*\)$/\`\`\`\n<div class="code-snippet-filename">\1<\/div>/'`
+        mdcontent=`echo "$mdcontent" | sed 's/^\}\}\}\/\(.*\)$/\}\}\}\n<div class="code-snippet-filename">\1<\/div>/'`
+
+        # Convert {{{ and }}} to <pre><code> and </pre></code>
+        mdcontent=`echo "$mdcontent" | awk '/\{\{\{.*$/ { printf("<pre class=\"%s\"><code>", substr($0, 4)); next } 1'`
+        mdcontent=`echo "$mdcontent" | sed 's/^}}}$/<\/code><\/pre>/'`
 
         # Add home anchor on title
         if [[ "$md" != "./index.md" ]]; then

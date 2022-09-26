@@ -1,1 +1,1 @@
-# Aria Programming Language Documentation
+# Aria Programming Language: Documentation

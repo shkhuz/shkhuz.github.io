@@ -38,7 +38,7 @@
 <h2 id="building">Building</h2>
 <p><del>As the project is not fully mature yet, I have decided to build the compiler in private — once the compiler is able to bootstrap itself, I will release the repository online.</del> I have now decided to release the repository earlier than planned due to multiple collaborators working on it.</p>
 <h2 id="sample-code">Sample Code</h2>
-<pre><code>module math {
+<pre class="aria"><code>module math {
     struct Vector2 {
         x, y: f32,
 
@@ -49,27 +49,30 @@
             }
         }
     }
-}</code></pre>
+}
+</code></pre>
 <h3 id="generics">Generics</h3>
-<pre><code>proc max&lt;T&gt;(a: T, b: T) T {
-    if a &gt; b { a }
+<pre class="aria"><code>proc max<T>(a: T, b: T) T {
+    if a > b { a }
     else { b }
-}</code></pre>
+}
+</code></pre>
 <h3 id="errors">Errors</h3>
-<pre><code>@import(&quot;std&quot;);
+<pre class="aria"><code>@import(<span class="s">"std"</span>);
 
 proc allocate_memory(n: usize) ![]u8 {
     let mem = std::gp_allocator_mem(n)?;
     std::slice::from_raw(mem, n)
-}</code></pre>
+}
+</code></pre>
 <h3 id="optionals">Optionals</h3>
-<pre><code>@import(&quot;std&quot;);
+<pre class="aria"><code>@import(<span class="s">"std"</span>);
 
 proc main() {
-    std::printf(if open_file(&quot;test.txt&quot;) {
-        &quot;file successfully opened&quot;
+    std::printf(if open_file(<span class="s">"test.txt"</span>) {
+        <span class="s">"file successfully opened"</span>
     } else {
-        &quot;file cannot be opened&quot;
+        <span class="s">"file cannot be opened"</span>
     });
 }
 
@@ -79,25 +82,28 @@ proc open_file(fpath: string) ?std::File {
     } else {
         none
     }
-}</code></pre>
+}
+</code></pre>
 <h3 id="read-user-input">Read User Input</h3>
-<pre><code>@import(&quot;std&quot;);
+<pre class="aria"><code>@import(<span class="s">"std"</span>);
 
 proc main() !void {
     let input = std::io::read_to_string()?;
     defer free(input);
-    redef input = input as []const u8;
-}</code></pre>
+    redef input = input as []<span class="k">const</span> u8;
+}
+</code></pre>
 <h3 id="conditional-compilation">Conditional Compilation</h3>
-<pre><code>@import(&quot;std&quot;);
+<pre class="aria"><code>@import(<span class="s">"std"</span>);
 
 proc main() !void {
     std::writeln(static match std::os::host_os {
-        std::os::OsType::UNIX =&gt; &quot;we are on *NIX&quot;,
-        std::os::OsType::Windows =&gt; &quot;windows.&quot;,
-        else =&gt; &quot;something else. hmm...&quot;,
+        std::os::OsType::UNIX => <span class="s">"we are on *NIX"</span>,
+        std::os::OsType::Windows => <span class="s">"windows."</span>,
+        else => <span class="s">"something else. hmm..."</span>,
     });
-}</code></pre>
+}
+</code></pre>
 </article>
 </body>
 </html>

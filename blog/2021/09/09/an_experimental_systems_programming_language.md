@@ -64,7 +64,7 @@ planned due to multiple collaborators working on it.
 
 ## Sample Code 
 
-~~~
+{{{aria
 module math {
 	struct Vector2 {
 		x, y: f32,
@@ -77,31 +77,31 @@ module math {
 		}
 	}
 }
-~~~
+}}}
 
 ### Generics
 
-~~~
+{{{aria
 proc max<T>(a: T, b: T) T {
 	if a > b { a }
 	else { b }
 }
-~~~
+}}}
 
 ### Errors
 
-~~~
+{{{aria
 @import("std");
 
 proc allocate_memory(n: usize) ![]u8 {
 	let mem = std::gp_allocator_mem(n)?;
 	std::slice::from_raw(mem, n)
 }
-~~~
+}}}
 
 ### Optionals
 
-~~~
+{{{aria
 @import("std");
 
 proc main() {
@@ -119,11 +119,11 @@ proc open_file(fpath: string) ?std::File {
 		none
 	}
 }
-~~~
+}}}
 
 ### Read User Input
 
-~~~
+{{{aria
 @import("std");
 
 proc main() !void {
@@ -131,11 +131,11 @@ proc main() !void {
 	defer free(input);
 	redef input = input as []const u8;
 }
-~~~
+}}}
 
 ### Conditional Compilation
 
-~~~
+{{{aria
 @import("std");
 
 proc main() !void {
@@ -145,5 +145,5 @@ proc main() !void {
 		else => "something else. hmm...",
 	});
 }
-~~~
+}}}
 

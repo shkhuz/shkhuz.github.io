@@ -18,20 +18,22 @@
 <article>
 <h1 id="huzaifa-aria-programming-language"><a href="/">huzaifa</a> / Aria Programming Language</h1>
 <p>Aria is an experimental low-level programming language built to improve on C.</p>
-<p><a class="button extern-link" target="_blank" href="https://github.com/shkhuz/aria">GitHub</a></p>
+<p><a class="button extern-link" href="https://github.com/shkhuz/aria">GitHub</a></p>
 <p><em>Note: Aria is in heavy development right now. Please refrain from using the compiler apart from testing until it matures enough.</em></p>
 <p>Obligatory hello world code snippet:</p>
-<pre class="aria"><code>const std = @load(&quot;std.ar&quot;);
+<pre class="aria"><code><span class="k">const</span> std = @load(<span class="s">"std.ar"</span>);
 
-def main() {
-    std.write(&quot;Hello, World!&quot;);
-}</code></pre>
+<span class="k">def</span> main() {
+    std.write(<span class="s">"Hello, World!"</span>);
+}
+</code></pre>
 <div class="code-snippet-filename">
 hello_world.ar
 </div>
-<pre class="shell"><code>$ ariac hello_world.ar
-$ ./a.out
-Hello, World!</code></pre>
+<pre class="console"><code>$ <span class="o">ariac hello_world.ar</span>
+$ <span class="o">./a.out</span>
+Hello, World!
+</code></pre>
 <p>Aria is heavily inspired by C, Zig, Rust, Go, and others. Some neat features:</p>
 <ul>
 <li>No runtime or GC.</li>
@@ -47,7 +49,7 @@ Hello, World!</code></pre>
 <li>Very close to bare-metal.</li>
 </ul>
 <p>Please see the <a href="doc">documentation</a> to learn more about the language.</p>
-<p>Aria toolchain is GPLv3 licensed. See the <a class="extern-link" target="_blank" href="https://github.com/shkhuz/aria/blob/master/COPYING">COPYING</a> file for more details.</p>
+<p>Aria toolchain is GPLv3 licensed. See the <a class="extern-link" href="https://github.com/shkhuz/aria/blob/master/COPYING">COPYING</a> file for more details.</p>
 </article>
 </body>
 </html>

@@ -226,3 +226,25 @@ hr {
 		max-width: none;
 	}
 }
+
+.aria .k {
+    color: var(--theme-color);
+    font-weight: bold;
+}
+
+.aria .n {
+    color: var(--theme-color);
+}
+
+.aria .i {
+    color: #add8e6;
+    font-weight: bold;
+}
+
+.aria .s {
+    color: #5fd7af;
+}
+
+.console .o {
+    font-weight: bold;
+}
