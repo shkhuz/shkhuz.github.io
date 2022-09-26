@@ -16,10 +16,10 @@ const std = @load("std.ar");
 def main() {
     std.write("Hello, World!");
 }
-```
+```/hello_world.ar
 
-```sh
-$ ariac main.ar
+```shell
+$ ariac hello_world.ar
 $ ./a.out
 Hello, World!
 ```

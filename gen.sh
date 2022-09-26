@@ -42,6 +42,8 @@ build() {
             mdcontent=`cat $md`
         fi
 
+        # Code snippet filename format conversion
+        mdcontent=`echo "$mdcontent" | sed -e 's/^\`\`\`\/\(.*\)$/\`\`\`\n<div class="code-snippet-filename">\1<\/div>/'`
 
         # Add home anchor on title
         if [[ "$md" != "./index.md" ]]; then
