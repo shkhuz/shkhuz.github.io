@@ -5,8 +5,13 @@ on C.
 
 <a class="button extern-link" href="https://github.com/shkhuz/aria">GitHub</a>
 
-_Note: Aria is in heavy development right now. Please refrain from using the 
-compiler apart from testing until it matures enough._
+[[[
+Note: Aria is in heavy development right now. Please refrain from using the 
+compiler apart from testing until it matures enough.
+
+To report a bug, suggest a feature, or share any information pertaining to the 
+Aria toolchain, open an issue [here](https://github.com/shkhuz/aria/issues).
+]]]
 
 Obligatory hello world code snippet:
 

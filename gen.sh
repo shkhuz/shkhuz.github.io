@@ -48,7 +48,7 @@ build() {
             }
             aria { 
                 $0=gensub(/(".*")/, "<span class=\"s\">\\\1</span>", "g", $0);
-                $0=gensub(/(\\<@\w*)(\()/, "<span class=\"i\">\\\1</span>\\\2", "g", $0);
+                $0=gensub(/(@[a-zA-Z0-9_]+)(\()/, "<span class=\"i\">\\\1</span>\\\2", "g", $0);
                 $0=gensub(/(\\<[0-9]+(\.[0-9]+)?\\>)/, "<span class=\"n\">\\\1</span>", "g", $0);
                 $0=gensub(/(\\<const\\>)/, "<span class=\"k\">\\\1</span>", "g", $0);
                 $0=gensub(/(\\<def\\>)/, "<span class=\"k\">\\\1</span>", "g", $0);
@@ -72,8 +72,12 @@ build() {
         mdcontent=`echo "$mdcontent" | sed 's/^\}\}\}\/\(.*\)$/\}\}\}\n<div class="code-snippet-filename">\1<\/div>/'`
 
         # Convert {{{ and }}} to <pre><code> and </pre></code>
-        mdcontent=`echo "$mdcontent" | awk '/\{\{\{.*$/ { printf("<pre class=\"%s\"><code>", substr($0, 4)); next } 1'`
+        mdcontent=`echo "$mdcontent" | awk '/^\{\{\{.*$/ { printf("<pre class=\"%s\"><code>", substr($0, 4)); next } 1'`
         mdcontent=`echo "$mdcontent" | sed 's/^}}}$/<\/code><\/pre>/'`
+
+        # Convert [[[ and ]]] to <aside> and </aside>
+        mdcontent=`echo "$mdcontent" | sed 's/^\[\[\[$/<aside>\n/'`
+        mdcontent=`echo "$mdcontent" | sed 's/^\]\]\]$/\n<\/aside>/'`
 
         # Add home anchor on title
         if [[ "$md" != "./index.md" ]]; then
