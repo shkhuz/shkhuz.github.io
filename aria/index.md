@@ -1,7 +1,6 @@
 # Aria Programming Language
 
-Aria is an experimental low-level programming language built to improve
-on C. 
+Aria is an experimental low-level programming language built to improve on C. 
 
 <a class="button extern-link" href="https://github.com/shkhuz/aria">GitHub</a>
 
@@ -9,9 +8,12 @@ on C.
 Note: Aria is in heavy development right now. Please refrain from using the 
 compiler apart from testing until it matures enough.
 
-To report a bug, suggest a feature, or share any information pertaining to the 
-Aria toolchain, open an issue [here](https://github.com/shkhuz/aria/issues).
+To report a bug or suggest a feature, open an issue <a class="extern-link" href="https://github.com/shkhuz/aria/issues">here</a>.
 ]]]
+
+Please keep in mind that Aria is a personal project—I solely develop and 
+maintain the project, to see what a simple, fast, efficient, no-legacy-baggage 
+language would look like.
 
 Obligatory hello world code snippet:
 
