@@ -37,18 +37,65 @@
 </aside>
 <p>Please keep in mind that Aria is a personal project—I solely develop and maintain the project, to see what a simple, fast, efficient, no-legacy-baggage language would look like.</p>
 <p>Obligatory hello world code snippet:</p>
-<pre class="aria"><code><span class="k">const</span> std = <span class="i">@load</span>(<span class="s">"std.ar"</span>);
+<pre class="aria"><code><span class="k">let</span> std = <span class="i">@import</span>(<span class="s">"std.ar"</span>)
 
-<span class="k">def</span> main() {
-    std.write(<span class="s">"Hello, World!"</span>);
+<span class="k">fn</span> main() {
+    std.write(<span class="s">"Hello, World!"</span>)
 }
 </code></pre>
 <div class="code-snippet-filename">
 hello_world.ar
 </div>
-<pre class="console"><code>$ <span class="o">ariac hello_world.ar</span>
+<pre class="console"><code>$ <span class="o">aria hello_world.ar</span>
 $ <span class="o">./a.out</span>
 Hello, World!
+</code></pre>
+<p>Types are first-class values. To define a struct:</p>
+<pre class="aria"><code><span class="k">let</span> Handler = <span class="k">struct</span> {
+    id: <span class="t">usize</span>,
+    name: []<span class="t">u8</span>,
+    func: *<span class="k">fn</span>() <span class="t">void</span>,
+}
+
+<span class="k">fn</span> main() {
+    <span class="k">mut</span> handler = Handler { <span class="n">0</span>, .{}, <span class="c">null</span> }
+}
+</code></pre>
+<div class="code-snippet-filename">
+structs.ar
+</div>
+<pre class="console"><code>$ <span class="o">aria structs.ar</span>
+$ <span class="o">./a.out</span>
+</code></pre>
+<p>In Aria, structs can have functions called on them, which are no more than namespaced functions:</p>
+<pre class="aria"><code><span class="k">let</span> Handler = <span class="k">struct</span> {
+    id: <span class="t">usize</span>,
+    name: []<span class="t">u8</span>,
+    func: *<span class="k">fn</span>() <span class="t">void</span>,
+}
+
+<span class="k">mut</span> Handler::current_id = <span class="n">0</span>
+
+<span class="k">fn</span> Handler::new(func: *<span class="k">fn</span>() <span class="t">void</span>) {
+    return Self { Handler.current_id, .{}, func }
+    Handler.current_id += <span class="n">1</span>
+}
+
+<span class="k">fn</span> Handler::destroy(self) {
+    std.print(<span class="s">"Handler destroyed with id: {}"</span>, .{ self.id })
+}
+
+<span class="k">fn</span> main() {
+    <span class="k">let</span> handler = Handler.new(main)
+    handler.destroy()
+}
+</code></pre>
+<div class="code-snippet-filename">
+struct_functions.ar
+</div>
+<pre class="console"><code>$ <span class="o">aria struct_functions.ar</span>
+$ <span class="o">./a.out</span>
+Handler destroyed with id: 0
 </code></pre>
 <p>Aria is heavily inspired by C, Zig, Rust, Go, and others. Some neat features:</p>
 <ul>

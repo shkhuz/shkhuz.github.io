@@ -1,3 +1,5 @@
+@import url('https://fonts.googleapis.com/css2?family=Source+Code+Pro&display=swap');
+
 :root {
     /* light */
     /* ---------------------------------------------------------------------- */
@@ -48,8 +50,6 @@
 	
 	--container-border-color: #828282;
 }
-
-@import url('https://fonts.googleapis.com/css2?family=Source+Code+Pro&display=swap');
 
 @font-face {
     font-family: FreeSans;
@@ -252,6 +252,15 @@ hr {
 .aria .k {
     color: var(--theme-color);
     font-weight: bold;
+}
+
+.aria .t {
+    color: var(--theme-color);
+    font-weight: bold;
+}
+
+.aria .c {
+    color: var(--theme-color);
 }
 
 .aria .n {

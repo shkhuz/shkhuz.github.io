@@ -51,7 +51,7 @@
 <p><del>As the project is not fully mature yet, I have decided to build the compiler in private — once the compiler is able to bootstrap itself, I will release the repository online.</del> I have now decided to release the repository earlier than planned due to multiple collaborators working on it.</p>
 <h2 id="sample-code">Sample Code</h2>
 <pre class="aria"><code>module math {
-    struct Vector2 {
+    <span class="k">struct</span> Vector2 {
         x, y: f32,
 
         proc add(self, other: Vector2) {
@@ -72,8 +72,8 @@
 <h3 id="errors">Errors</h3>
 <pre class="aria"><code><span class="i">@import</span>(<span class="s">"std"</span>);
 
-proc allocate_memory(n: usize) ![]u8 {
-    let mem = std::gp_allocator_mem(n)?;
+proc allocate_memory(n: <span class="t">usize</span>) ![]<span class="t">u8</span> {
+    <span class="k">let</span> mem = std::gp_allocator_mem(n)?;
     std::slice::from_raw(mem, n)
 }
 </code></pre>
@@ -99,16 +99,16 @@ proc open_file(fpath: string) ?std::File {
 <h3 id="read-user-input">Read User Input</h3>
 <pre class="aria"><code><span class="i">@import</span>(<span class="s">"std"</span>);
 
-proc main() !void {
-    let input = std::io::read_to_string()?;
+proc main() !<span class="t">void</span> {
+    <span class="k">let</span> input = std::io::read_to_string()?;
     defer free(input);
-    redef input = input as []<span class="k">const</span> u8;
+    redef input = input as []const <span class="t">u8</span>;
 }
 </code></pre>
 <h3 id="conditional-compilation">Conditional Compilation</h3>
 <pre class="aria"><code><span class="i">@import</span>(<span class="s">"std"</span>);
 
-proc main() !void {
+proc main() !<span class="t">void</span> {
     std::writeln(static match std::os::host_os {
         std::os::OsType::UNIX => <span class="s">"we are on *NIX"</span>,
         std::os::OsType::Windows => <span class="s">"windows."</span>,

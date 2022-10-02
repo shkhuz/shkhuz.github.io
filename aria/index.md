@@ -18,17 +18,69 @@ language would look like.
 Obligatory hello world code snippet:
 
 {{{aria
-const std = @load("std.ar");
+let std = @import("std.ar")
 
-def main() {
-    std.write("Hello, World!");
+fn main() {
+    std.write("Hello, World!")
 }
 }}}/hello_world.ar
 
 {{{console
-$ ariac hello_world.ar
+$ aria hello_world.ar
 $ ./a.out
 Hello, World!
+}}}
+
+Types are first-class values. To define a struct:
+
+{{{aria
+let Handler = struct {
+    id: usize,
+    name: []u8,
+    func: *fn() void,
+}
+
+fn main() {
+    mut handler = Handler { 0, .{}, null }
+}
+}}}/structs.ar
+
+{{{console
+$ aria structs.ar
+$ ./a.out
+}}}
+
+In Aria, structs can have functions called on them, which are no more than
+namespaced functions:
+
+{{{aria
+let Handler = struct {
+    id: usize,
+    name: []u8,
+    func: *fn() void,
+}
+
+mut Handler::current_id = 0
+
+fn Handler::new(func: *fn() void) {
+    return Self { Handler.current_id, .{}, func }
+    Handler.current_id += 1
+}
+
+fn Handler::destroy(self) {
+    std.print("Handler destroyed with id: {}", .{ self.id })
+}
+
+fn main() {
+    let handler = Handler.new(main)
+    handler.destroy()
+}
+}}}/struct_functions.ar
+
+{{{console
+$ aria struct_functions.ar
+$ ./a.out
+Handler destroyed with id: 0
 }}}
 
 Aria is heavily inspired by C, Zig, Rust, Go, and others. Some neat features:
