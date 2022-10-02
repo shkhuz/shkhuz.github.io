@@ -18,7 +18,8 @@
     /* --aside-border-color: #aaaaaa; */
 
     /* --code-string-color: #005f00; */
-    /* --code-intrinsic-func-color: #5f875f; */
+    /* --code-aria-intrinsic-func-color: #5f875f; */
+    /* --code-aria-strp-color: #555; */
     /* ---------------------------------------------------------------------- */
 	
     /* dark */
@@ -38,7 +39,8 @@
     --aside-border-color: #444444;
 
     --code-string-color: #5fd7af;
-    --code-intrinsic-func-color: #add8e6;
+    --code-aria-intrinsic-func-color: #add8e6;
+    --code-aria-strp-color: #aaa;
     /* ---------------------------------------------------------------------- */
    
     /* common */
@@ -268,12 +270,16 @@ hr {
 }
 
 .aria .i {
-    color: var(--code-intrinsic-func-color);
+    color: var(--code-aria-intrinsic-func-color);
     font-weight: bold;
 }
 
 .aria .s {
     color: var(--code-string-color);
+}
+
+.aria .strp {
+    color: var(--code-aria-strp-color);
 }
 
 .console .o {

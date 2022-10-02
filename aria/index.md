@@ -41,7 +41,11 @@ let Handler = struct {
 }
 
 fn main() {
-    mut handler = Handler { 0, .{}, null }
+    mut handler = Handler { 
+        .id = 0, 
+        .name = .[], 
+        .func = null, 
+    }
 }
 }}}/structs.ar
 
@@ -54,6 +58,8 @@ In Aria, structs can have functions called on them, which are no more than
 namespaced functions:
 
 {{{aria
+let std = @import("std.ar")
+
 let Handler = struct {
     id: usize,
     name: []u8,
@@ -63,8 +69,13 @@ let Handler = struct {
 mut Handler::current_id = 0
 
 fn Handler::new(func: *fn() void) {
-    return Self { Handler.current_id, .{}, func }
+    let result = Self { 
+        .id = Handler.current_id, 
+        .name = .[], 
+        .func = func, 
+    }
     Handler.current_id += 1
+    return result
 }
 
 fn Handler::destroy(self) {

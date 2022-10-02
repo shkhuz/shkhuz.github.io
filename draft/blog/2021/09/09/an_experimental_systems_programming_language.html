@@ -54,10 +54,10 @@
     <span class="k">struct</span> Vector2 {
         x, y: f32,
 
-        proc add(self, other: Vector2) {
-            Self {
-                x: self.x + other.x,
-                y: self.y + other.y,
+        proc add(<span class="c">self</span>, other: Vector2) {
+            <span class="t">Self</span> {
+                x: <span class="c">self</span>.x + other.x,
+                y: <span class="c">self</span>.y + other.y,
             }
         }
     }
@@ -73,23 +73,23 @@
 <pre class="aria"><code><span class="i">@import</span>(<span class="s">"std"</span>);
 
 proc allocate_memory(n: <span class="t">usize</span>) ![]<span class="t">u8</span> {
-    <span class="k">let</span> mem = std::gp_allocator_mem(n)?;
-    std::slice::from_raw(mem, n)
+    <span class="k">let</span> mem = <span class="strp">std::</span>gp_allocator_mem(n)?;
+    <span class="strp">std::</span><span class="strp">slice::</span>from_raw(mem, n)
 }
 </code></pre>
 <h3 id="optionals">Optionals</h3>
 <pre class="aria"><code><span class="i">@import</span>(<span class="s">"std"</span>);
 
 proc main() {
-    std::printf(if open_file(<span class="s">"test.txt"</span>) {
+    <span class="strp">std::</span>printf(if open_file(<span class="s">"test.txt"</span>) {
         <span class="s">"file successfully opened"</span>
     } else {
         <span class="s">"file cannot be opened"</span>
     });
 }
 
-proc open_file(fpath: string) ?std::File {
-    if std::os::openf(fpath, std::io::rb) with file {
+proc open_file(fpath: string) ?<span class="strp">std::</span>File {
+    if <span class="strp">std::</span><span class="strp">os::</span>openf(fpath, <span class="strp">std::</span><span class="strp">io::</span>rb) with file {
         file
     } else {
         none
@@ -100,7 +100,7 @@ proc open_file(fpath: string) ?std::File {
 <pre class="aria"><code><span class="i">@import</span>(<span class="s">"std"</span>);
 
 proc main() !<span class="t">void</span> {
-    <span class="k">let</span> input = std::io::read_to_string()?;
+    <span class="k">let</span> input = <span class="strp">std::</span><span class="strp">io::</span>read_to_string()?;
     defer free(input);
     redef input = input as []const <span class="t">u8</span>;
 }
@@ -109,9 +109,9 @@ proc main() !<span class="t">void</span> {
 <pre class="aria"><code><span class="i">@import</span>(<span class="s">"std"</span>);
 
 proc main() !<span class="t">void</span> {
-    std::writeln(static match std::os::host_os {
-        std::os::OsType::UNIX => <span class="s">"we are on *NIX"</span>,
-        std::os::OsType::Windows => <span class="s">"windows."</span>,
+    <span class="strp">std::</span>writeln(static match <span class="strp">std::</span><span class="strp">os::</span>host_os {
+        <span class="strp">std::</span><span class="strp">os::</span><span class="strp">OsType::</span>UNIX => <span class="s">"we are on *NIX"</span>,
+        <span class="strp">std::</span><span class="strp">os::</span><span class="strp">OsType::</span>Windows => <span class="s">"windows."</span>,
         else => <span class="s">"something else. hmm..."</span>,
     });
 }

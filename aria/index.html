@@ -58,7 +58,11 @@ Hello, World!
 }
 
 <span class="k">fn</span> main() {
-    <span class="k">mut</span> handler = Handler { <span class="n">0</span>, .{}, <span class="c">null</span> }
+    <span class="k">mut</span> handler = Handler { 
+        .id = <span class="n">0</span>, 
+        .name = .[], 
+        .func = <span class="c">null</span>, 
+    }
 }
 </code></pre>
 <div class="code-snippet-filename">
@@ -68,21 +72,28 @@ structs.ar
 $ <span class="o">./a.out</span>
 </code></pre>
 <p>In Aria, structs can have functions called on them, which are no more than namespaced functions:</p>
-<pre class="aria"><code><span class="k">let</span> Handler = <span class="k">struct</span> {
+<pre class="aria"><code><span class="k">let</span> std = <span class="i">@import</span>(<span class="s">"std.ar"</span>)
+
+<span class="k">let</span> Handler = <span class="k">struct</span> {
     id: <span class="t">usize</span>,
     name: []<span class="t">u8</span>,
     func: *<span class="k">fn</span>() <span class="t">void</span>,
 }
 
-<span class="k">mut</span> Handler::current_id = <span class="n">0</span>
+<span class="k">mut</span> <span class="strp">Handler::</span>current_id = <span class="n">0</span>
 
-<span class="k">fn</span> Handler::new(func: *<span class="k">fn</span>() <span class="t">void</span>) {
-    return Self { Handler.current_id, .{}, func }
+<span class="k">fn</span> <span class="strp">Handler::</span>new(func: *<span class="k">fn</span>() <span class="t">void</span>) {
+    <span class="k">let</span> result = <span class="t">Self</span> { 
+        .id = Handler.current_id, 
+        .name = .[], 
+        .func = func, 
+    }
     Handler.current_id += <span class="n">1</span>
+    <span class="k">return</span> result
 }
 
-<span class="k">fn</span> Handler::destroy(self) {
-    std.print(<span class="s">"Handler destroyed with id: {}"</span>, .{ self.id })
+<span class="k">fn</span> <span class="strp">Handler::</span>destroy(<span class="c">self</span>) {
+    std.print(<span class="s">"Handler destroyed with id: {}"</span>, .{ <span class="c">self</span>.id })
 }
 
 <span class="k">fn</span> main() {

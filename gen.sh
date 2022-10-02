@@ -62,11 +62,13 @@ build() {
                 $0=gensub(/(".*")/, "<span class=\"s\">\\\1</span>", "g", $0);
                 $0=gensub(/(@[a-zA-Z0-9_]+)(\()/, "<span class=\"i\">\\\1</span>\\\2", "g", $0);
                 $0=gensub(/(\\<[0-9]+(\.[0-9]+)?\\>)/, "<span class=\"n\">\\\1</span>", "g", $0);
+                $0=gensub(/(\\<[a-zA-Z0-9_]+::)/, "<span class=\"strp\">\\\1</span>", "g", $0);
 
                 $0=gensub(/(\\<let\\>)/, "<span class=\"k\">\\\1</span>", "g", $0);
                 $0=gensub(/(\\<mut\\>)/, "<span class=\"k\">\\\1</span>", "g", $0);
                 $0=gensub(/(\\<fn\\>)/, "<span class=\"k\">\\\1</span>", "g", $0);
                 $0=gensub(/(\\<struct\\>)/, "<span class=\"k\">\\\1</span>", "g", $0);
+                $0=gensub(/(\\<return\\>)/, "<span class=\"k\">\\\1</span>", "g", $0);
 
                 $0=gensub(/(\\<u8\\>)/, "<span class=\"t\">\\\1</span>", "g", $0);
                 $0=gensub(/(\\<u16\\>)/, "<span class=\"t\">\\\1</span>", "g", $0);
@@ -80,10 +82,12 @@ build() {
                 $0=gensub(/(\\<isize\\>)/, "<span class=\"t\">\\\1</span>", "g", $0);
                 $0=gensub(/(\\<bool\\>)/, "<span class=\"t\">\\\1</span>", "g", $0);
                 $0=gensub(/(\\<void\\>)/, "<span class=\"t\">\\\1</span>", "g", $0);
+                $0=gensub(/(\\<Self\\>)/, "<span class=\"t\">\\\1</span>", "g", $0);
 
                 $0=gensub(/(\\<true\\>)/, "<span class=\"c\">\\\1</span>", "g", $0);
                 $0=gensub(/(\\<false\\>)/, "<span class=\"c\">\\\1</span>", "g", $0);
                 $0=gensub(/(\\<null\\>)/, "<span class=\"c\">\\\1</span>", "g", $0);
+                $0=gensub(/(\\<self\\>)/, "<span class=\"c\">\\\1</span>", "g", $0);
             }
 
             /\{\{\{console/ { 
