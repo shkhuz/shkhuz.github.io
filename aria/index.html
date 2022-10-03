@@ -85,7 +85,7 @@ $ <span class="o">./a.out</span>
 <span class="k">fn</span> <span class="strp">Handler::</span>new(func: *<span class="k">fn</span>() <span class="t">void</span>) {
     <span class="k">let</span> result = <span class="t">Self</span> { 
         .id = Handler.current_id, 
-        .name = .[], 
+        .name = .{}, 
         .func = func, 
     }
     Handler.current_id += <span class="n">1</span>
@@ -107,6 +107,39 @@ struct_functions.ar
 <pre class="console"><code>$ <span class="o">aria struct_functions.ar</span>
 $ <span class="o">./a.out</span>
 Handler destroyed with id: 0
+</code></pre>
+<p>Multiple values can returned using tuples:</p>
+<pre class="aria"><code><span class="k">let</span> std = <span class="i">@import</span>(<span class="s">"std.ar"</span>)
+
+<span class="k">let</span> GameObject = <span class="k">struct</span> {
+    id: <span class="t">usize</span>,
+    name: []<span class="t">u8</span>,
+}
+
+<span class="k">let</span> objects = .[
+    GameObject { .id=<span class="n">0</span>, .name=<span class="s">"player"</span> },
+    GameObject { .id=<span class="n">1</span>, .name=<span class="s">"weapon"</span> },
+    GameObject { .id=<span class="n">2</span>, .name=<span class="s">"enemy"</span> },
+]
+
+<span class="k">fn</span> get_object_with_name(name: []<span class="t">u8</span>) <span class="k">struct</span> {<span class="t">usize</span>, <span class="t">bool</span>} {
+    <span class="k">for</span> (o <span class="k">in</span> objects) {
+        <span class="k">if</span> (std.strcmp(name, o.name) == <span class="n">0</span>) 
+            <span class="k">return</span> .{o.id, <span class="c">true</span>}
+    }
+    <span class="k">return</span> .{<span class="n">0</span>, <span class="c">false</span>}
+}
+
+<span class="k">fn</span> main() {
+    <span class="k">let</span> result = get_object_with_name(<span class="s">"weapon"</span>)
+    std.assert(result.<span class="n">1</span> == <span class="c">true</span> & result.<span class="n">0</span> == <span class="n">1</span>)
+}
+</code></pre>
+<div class="code-snippet-filename">
+tuples.ar
+</div>
+<pre class="console"><code>$ <span class="o">aria tuples.ar</span>
+$ <span class="o">./a.out</span>
 </code></pre>
 <p>Aria is heavily inspired by C, Zig, Rust, Go, and others. Some neat features:</p>
 <ul>

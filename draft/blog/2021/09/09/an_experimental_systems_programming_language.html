@@ -65,8 +65,8 @@
 </code></pre>
 <h3 id="generics">Generics</h3>
 <pre class="aria"><code>proc max<T>(a: T, b: T) T {
-    if a > b { a }
-    else { b }
+    <span class="k">if</span> a > b { a }
+    <span class="k">else</span> { b }
 }
 </code></pre>
 <h3 id="errors">Errors</h3>
@@ -81,17 +81,17 @@ proc allocate_memory(n: <span class="t">usize</span>) ![]<span class="t">u8</spa
 <pre class="aria"><code><span class="i">@import</span>(<span class="s">"std"</span>);
 
 proc main() {
-    <span class="strp">std::</span>printf(if open_file(<span class="s">"test.txt"</span>) {
+    <span class="strp">std::</span>printf(<span class="k">if</span> open_file(<span class="s">"test.txt"</span>) {
         <span class="s">"file successfully opened"</span>
-    } else {
+    } <span class="k">else</span> {
         <span class="s">"file cannot be opened"</span>
     });
 }
 
 proc open_file(fpath: string) ?<span class="strp">std::</span>File {
-    if <span class="strp">std::</span><span class="strp">os::</span>openf(fpath, <span class="strp">std::</span><span class="strp">io::</span>rb) with file {
+    <span class="k">if</span> <span class="strp">std::</span><span class="strp">os::</span>openf(fpath, <span class="strp">std::</span><span class="strp">io::</span>rb) with file {
         file
-    } else {
+    } <span class="k">else</span> {
         none
     }
 }
@@ -112,7 +112,7 @@ proc main() !<span class="t">void</span> {
     <span class="strp">std::</span>writeln(static match <span class="strp">std::</span><span class="strp">os::</span>host_os {
         <span class="strp">std::</span><span class="strp">os::</span><span class="strp">OsType::</span>UNIX => <span class="s">"we are on *NIX"</span>,
         <span class="strp">std::</span><span class="strp">os::</span><span class="strp">OsType::</span>Windows => <span class="s">"windows."</span>,
-        else => <span class="s">"something else. hmm..."</span>,
+        <span class="k">else</span> => <span class="s">"something <span class="k">else</span>. hmm..."</span>,
     });
 }
 </code></pre>

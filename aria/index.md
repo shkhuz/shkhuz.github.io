@@ -71,7 +71,7 @@ mut Handler::current_id = 0
 fn Handler::new(func: *fn() void) {
     let result = Self { 
         .id = Handler.current_id, 
-        .name = .[], 
+        .name = .{}, 
         .func = func, 
     }
     Handler.current_id += 1
@@ -92,6 +92,41 @@ fn main() {
 $ aria struct_functions.ar
 $ ./a.out
 Handler destroyed with id: 0
+}}}
+
+Multiple values can returned using tuples:
+
+{{{aria
+let std = @import("std.ar")
+
+let GameObject = struct {
+    id: usize,
+    name: []u8,
+}
+
+let objects = .[
+    GameObject { .id=0, .name="player" },
+    GameObject { .id=1, .name="weapon" },
+    GameObject { .id=2, .name="enemy" },
+]
+
+fn get_object_with_name(name: []u8) struct {usize, bool} {
+    for (o in objects) {
+        if (std.strcmp(name, o.name) == 0) 
+            return .{o.id, true}
+    }
+    return .{0, false}
+}
+
+fn main() {
+    let result = get_object_with_name("weapon")
+    std.assert(result.1 == true & result.0 == 1)
+}
+}}}/tuples.ar
+
+{{{console
+$ aria tuples.ar
+$ ./a.out
 }}}
 
 Aria is heavily inspired by C, Zig, Rust, Go, and others. Some neat features:

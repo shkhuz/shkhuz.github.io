@@ -68,7 +68,12 @@ build() {
                 $0=gensub(/(\\<mut\\>)/, "<span class=\"k\">\\\1</span>", "g", $0);
                 $0=gensub(/(\\<fn\\>)/, "<span class=\"k\">\\\1</span>", "g", $0);
                 $0=gensub(/(\\<struct\\>)/, "<span class=\"k\">\\\1</span>", "g", $0);
+                $0=gensub(/(\\<extern\\>)/, "<span class=\"k\">\\\1</span>", "g", $0);
+                $0=gensub(/(\\<if\\>)/, "<span class=\"k\">\\\1</span>", "g", $0);
+                $0=gensub(/(\\<else\\>)/, "<span class=\"k\">\\\1</span>", "g", $0);
                 $0=gensub(/(\\<return\\>)/, "<span class=\"k\">\\\1</span>", "g", $0);
+                $0=gensub(/(\\<for\\>)/, "<span class=\"k\">\\\1</span>", "g", $0);
+                $0=gensub(/(\\<in\\>)/, "<span class=\"k\">\\\1</span>", "g", $0);
 
                 $0=gensub(/(\\<u8\\>)/, "<span class=\"t\">\\\1</span>", "g", $0);
                 $0=gensub(/(\\<u16\\>)/, "<span class=\"t\">\\\1</span>", "g", $0);
