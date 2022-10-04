@@ -93,7 +93,7 @@ $ <span class="o">./a.out</span>
 }
 
 <span class="k">fn</span> <span class="strp">Handler::</span>destroy(<span class="c">self</span>) {
-    std.print(<span class="s">"Handler destroyed with id: {}"</span>, .{ <span class="c">self</span>.id })
+    std.print(<span class="s">"Handler destroyed with id: {}"</span>, .{<span class="c">self</span>.id})
 }
 
 <span class="k">fn</span> main() {
@@ -108,7 +108,7 @@ struct_functions.ar
 $ <span class="o">./a.out</span>
 Handler destroyed with id: 0
 </code></pre>
-<p>Multiple values can returned using tuples:</p>
+<p>Multiple values can be returned using tuples:</p>
 <pre class="aria"><code><span class="k">let</span> std = <span class="i">@import</span>(<span class="s">"std.ar"</span>)
 
 <span class="k">let</span> GameObject = <span class="k">struct</span> {
@@ -139,6 +139,25 @@ Handler destroyed with id: 0
 tuples.ar
 </div>
 <pre class="console"><code>$ <span class="o">aria tuples.ar</span>
+$ <span class="o">./a.out</span>
+</code></pre>
+<p>Pointers behave just like C pointers:</p>
+<pre class="aria"><code><span class="k">let</span> std = <span class="i">@import</span>(<span class="s">"std.ar"</span>)
+
+<span class="k">fn</span> main() {
+    <span class="k">mut</span> i = <span class="n">2</span>
+    <span class="k">mut</span> ptr = &i
+    ptr.* = <span class="n">3</span>
+    std.assert(i == <span class="n">3</span>)
+
+    <span class="k">let</span> buf: []<span class="t">u16</span> = .[<span class="n">4</span>, <span class="n">17</span>, <span class="n">9</span>]
+    std.assert(((&(buf.*)) + <span class="n">2</span>*<span class="i">@sizeof</span>(<span class="t">u16</span>)).* == <span class="n">9</span>)
+}
+</code></pre>
+<div class="code-snippet-filename">
+pointers.ar
+</div>
+<pre class="console"><code>$ <span class="o">aria pointers.ar</span>
 $ <span class="o">./a.out</span>
 </code></pre>
 <p>Aria is heavily inspired by C, Zig, Rust, Go, and others. Some neat features:</p>

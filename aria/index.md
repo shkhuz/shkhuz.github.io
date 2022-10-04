@@ -79,7 +79,7 @@ fn Handler::new(func: *fn() void) {
 }
 
 fn Handler::destroy(self) {
-    std.print("Handler destroyed with id: {}", .{ self.id })
+    std.print("Handler destroyed with id: {}", .{self.id})
 }
 
 fn main() {
@@ -94,7 +94,7 @@ $ ./a.out
 Handler destroyed with id: 0
 }}}
 
-Multiple values can returned using tuples:
+Multiple values can be returned using tuples:
 
 {{{aria
 let std = @import("std.ar")
@@ -126,6 +126,27 @@ fn main() {
 
 {{{console
 $ aria tuples.ar
+$ ./a.out
+}}}
+
+Pointers behave just like C pointers:
+
+{{{aria
+let std = @import("std.ar")
+
+fn main() {
+    mut i = 2
+    mut ptr = &i
+    ptr.* = 3
+    std.assert(i == 3)
+
+    let buf: []u16 = .[4, 17, 9]
+    std.assert(((&(buf.*)) + 2*@sizeof(u16)).* == 9)
+}
+}}}/pointers.ar
+
+{{{console
+$ aria pointers.ar
 $ ./a.out
 }}}
 
