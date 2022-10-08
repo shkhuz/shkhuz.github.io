@@ -278,10 +278,14 @@ hr {
     color: var(--code-string-color);
 }
 
+.aria .ch {
+    color: var(--theme-color);
+}
+
 .aria .strp {
     color: var(--code-aria-strp-color);
 }
 
-.console .o {
+.console .i {
     font-weight: bold;
 }
