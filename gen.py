@@ -1,81 +1,156 @@
-import os
 import sys
-import re
+import os
 import subprocess
+import re
+from pathlib import Path
 from glob import glob
 
-CT_NONE = 0
-CT_ARIA = 1
-CT_CONSOLE = 2
+def eprint(*args, **kwargs):
+    print(*args, file=sys.stderr, **kwargs)
 
-PS_NONE = 0
-PS_STRING = 1
-PS_CHAR = 2
-PS_NUMBER = 3
-PS_WORD = 4
-PS_INPUT = 5
+TOKEN_STRING = 0
+TOKEN_WORD = 1
+TOKEN_NUMBER = 2
+TOKEN_SPACE = 3
+TOKEN_NEWLINE = 4
+TOKEN_ELSE = 5
 
-CLOSE_SPAN_AFTER_WORD = False
+PRE_ARIA = 0
+PRE_CONSOLE = 1
+PRE_NONE = 2
+    
+class Token:
+    lexeme = ""
+    kind = 5
 
-synhlt = {
-    "let": "k",
-    "mut": "k",
-    "fn": "k",
-    "struct": "k",
-    "extern": "k",
-    "if": "k",
-    "else": "k",
-    "return": "k",
-    "for": "k",
-    "in": "k",
-    "as": "k",
-    "with": "k",
-    "and": "k",
-    "or": "k",
-    "not": "k",
+    def __init__(self, l, kind):
+        self.lexeme = l
+        self.kind = kind
 
-    "u8": "t",
-    "u16": "t",
-    "u32": "t",
-    "u64": "t",
-    "usize": "t",
-    "i8": "t",
-    "i16": "t",
-    "i32": "t",
-    "i64": "t",
-    "isize": "t",
-    "bool": "t",
-    "void": "t",
-    "Self": "t",
+    def __str__(self):
+        return self.lexeme
 
-    "true": "c",
-    "false": "c",
-    "null": "c",
-    "self": "c",
-}
+    def __repr__(self):
+        return self.lexeme
 
-mdfiles = [y for x in os.walk('.') for y in glob(os.path.join(x[0], '*.md'))]
-for mdpath in mdfiles:
-    print("Compiling ", mdpath, "...", sep='')
-    contents = ""
-    with open(mdpath, 'r') as handle:
-        contents = handle.readlines()
-        handle.close()
+def lex(mdcode):
+    tokensall = []
+    tokensline = []
+    start = 0
+    current = 0
 
-    title = contents[0][2:].strip()
-    htmlpath = mdpath.replace("md", "html")
+    while True:
+        start = current
+        if mdcode[current].isalpha() or mdcode[current] == '_':
+            while mdcode[current].isalnum() or mdcode[current] == '_':
+                current += 1
+            tokensline.append(Token(mdcode[start:current], TOKEN_WORD))
+        elif mdcode[current] == '"':
+            current += 1
+            while mdcode[current] != '"' and mdcode[current] != '\n':
+                current += 1
+            if mdcode[current] == '"':
+                current += 1
+            tokensline.append(Token(mdcode[start:current], TOKEN_STRING))
+        elif mdcode[current] == '`' and mdcode[current+1] == '`' and mdcode[current+2] == '`':
+            current += 3
+            tokensline.append(Token(mdcode[start:current], TOKEN_ELSE))
+        elif mdcode[current] == '[' and mdcode[current+1] == '[' and mdcode[current+2] == '[':
+            current += 3
+            tokensline.append(Token(mdcode[start:current], TOKEN_ELSE))
+        elif mdcode[current] == ']' and mdcode[current+1] == ']' and mdcode[current+2] == ']':
+            current += 3
+            tokensline.append(Token(mdcode[start:current], TOKEN_ELSE))
+        elif mdcode[current] == ' ' or mdcode[current] == '\t':
+            while mdcode[current] == ' ' or mdcode[current] == '\t':
+                current += 1
+            tokensline.append(Token(mdcode[start:current], TOKEN_SPACE))
+        elif mdcode[current] == '\n':
+            current += 1
+            tokensline.append(Token(mdcode[start:current], TOKEN_NEWLINE))
+            tokensall.append(tokensline)
+            tokensline = []
+        elif mdcode[current] == '\0':
+            if mdcode[current-1] != '\n':
+                tokensall.append(tokensline)
+            return tokensall
+        else:
+            current += 1
+            tokensline.append(Token(mdcode[start:current], TOKEN_ELSE))
+        
 
-    handle = open(htmlpath, 'w')
-    handle.write(
-"""<!DOCTYPE html>
+if len(sys.argv) < 2:
+    eprint("error: no input files");
+    sys.exit(1)
+    
+mdpath = Path(sys.argv[1])
+print("Compiling ", mdpath, "...", sep='', end='')
+contents = ""
+with mdpath.open('rb') as handle:
+    contents = handle.read().decode("utf-8")
+    contents += '\0'
+    handle.close()
+
+tokens = lex(contents)
+
+title = ""
+for tok in tokens[0][2:]:
+    title += tok.lexeme
+
+if mdpath != Path("index.md"):
+    tokens[0][2].lexeme = "<a href='/'>huzaifa</a> / " + tokens[0][2].lexeme
+    if Path("blog/") in mdpath.parents:
+        mdpathspl = str(mdpath).split('/')
+        author = "<br><span class='author'>By Huzaifa Shaikh, " + subprocess.check_output(["date", "-d", "{}/{}/{}".format(mdpathspl[-4], mdpathspl[-3], mdpathspl[-2]), "+%b %d, %Y"]).decode("utf-8").strip() + "</span>\n"
+        tokens[0][len(tokens[0])-1].lexeme = author + tokens[0][len(tokens[0])-1].lexeme
+
+pre = False
+pretype = PRE_NONE
+
+for i, _ in enumerate(tokens):
+    for j, _ in enumerate(tokens[i]):
+        if tokens[i][j].lexeme == "```":
+            pre = not pre
+            if pre:
+                if tokens[i][j+1].kind != TOKEN_NEWLINE:
+                    tokens[i][j].lexeme = "<pre class='"
+                    tokens[i][len(tokens[i])-1].lexeme = "'><code>"
+                    if tokens[i][j+1].lexeme == "aria":
+                        j += 1
+                        pretype = PRE_ARIA
+            else:
+                if tokens[i][j+1].kind != TOKEN_NEWLINE:
+                    tokens[i][j].lexeme = "</code></pre>\n<div class='code-snippet-filename'>"
+                    tokens[i][len(tokens[i])-1].lexeme = "</div>\n"
+                else:
+                    tokens[i][j].lexeme = "</code></pre>"
+
+        elif tokens[i][j].lexeme == "[[[":
+            tokens[i][j].lexeme = "<aside>\n"
+        elif tokens[i][j].lexeme == "]]]":
+            tokens[i][j].lexeme = "\n</aside>"
+
+        elif pretype == PRE_ARIA:
+            if tokens[i][j].kind == TOKEN_STRING:
+                tokens[i][j].lexeme = "<span class='s'>" + tokens[i][j].lexeme + "</span>"
+
+mdcode_modified = ""
+for line in tokens:
+    for tok in line:
+        mdcode_modified += tok.lexeme
+
+htmlpath = mdpath.with_suffix(".html")
+handle = htmlpath.open('w')
+
+handle.write("""<!DOCTYPE html>
 <html lang=\"en\">
 <head>
 <meta charset=\"utf-8\">
 <meta name=\"viewport\" content=\"width=device-width, initial-scale=1\">
 
 <title>""")
-    handle.write(title) 
-    handle.write(
+handle.write(title)
+handle.write(
 """</title>
 <link rel=\"apple-touch-icon\" sizes=\"180x180\" href=\"/assets/apple-touch-icon.png\">
 <link rel=\"icon\" type=\"image/png\" sizes=\"32x32\" href=\"/assets/favicon-32x32.png\">
@@ -100,170 +175,42 @@ for mdpath in mdfiles:
 
 <body>
 <article>
-"""
-    )
+""")
 
-    if mdpath != "./index.md":
-        contents[0] = "# <a href='/'>huzaifa</a> / " + title
-        if "/blog/" not in mdpath:
-            contents[0] += '\n'
+pandocproc = subprocess.Popen(["pandoc", "--from=markdown+tex_math_single_backslash+tex_math_dollars", "--to=html5", "--mathjax"], stdout=subprocess.PIPE, stdin=subprocess.PIPE)
+pandocproc.stdin.write(''.join(mdcode_modified).encode("utf-8"))
+pandocout, pandocerr = pandocproc.communicate()
+pandocproc.wait()
 
-    if "/blog/" in mdpath:
-        mdpathspl = mdpath.split('/')
-        author = "<br><span class='author'>By Huzaifa Shaikh, " + subprocess.check_output(["date", "-d", "{}/{}/{}".format(mdpathspl[-4], mdpathspl[-3], mdpathspl[-2]), "+%b %d, %Y"]).decode("utf-8").strip() + "</span>\n"
-        contents[0] = contents[0] + author
+pandocoutstr = pandocout.decode("utf-8")
+pandocoutstr = re.sub("(<table.*>)", "<div class='table-wrapper'>\n\\1", pandocoutstr)
+pandocoutstr = re.sub("</table>", "</table>\n</div>", pandocoutstr)
 
-    codetype = CT_NONE
-    word = ""
-    for i, line in enumerate(contents):
-        newline = ""
-        parsestate = PS_NONE
-        if line.strip().startswith("{{{"):
-            ctstr = line.strip()[3:]
-            contents[i] = "<pre class='" + ctstr + "'><code>"
+handle.write(pandocoutstr)
 
-            if ctstr == "aria": 
-                codetype = CT_ARIA
-            elif ctstr == "console":
-                codetype = CT_CONSOLE
-        
-        elif line.strip() == "[[[":
-            contents[i] = "<aside>\n\n"
+if mdpath == Path("index.md"):
+    handle.write("<h2>Blog</h2>\n")
+    if os.path.isdir("blog"):
+        handle.write("<ul>\n")
+        for year in sorted(glob("blog/*")):
+            for month in sorted(glob(year + "/*")):
+                for day in sorted(glob(month + "/*")):
+                    for post in sorted(glob(day + "/*")):
+                        if post.endswith(".md"):
+                            posttitle = ""
+                            with open(post) as postfile:
+                                posttitle = postfile.readline()[2:].strip()
+                            handle.write("<li>{}/{}/{}: <a href='{}.html'>{}</a></li>\n".format(
+                                os.path.basename(year),
+                                os.path.basename(month),
+                                os.path.basename(day),
+                                os.path.splitext(post)[0],
+                                posttitle))
+        handle.write("</ul>\n")
 
-        elif line.strip().startswith("}}}"):
-            snippetpath = line.strip()[4:]
-            if snippetpath != "":
-                contents[i] = "</code></pre>\n<div class='code-snippet-filename'>" + snippetpath + "</div>\n"
-            else:
-                contents[i] = "</code></pre>\n"
-            codetype = CT_NONE
-
-        elif line.strip() == "]]]":
-            contents[i] = "\n</aside>\n"
-
-        elif codetype == CT_ARIA:
-            for j, ch in enumerate(line):
-                if ch == '"':
-                    if parsestate != PS_STRING:
-                        parsestate = PS_STRING
-                        newline += "<span class='s'>\""
-                    elif parsestate == PS_STRING:
-                        parsestate = PS_NONE
-                        newline += "\"</span>"
-                
-                elif parsestate == PS_STRING:
-                    newline += ch
-
-                elif ch == "'":
-                    if parsestate != PS_CHAR:
-                        parsestate = PS_CHAR
-                        newline += "<span class='ch'>'"
-                    elif parsestate == PS_CHAR:
-                        parsestate = PS_NONE
-                        newline += "'</span>"
-                elif parsestate == PS_CHAR:
-                    newline += ch
-
-                elif ch == '@':
-                    newline += "<span class='i'>@"
-                    CLOSE_SPAN_AFTER_WORD = True
-
-                elif parsestate != PS_WORD and (ch.isalpha() or ch == '_'):
-                    parsestate = PS_WORD
-                    word += ch
-
-                elif parsestate == PS_WORD and (ch.isalpha() or ch.isdigit() or ch == '_'):
-                    word += ch
-
-                elif parsestate != PS_NUMBER and ch >= '0' and ch <= '9':
-                    parsestate = PS_NUMBER
-                    newline += "<span class='n'>"
-                    newline += ch
-
-                elif parsestate == PS_NUMBER and ((ch >= '0' and ch <= '9') or ch == '.'):
-                    newline += ch
-
-                else:
-                    if parsestate == PS_NUMBER:
-                        parsestate = PS_NONE
-                        newline += "</span>"
-                        newline += ch
-                    elif parsestate == PS_WORD:
-                        parsestate = PS_NONE
-                        if word in synhlt or CLOSE_SPAN_AFTER_WORD:
-                            if word in synhlt:
-                                newline += "<span class='" + synhlt[word] + "'>"
-                                newline += word
-                                newline += "</span>"
-                                newline += ch
-                        
-                            if CLOSE_SPAN_AFTER_WORD:
-                                CLOSE_SPAN_AFTER_WORD = False
-                                newline += word
-                                newline += "</span>"
-                                newline += ch
-                        
-                        else:
-                            newline += word
-                            newline += ch
-                        word = ""
-                    else:
-                        newline += ch
-            newline = re.sub("([a-zA-Z_][a-zA-Z0-9_.]*::)", "<span class='strp'>\\1</span>", newline)
-            contents[i] = newline
-        elif codetype == CT_CONSOLE:
-            for j, ch in enumerate(line):
-                if j == 0 and ch == '$':
-                    parsestate = PS_INPUT
-                    newline += ch
-                    newline += "<span class='i'>"
-                else:
-                    newline += ch
-            if parsestate == PS_INPUT:
-                parsestate = PS_NONE
-                newline += "</span>"
-            contents[i] = newline
-
-
-    pandocproc = subprocess.Popen(["pandoc", "--from=markdown+tex_math_single_backslash+tex_math_dollars", "--to=html5", "--mathjax"], stdout=subprocess.PIPE, stdin=subprocess.PIPE)
-    pandocproc.stdin.write(''.join(contents).encode("utf-8"))
-    pandocout, pandocerr = pandocproc.communicate()
-    pandocproc.wait()
-
-    pandocoutstr = pandocout.decode("utf-8")
-    pandocoutstr = re.sub("(<table.*>)", "<div class='table-wrapper'>\n\\1", pandocoutstr)
-    pandocoutstr = re.sub("</table>", "</table>\n</div>", pandocoutstr)
-
-    handle.write(pandocoutstr)
-    
-    if mdpath == "./index.md":
-        handle.write("<h2>Blog</h2>\n")
-        
-        if os.path.isdir("blog"):
-            handle.write("<ul>\n")
-            for year in sorted(glob("blog/*")):
-                for month in sorted(glob(year + "/*")):
-                    for day in sorted(glob(month + "/*")):
-                        for post in sorted(glob(day + "/*")):
-                            if post.endswith(".md"):
-                                posttitle = ""
-                                with open(post) as postfile:
-                                    posttitle = postfile.readline()[2:].strip()
-                                handle.write("<li>{}/{}/{}: <a href='{}.html'>{}</a></li>\n".format(
-                                    os.path.basename(year),
-                                    os.path.basename(month),
-                                    os.path.basename(day),
-                                    os.path.splitext(post)[0],
-                                    posttitle))
-            handle.write("</ul>\n")
-
-    handle.write(
+handle.write(
 """</article>
 </body>
-</html>"""
-    )
-    handle.close()
-
-if len(sys.argv) > 1 and sys.argv[1] == '-r':
-    httpserverproc = subprocess.Popen(['http-server', '-p', '8080', '.'])
-    httpserverproc.wait()
+</html>""")
+handle.close()
+print(" ok")
