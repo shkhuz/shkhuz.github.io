@@ -4,80 +4,138 @@ import subprocess
 import re
 from pathlib import Path
 from glob import glob
+from enum import Enum
 
 def eprint(*args, **kwargs):
     print(*args, file=sys.stderr, **kwargs)
 
-TOKEN_STRING = 0
-TOKEN_WORD = 1
-TOKEN_NUMBER = 2
-TOKEN_SPACE = 3
-TOKEN_NEWLINE = 4
-TOKEN_ELSE = 5
+class TokenKind(Enum):
+    STRING, \
+    CHAR, \
+    WORD, \
+    NUMBER, \
+    SPACE, \
+    NEWLINE, \
+    TRIPLE_LBRACK, \
+    TRIPLE_RBRACK, \
+    TRIPLE_BACKTICK, \
+    DOUBLE_COLON, \
+    ELSE = range(11)
 
 PRE_ARIA = 0
 PRE_CONSOLE = 1
 PRE_NONE = 2
+
+synhlt = {
+    "imm": "k",
+    "mut": "k",
+    "fn": "k",
+    "struct": "k",
+    "extern": "k",
+    "if": "k",
+    "else": "k",
+    "return": "k",
+    "for": "k",
+    "in": "k",
+    "as": "k",
+    "and": "k",
+    "or": "k",
+    "not": "k",
+
+    "u8": "t",
+    "u16": "t",
+    "u32": "t",
+    "u64": "t",
+    "usize": "t",
+    "i8": "t",
+    "i16": "t",
+    "i32": "t",
+    "i64": "t",
+    "isize": "t",
+    "bool": "t",
+    "void": "t",
+    "Self": "t",
+
+    "true": "c",
+    "false": "c",
+    "null": "c",
+    "self": "c",
+    "undef": "c",
+}
     
 class Token:
     lexeme = ""
-    kind = 5
+    kind = TokenKind.ELSE
+    line = 0 # zero indexed
 
-    def __init__(self, l, kind):
-        self.lexeme = l
+    def __init__(self, lexeme, kind, line):
+        self.lexeme = lexeme
         self.kind = kind
+        self.line = line
 
     def __str__(self):
         return self.lexeme
 
     def __repr__(self):
         return self.lexeme
-
+    
 def lex(mdcode):
-    tokensall = []
-    tokensline = []
+    tokens = []
+    newline_pos = {}
     start = 0
     current = 0
+    line = 0
 
     while True:
         start = current
         if mdcode[current].isalpha() or mdcode[current] == '_':
             while mdcode[current].isalnum() or mdcode[current] == '_':
                 current += 1
-            tokensline.append(Token(mdcode[start:current], TOKEN_WORD))
+            tokens.append(Token(mdcode[start:current], TokenKind.WORD, line))
+        elif mdcode[current].isdigit():
+            while mdcode[current].isdigit() or mdcode[current] == '.':
+                current += 1
+            tokens.append(Token(mdcode[start:current], TokenKind.NUMBER, line))
         elif mdcode[current] == '"':
             current += 1
             while mdcode[current] != '"' and mdcode[current] != '\n':
                 current += 1
             if mdcode[current] == '"':
                 current += 1
-            tokensline.append(Token(mdcode[start:current], TOKEN_STRING))
+            tokens.append(Token(mdcode[start:current], TokenKind.STRING, line))
+        elif mdcode[current] == "'":
+            current += 1
+            while mdcode[current] != "'" and mdcode[current] != '\n':
+                current += 1
+            if mdcode[current] == "'":
+                current += 1
+            tokens.append(Token(mdcode[start:current], TokenKind.CHAR, line))
         elif mdcode[current] == '`' and mdcode[current+1] == '`' and mdcode[current+2] == '`':
             current += 3
-            tokensline.append(Token(mdcode[start:current], TOKEN_ELSE))
+            tokens.append(Token(mdcode[start:current], TokenKind.TRIPLE_BACKTICK, line))
         elif mdcode[current] == '[' and mdcode[current+1] == '[' and mdcode[current+2] == '[':
             current += 3
-            tokensline.append(Token(mdcode[start:current], TOKEN_ELSE))
+            tokens.append(Token(mdcode[start:current], TokenKind.TRIPLE_LBRACK, line))
         elif mdcode[current] == ']' and mdcode[current+1] == ']' and mdcode[current+2] == ']':
             current += 3
-            tokensline.append(Token(mdcode[start:current], TOKEN_ELSE))
+            tokens.append(Token(mdcode[start:current], TokenKind.TRIPLE_RBRACK, line))
+        elif mdcode[current] == ':' and mdcode[current+1] == ':':
+            current += 2
+            tokens.append(Token(mdcode[start:current], TokenKind.DOUBLE_COLON, line))
         elif mdcode[current] == ' ' or mdcode[current] == '\t':
             while mdcode[current] == ' ' or mdcode[current] == '\t':
                 current += 1
-            tokensline.append(Token(mdcode[start:current], TOKEN_SPACE))
+            tokens.append(Token(mdcode[start:current], TokenKind.SPACE, line))
         elif mdcode[current] == '\n':
             current += 1
-            tokensline.append(Token(mdcode[start:current], TOKEN_NEWLINE))
-            tokensall.append(tokensline)
-            tokensline = []
+            newline_pos[line] = len(tokens)
+            tokens.append(Token(mdcode[start:current], TokenKind.NEWLINE, line))
+            line += 1
         elif mdcode[current] == '\0':
-            if mdcode[current-1] != '\n':
-                tokensall.append(tokensline)
-            return tokensall
+            return tokens, newline_pos
         else:
             current += 1
-            tokensline.append(Token(mdcode[start:current], TOKEN_ELSE))
-        
+            tokens.append(Token(mdcode[start:current], TokenKind.ELSE, line))
 
 if len(sys.argv) < 2:
     eprint("error: no input files");
@@ -91,53 +149,66 @@ with mdpath.open('rb') as handle:
     contents += '\0'
     handle.close()
 
-tokens = lex(contents)
+tokens, newline_pos = lex(contents)
 
 title = ""
-for tok in tokens[0][2:]:
+for tok in tokens[2:newline_pos[0]]:
     title += tok.lexeme
 
 if mdpath != Path("index.md"):
-    tokens[0][2].lexeme = "<a href='/'>huzaifa</a> / " + tokens[0][2].lexeme
+    tokens[2].lexeme = "<a href='/'>huzaifa</a> / " + tokens[2].lexeme
     if Path("blog/") in mdpath.parents:
         mdpathspl = str(mdpath).split('/')
         author = "<br><span class='author'>By Huzaifa Shaikh, " + subprocess.check_output(["date", "-d", "{}/{}/{}".format(mdpathspl[-4], mdpathspl[-3], mdpathspl[-2]), "+%b %d, %Y"]).decode("utf-8").strip() + "</span>\n"
-        tokens[0][len(tokens[0])-1].lexeme = author + tokens[0][len(tokens[0])-1].lexeme
+        tokens[newline_pos[0]].lexeme = author + tokens[newline_pos[0]].lexeme
 
 pre = False
 pretype = PRE_NONE
 
 for i, _ in enumerate(tokens):
-    for j, _ in enumerate(tokens[i]):
-        if tokens[i][j].lexeme == "```":
-            pre = not pre
-            if pre:
-                if tokens[i][j+1].kind != TOKEN_NEWLINE:
-                    tokens[i][j].lexeme = "<pre class='"
-                    tokens[i][len(tokens[i])-1].lexeme = "'><code>"
-                    if tokens[i][j+1].lexeme == "aria":
-                        j += 1
-                        pretype = PRE_ARIA
+    if tokens[i].kind == TokenKind.TRIPLE_BACKTICK:
+        pre = not pre
+        if pre:
+            if tokens[i+1].kind != TokenKind.NEWLINE:
+                tokens[i].lexeme = "<pre class='"
+                tokens[newline_pos[tokens[i].line]].lexeme = "'><code>"
+                if tokens[i+1].lexeme == "aria":
+                    i += 1
+                    pretype = PRE_ARIA
+        else:
+            if tokens[i+1].kind != TokenKind.NEWLINE:
+                tokens[i].lexeme = "</code></pre>\n<div class='code-snippet-filename'>"
+                tokens[newline_pos[tokens[i].line]].lexeme = "</div>\n"
             else:
-                if tokens[i][j+1].kind != TOKEN_NEWLINE:
-                    tokens[i][j].lexeme = "</code></pre>\n<div class='code-snippet-filename'>"
-                    tokens[i][len(tokens[i])-1].lexeme = "</div>\n"
-                else:
-                    tokens[i][j].lexeme = "</code></pre>"
+                tokens[i].lexeme = "</code></pre>"
 
-        elif tokens[i][j].lexeme == "[[[":
-            tokens[i][j].lexeme = "<aside>\n"
-        elif tokens[i][j].lexeme == "]]]":
-            tokens[i][j].lexeme = "\n</aside>"
+    elif tokens[i].kind == TokenKind.TRIPLE_LBRACK:
+        tokens[i].lexeme = "<aside>\n"
+    elif tokens[i].kind == TokenKind.TRIPLE_RBRACK:
+        tokens[i].lexeme = "\n</aside>"
 
-        elif pretype == PRE_ARIA:
-            if tokens[i][j].kind == TOKEN_STRING:
-                tokens[i][j].lexeme = "<span class='s'>" + tokens[i][j].lexeme + "</span>"
+    elif pretype == PRE_ARIA:
+        if tokens[i].kind == TokenKind.STRING:
+            tokens[i].lexeme = "<span class='s'>" + tokens[i].lexeme + "</span>"
+        elif tokens[i].kind == TokenKind.CHAR:
+            tokens[i].lexeme = "<span class='ch'>" + tokens[i].lexeme + "</span>"
+        elif tokens[i].kind == TokenKind.NUMBER:
+            tokens[i].lexeme = "<span class='n'>" + tokens[i].lexeme + "</span>"
+        elif tokens[i].kind == TokenKind.WORD and tokens[i].lexeme in synhlt:
+            tokens[i].lexeme = "<span class='" + synhlt[tokens[i].lexeme] + "'>" + tokens[i].lexeme + "</span>"
+        elif tokens[i].lexeme == '@' and tokens[i+1].kind == TokenKind.WORD and tokens[i+2].lexeme == '(':
+            tokens[i].lexeme = "<span class='i'>@"
+            i += 1
+            tokens[i].lexeme += "</span>"
+            i += 1
+        elif tokens[i].kind == TokenKind.WORD and tokens[i+1].kind == TokenKind.DOUBLE_COLON:
+            tokens[i].lexeme = "<span class='struct-acc'>" + tokens[i].lexeme
+            i += 1
+            tokens[i].lexeme = "::</span>"
 
 mdcode_modified = ""
-for line in tokens:
-    for tok in line:
-        mdcode_modified += tok.lexeme
+for tok in tokens:
+    mdcode_modified += tok.lexeme
 
 htmlpath = mdpath.with_suffix(".html")
 handle = htmlpath.open('w')

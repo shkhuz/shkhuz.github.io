@@ -19,7 +19,7 @@
 
     /* --code-string-color: #005f00; */
     /* --code-aria-intrinsic-func-color: #5f875f; */
-    /* --code-aria-strp-color: #555; */
+    /* --code-aria-struct-acc-color: #555; */
     /* ---------------------------------------------------------------------- */
 	
     /* dark */
@@ -40,7 +40,7 @@
 
     --code-string-color: #5fd7af;
     --code-aria-intrinsic-func-color: #add8e6;
-    --code-aria-strp-color: #aaa;
+    --code-aria-struct-acc-color: #aaa;
     /* ---------------------------------------------------------------------- */
    
     /* common */
@@ -282,8 +282,8 @@ hr {
     color: var(--theme-color);
 }
 
-.aria .strp {
-    color: var(--code-aria-strp-color);
+.aria .struct-acc {
+    color: var(--code-aria-struct-acc-color);
 }
 
 .console .i {
