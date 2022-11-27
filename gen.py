@@ -20,7 +20,8 @@ class TokenKind(Enum):
     TRIPLE_RBRACK, \
     TRIPLE_BACKTICK, \
     DOUBLE_COLON, \
-    ELSE = range(11)
+    COMMENT, \
+    ELSE = range(12)
 
 PRE_ARIA = 0
 PRE_CONSOLE = 1
@@ -122,6 +123,11 @@ def lex(mdcode):
         elif mdcode[current] == ':' and mdcode[current+1] == ':':
             current += 2
             tokens.append(Token(mdcode[start:current], TokenKind.DOUBLE_COLON, line))
+        elif mdcode[current] == '/' and mdcode[current+1] == '/':
+            current += 2
+            while mdcode[current] != '\n' and mdcode[current] != '\0':
+                current += 1
+            tokens.append(Token(mdcode[start:current], TokenKind.COMMENT, line))
         elif mdcode[current] == ' ' or mdcode[current] == '\t':
             while mdcode[current] == ' ' or mdcode[current] == '\t':
                 current += 1
@@ -181,6 +187,7 @@ for i, _ in enumerate(tokens):
                 tokens[newline_pos[tokens[i].line]].lexeme = "</div>\n"
             else:
                 tokens[i].lexeme = "</code></pre>"
+            pretype = PRE_NONE
 
     elif tokens[i].kind == TokenKind.TRIPLE_LBRACK:
         tokens[i].lexeme = "<aside>\n"
@@ -194,6 +201,8 @@ for i, _ in enumerate(tokens):
             tokens[i].lexeme = "<span class='ch'>" + tokens[i].lexeme + "</span>"
         elif tokens[i].kind == TokenKind.NUMBER:
             tokens[i].lexeme = "<span class='n'>" + tokens[i].lexeme + "</span>"
+        elif tokens[i].kind == TokenKind.COMMENT:
+            tokens[i].lexeme = "<span class='com'>" + tokens[i].lexeme + "</span>"
         elif tokens[i].kind == TokenKind.WORD and tokens[i].lexeme in synhlt:
             tokens[i].lexeme = "<span class='" + synhlt[tokens[i].lexeme] + "'>" + tokens[i].lexeme + "</span>"
         elif tokens[i].lexeme == '@' and tokens[i+1].kind == TokenKind.WORD and tokens[i+2].lexeme == '(':

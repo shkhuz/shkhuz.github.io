@@ -51,6 +51,8 @@
     --secondary-color: #777;
 	
 	--container-border-color: #828282;
+    
+    --code-comment-color: #888;
 }
 
 @font-face {
@@ -236,6 +238,10 @@ table {
     background-color: var(--container-bg-color);
 }
 
+td code {
+    border: none;
+}
+
 th, td {
     border: 1px solid var(--container-border-color);
     padding: 0 10px;
@@ -284,6 +290,10 @@ hr {
 
 .aria .struct-acc {
     color: var(--code-aria-struct-acc-color);
+}
+
+.aria .com {
+    color: var(--code-comment-color);
 }
 
 .console .i {
