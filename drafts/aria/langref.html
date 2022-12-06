@@ -29,119 +29,18 @@
 <body>
 <article>
 <h1 id="huzaifa-aria-language-reference"><a href='/'>huzaifa</a> / Aria language reference</h1>
-<h2 id="table-of-contents">Table of contents</h2>
-<ul>
-<li><a href="#variables">Variables</a></li>
-<li><a href="#basic-types">Basic Types</a>
-<ul>
-<li><a href="#primitives">Primitives</a></li>
-<li><a href="#pointers">Pointers</a></li>
-<li><a href="#slices">Slices</a></li>
-<li><a href="#arrays">Arrays</a></li>
-<li><a href="#tuples">Tuples</a></li>
-</ul></li>
-<li><a href="#functions">Functions</a></li>
-</ul>
-<h2 id="variables">Variables</h2>
-<pre class='aria'><code><span class='com'>// Variables are defined using `mut`</span>
-<span class='k'>mut</span> index = get_index();
-
-<span class='com'>// If the compiler cannot unambiguously infer </span>
-<span class='com'>// the type, then the type has to be specified</span>
-<span class='k'>mut</span> index: <span class='t'>u8</span> = <span class='n'>24</span>;
-
-<span class='com'>// If only type is specified, then the variable is </span>
-<span class='com'>// zero-initialized</span>
-<span class='k'>mut</span> index: <span class='t'>u8</span>;
-</code></pre>
-<pre class='aria'><code><span class='com'>// If the value must not change, then `imm` </span>
-<span class='com'>// should be used</span>
-<span class='k'>imm</span> max_length = get_max_length();
-
-<span class='com'>// Even if the exact type cannot be inferred here,</span>
-<span class='com'>// the compiler knows the value at compile-time </span>
-<span class='com'>// to ensure all the operations are safe</span>
-<span class='k'>imm</span> max_length = <span class='n'>5</span>;
-</code></pre>
-<h2 id="basic-types">Basic types</h2>
-<h3 id="primitives">Primitives</h3>
-<div class='table-wrapper'>
-<table>
-<tbody>
-<tr class="odd">
-<td><strong>Integers</strong></td>
-<td><code>u8</code></td>
-<td><code>u16</code></td>
-<td><code>u32</code></td>
-<td><code>u64</code></td>
-<td><code>i8</code></td>
-<td><code>i16</code></td>
-<td><code>i32</code></td>
-<td><code>i64</code></td>
-</tr>
-<tr class="even">
-<td><strong>Floats</strong></td>
-<td><code>f32</code></td>
-<td><code>f64</code></td>
-<td></td>
-<td></td>
-<td></td>
-<td></td>
-<td></td>
-<td></td>
-</tr>
-<tr class="odd">
-<td><strong>Other</strong></td>
-<td><code>bool</code></td>
-<td><code>void</code></td>
-<td></td>
-<td></td>
-<td></td>
-<td></td>
-<td></td>
-<td></td>
-</tr>
-</tbody>
-</table>
-</div>
-<h3 id="pointers">Pointers</h3>
-<pre class='aria'><code><span class='com'>// Pointers are declared using `*`</span>
-<span class='k'>mut</span> entity: *Entity;
-
-<span class='com'>// Pointers are mutable by default.</span>
-<span class='com'>// To declare an immutable pointer, use `imm`</span>
-<span class='k'>mut</span> emtity: *<span class='k'>imm</span> Entity;
-</code></pre>
-<h3 id="slices">Slices</h3>
-<pre class='aria'><code><span class='com'>// Slices are declared using `[]`</span>
-<span class='k'>imm</span> slice: []<span class='t'>u32</span>;
-
-<span class='com'>// Similar to pointers, slices are</span>
-<span class='com'>// mutable by default.</span>
-<span class='com'>// To declare an immutable slice, use `imm`</span>
-<span class='k'>imm</span> slice: []<span class='k'>imm</span> <span class='t'>u32</span>;
-</code></pre>
-<h3 id="arrays">Arrays</h3>
-<pre class='aria'><code><span class='com'>// Arrays are declared using `[]` infixed</span>
-<span class='com'>// with a number</span>
-<span class='k'>imm</span> array: [<span class='n'>3</span>]<span class='t'>bool</span>;
-
-<span class='com'>// The number may be replaced with an `_`</span>
-<span class='com'>// to have the compiler infer it</span>
-</code></pre>
-<h3 id="tuples">Tuples</h3>
-<pre class='aria'><code><span class='com'>// Tuples are declared using `[]`</span>
-<span class='k'>imm</span> tuple: [<span class='t'>u32</span>, <span class='t'>bool</span>, *<span class='t'>u8</span>];
-
-<span class='com'>// Tuple may be empty</span>
-<span class='k'>imm</span> tuple: [];
-</code></pre>
+<p>This document is a reference for the <em>Aria language specification</em>. All features are in reference to the <em>master</em> branch, unless otherwise noted.</p>
 <h2 id="functions">Functions</h2>
-<pre class='aria'><code><span class='com'>// Functions are defined using the `fn` keyword</span>
-<span class='k'>fn</span> main() {}
-
-<span class='com'>// Functions can accept parameters, and return values</span>
-<span class='k'>fn</span> get_position(player: Player) Coord {}
+<p>Function definitions are done using <code>fn</code>. Functions are private by default.</p>
+<pre class='aria'><code><span class='com'>// Private function with no parameters</span>
+<span class='com'>// and no return value</span>
+<span class='k'>fn</span> main() <span class='t'>void</span> {}
+</code></pre>
+<pre class='aria'><code><span class='com'>// Public function with one parameter</span>
+<span class='com'>// and a return value</span>
+<span class='k'>pub</span> <span class='k'>fn</span> get_entity(idx: <span class='t'>usize</span>) ?*Entity {
+    <span class='k'>return</span> <span class='c'>null</span>;
+}
 </code></pre>
 </article>
 </body>

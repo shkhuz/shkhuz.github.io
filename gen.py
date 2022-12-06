@@ -30,12 +30,15 @@ PRE_NONE = 2
 synhlt = {
     "imm": "k",
     "mut": "k",
+    "pub": "k",
     "fn": "k",
+    "type": "k",
     "struct": "k",
     "extern": "k",
     "if": "k",
     "else": "k",
     "return": "k",
+    "yield": "k",
     "for": "k",
     "in": "k",
     "as": "k",
@@ -63,7 +66,7 @@ synhlt = {
     "self": "c",
     "undef": "c",
 }
-    
+
 class Token:
     lexeme = ""
     kind = TokenKind.ELSE
@@ -79,7 +82,7 @@ class Token:
 
     def __repr__(self):
         return self.lexeme
-    
+
 def lex(mdcode):
     tokens = []
     newline_pos = {}
@@ -146,7 +149,7 @@ def lex(mdcode):
 if len(sys.argv) < 2:
     eprint("error: no input files");
     sys.exit(1)
-    
+
 mdpath = Path(sys.argv[1])
 print("Compiling ", mdpath, "...", sep='', end='')
 contents = ""

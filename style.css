@@ -3,16 +3,16 @@
 :root {
     /* light */
     /* ---------------------------------------------------------------------- */
-	/* --primary-color: #000000; */
-	/* --bg-color: #efe4d8; */
+    /* --primary-color: #000000; */
+    /* --bg-color: #efe4d8; */
     /* --theme-color: #2a1dae; */
-   
+
     /* --container-bg-color: #dbd0c4; */
-    
+
     /* --button-start-color: rgba(191,180,168,1); */
     /* --button-end-color: rgba(223,212,200,1); */
     /* --button-inset-shadow-color: rgba(220, 220, 220, 0.4); */
-    
+
     /* --code-snippet-filename-primary-color: #777777; */
     /* --code-snippet-filename-secondary-color: #888888; */
     /* --aside-border-color: #aaaaaa; */
@@ -21,19 +21,19 @@
     /* --code-aria-intrinsic-func-color: #5f875f; */
     /* --code-aria-struct-acc-color: #555; */
     /* ---------------------------------------------------------------------- */
-	
+
     /* dark */
     /* ---------------------------------------------------------------------- */
     --primary-color: #e8e8e8;
-	--bg-color: #0f0f0f;
+    --bg-color: #0f0f0f;
     --theme-color: #6d7dee;
-    
+
     --container-bg-color: #191919;
-	
+
     --button-start-color: rgba(16,16,16,1);
     --button-end-color: rgba(37,37,37,1);
     --button-inset-shadow-color: rgba(120, 120, 120, 0.4);
-    
+
     --code-snippet-filename-primary-color: #777777;
     --code-snippet-filename-secondary-color: #666666;
     --aside-border-color: #444444;
@@ -42,16 +42,16 @@
     --code-aria-intrinsic-func-color: #add8e6;
     --code-aria-struct-acc-color: #aaa;
     /* ---------------------------------------------------------------------- */
-   
+
     /* common */
     --a-color: var(--theme-color);
-	--a-visited-color: var(--theme-color);
-	--a-hover-color: red;
+    --a-visited-color: var(--theme-color);
+    --a-hover-color: red;
 
     --secondary-color: #777;
-	
-	--container-border-color: #828282;
-    
+
+    --container-border-color: #828282;
+
     --code-comment-color: #888;
 }
 
@@ -70,6 +70,20 @@
 }
 
 @font-face {
+    font-family: FreeSans;
+    src: url("/assets/FreeSansOblique.woff") format("woff");
+    font-weight: normal;
+    font-style: italic;
+}
+
+@font-face {
+    font-family: FreeSans;
+    src: url("/assets/FreeSansBoldOblique.woff") format("woff");
+    font-weight: bold;
+    font-style: italic;
+}
+
+@font-face {
     font-family: MiscIcons;
     src: url("/assets/misc-icons.woff") format("woff");
     font-weight: normal;
@@ -81,13 +95,13 @@ a:hover, a:visited:hover { color: var(--a-hover-color); }
 a:visited { color: var(--a-visited-color); }
 
 body {
-	margin: 1em auto;
-	max-width: 30em;
-	padding: 0 0.62em;
-	font: 1.2em FreeSans;
-	line-height: 1.5;
-	color: var(--primary-color);
-	background-color: var(--bg-color);
+    margin: 1em auto;
+    max-width: 30em;
+    padding: 0 0.62em;
+    font: 1.2em FreeSans;
+    line-height: 1.5;
+    color: var(--primary-color);
+    background-color: var(--bg-color);
 }
 
 .display {
@@ -95,41 +109,29 @@ body {
     overflow-x: auto;
 }
 
-h1,h2,h3 {
-	line-height: 1.2;
+h1, h2, h3 {
+    line-height: 1.2;
 }
 
 h1 small {
-	color: var(--secondary-color);
-	font-size: 0.8em;
+    color: var(--secondary-color);
+    font-size: 0.8em;
 }
 
 h1 a {
-	text-decoration: none;
+    text-decoration: none;
 }
 
 h1 a:hover {
-	text-decoration: none;
-	/* text-decoration: underline; */
-    /* text-decoration-color: var(--secondary-color); */
+    text-decoration: none;
 }
 
 h2 {
-    margin: 30px 0 12px 0;
-    padding-top: 3px;
+    font-size: 1.2em;
 }
 
-ul {
-    padding-left: 25px;
-}
-
-ul li {
-    list-style-type: none;
-}
-
-ul li::before {
-    content: "\274F  "; 
-    font-weight: bold;
+h3 {
+    font-size: 1.05em;
 }
 
 aside {
@@ -140,11 +142,11 @@ aside {
 }
 
 pre, code, .code-snippet-filename {
-	font: 0.85em/1 "Source Code Pro", monospace;
+    font: 0.85em/1 "Source Code Pro", monospace;
 }
 
 pre, code {
-	padding: 0 4px;
+    padding: 0 4px;
     border: 1px solid var(--container-border-color);
     border-radius: 3px;
     background-color: var(--container-bg-color);
@@ -154,13 +156,13 @@ pre {
     padding: 8px 12px;
     margin-bottom: 0;
     margin-top: 1em;
-    overflow-x: auto; 
+    overflow-x: auto;
 }
 
 pre > code {
     border: 0;
     padding-right: 0;
-    padding-left: 0; 
+    padding-left: 0;
 }
 
 .code-snippet-filename {
@@ -248,13 +250,13 @@ th, td {
 }
 
 hr {
-	border-top: 1px solid var(--theme-color);
-} 
+    border-top: 1px solid var(--theme-color);
+}
 
 @media print {
-	body {
-		max-width: none;
-	}
+    body {
+        max-width: none;
+    }
 }
 
 .aria .k {
