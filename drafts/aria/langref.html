@@ -24,6 +24,22 @@
 <script data-host="https://microanalytics.io" data-dnt="false" src="https://microanalytics.io/js/script.js" id="ZwSg9rf6GA" async defer></script>
 
 <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js"></script>
+
+<script>
+(function() {
+  var h, a, f;
+  a = document.getElementsByTagName('link');
+  for (h = 0; h < a.length; h++) {
+    f = a[h];
+    if (f.rel.toLowerCase().match(/stylesheet/) && f.href) {
+      var g = f.href.replace(/(&|\?)rnd=\d+/, '');
+      f.href = g + (g.match(/\?/) ? '&' : '?');
+      f.href += 'rnd=' + (new Date().valueOf());
+    }
+  } // for
+})()
+</script>
+
 </head>
 
 <body>
@@ -32,6 +48,7 @@
 <p>This document is a reference for the <em>Aria language specification</em>. All features are in reference to the <em>master</em> branch, unless otherwise noted.</p>
 <h2 id="functions">Functions</h2>
 <p>Function definitions are done using <code>fn</code>. Functions are private by default.</p>
+<h3 id="function-definitions">Function definitions</h3>
 <pre class='aria'><code><span class='com'>// Private function with no parameters</span>
 <span class='com'>// and no return value</span>
 <span class='k'>fn</span> main() <span class='t'>void</span> {}

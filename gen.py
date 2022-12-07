@@ -254,6 +254,22 @@ handle.write(
 <script data-host=\"https://microanalytics.io\" data-dnt=\"false\" src=\"https://microanalytics.io/js/script.js\" id="ZwSg9rf6GA" async defer></script>
 
 <script id=\"MathJax-script\" async src=\"https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js\"></script>
+
+<script>
+(function() {
+  var h, a, f;
+  a = document.getElementsByTagName('link');
+  for (h = 0; h < a.length; h++) {
+    f = a[h];
+    if (f.rel.toLowerCase().match(/stylesheet/) && f.href) {
+      var g = f.href.replace(/(&|\?)rnd=\d+/, '');
+      f.href = g + (g.match(/\?/) ? '&' : '?');
+      f.href += 'rnd=' + (new Date().valueOf());
+    }
+  } // for
+})()
+</script>
+
 </head>
 
 <body>

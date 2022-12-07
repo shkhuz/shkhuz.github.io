@@ -7,6 +7,8 @@ are in reference to the _master_ branch, unless otherwise noted.
 
 Function definitions are done using `fn`. Functions are private by default.
 
+### Function definitions
+
 ```aria
 // Private function with no parameters
 // and no return value
