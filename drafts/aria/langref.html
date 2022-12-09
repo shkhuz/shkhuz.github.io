@@ -45,20 +45,48 @@
 <body>
 <article>
 <h1 id="huzaifa-aria-language-reference"><a href='/'>huzaifa</a> / Aria language reference</h1>
-<p>This document is a reference for the <em>Aria language specification</em>. All features are in reference to the <em>master</em> branch, unless otherwise noted.</p>
-<h2 id="functions">Functions</h2>
-<p>Function definitions are done using <code>fn</code>. Functions are private by default.</p>
-<h3 id="function-definitions">Function definitions</h3>
-<pre class='aria'><code><span class='com'>// Private function with no parameters</span>
-<span class='com'>// and no return value</span>
-<span class='k'>fn</span> main() <span class='t'>void</span> {}
-</code></pre>
-<pre class='aria'><code><span class='com'>// Public function with one parameter</span>
-<span class='com'>// and a return value</span>
-<span class='k'>pub</span> <span class='k'>fn</span> get_entity(idx: <span class='t'>usize</span>) ?*Entity {
-    <span class='k'>return</span> <span class='c'>null</span>;
+<pre class='aria'><code><span class='k'>where</span> T;
+
+<span class='k'>type</span> std <span class='k'>=</span> <span class='i'>@import</span>(<span class='s'>"std"</span>);
+
+data: []T,
+cap: <span class='t'>usize</span>,
+len: <span class='t'>usize</span>,
+
+<span class='k'>imm</span> default_cap <span class='k'>=</span> <span class='n'>8</span>;
+
+<span class='k'>pub</span> <span class='k'>fn</span> new() !<span class='t'>Self</span> {
+    <span class='k'>return</span> <span class='t'>Self</span> [
+        .data <span class='k'>=</span> std.malloc(<span class='i'>@sizeof</span>(T) * default_cap)!,
+        .cap <span class='k'>=</span> default_cap,
+        .len <span class='k'>=</span> <span class='n'>0</span>,
+    ];
+}
+
+<span class='k'>pub</span> <span class='k'>fn</span> from_slice(slice: []<span class='k'>imm</span> T) !<span class='t'>Self</span> {
+    <span class='k'>return</span> <span class='t'>Self</span> [
+        .data <span class='k'>=</span> {
+            <span class='k'>mut</span> buf: *T <span class='k'>=</span> std.malloc(<span class='i'>@sizeof</span>(T) * slice.len)!;
+            std.mem.cpy(buf, slice.ptr, slice.len)!;
+            <span class='k'>yield</span> buf;
+        },
+        .cap <span class='k'>=</span> slice.len,
+        .len <span class='k'>=</span> slice.len,
+    ];
 }
 </code></pre>
+<div class="code-snippet-filename">
+Vec.ar
+</div>
+<pre class='aria'><code><span class='k'>type</span> Vec <span class='k'>=</span> <span class='i'>@import</span>(<span class='s'>"Vec.ar"</span>);
+
+<span class='k'>fn</span> main() !<span class='t'>void</span> {
+    <span class='k'>mut</span> v <span class='k'>=</span> Vec<<span class='t'>usize</span>>.from_slice(&[<span class='n'>1</span>, <span class='n'>4</span>, <span class='n'>9</span>])!;
+}
+</code></pre>
+<div class="code-snippet-filename">
+main.ar
+</div>
 </article>
 </body>
 </html>

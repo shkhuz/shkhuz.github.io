@@ -1,24 +1,41 @@
 # Aria language reference
 
-This document is a reference for the _Aria language specification_. All features
-are in reference to the _master_ branch, unless otherwise noted.
-
-## Functions
-
-Function definitions are done using `fn`. Functions are private by default.
-
-### Function definitions
-
 ```aria
-// Private function with no parameters
-// and no return value
-fn main() void {}
-```
+where T;
 
-```aria
-// Public function with one parameter
-// and a return value
-pub fn get_entity(idx: usize) ?*Entity {
-    return null;
+type std = @import("std");
+
+data: []T,
+cap: usize,
+len: usize,
+
+imm default_cap = 8;
+
+pub fn new() !Self {
+    return Self [
+        .data = std.malloc(@sizeof(T) * default_cap)!,
+        .cap = default_cap,
+        .len = 0,
+    ];
 }
-```
+
+pub fn from_slice(slice: []imm T) !Self {
+    return Self [
+        .data = {
+            mut buf: *T = std.malloc(@sizeof(T) * slice.len)!;
+            std.mem.cpy(buf, slice.ptr, slice.len)!;
+            yield buf;
+        },
+        .cap = slice.len,
+        .len = slice.len,
+    ];
+}
+```Vec.ar
+
+```aria
+type Vec = @import("Vec.ar");
+
+fn main() !void {
+    mut v = Vec<usize>.from_slice(&[1, 4, 9])!;
+}
+```main.ar

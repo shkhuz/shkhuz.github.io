@@ -39,12 +39,14 @@ synhlt = {
     "else": "k",
     "return": "k",
     "yield": "k",
+    "where": "k",
     "for": "k",
     "in": "k",
     "as": "k",
     "and": "k",
     "or": "k",
     "not": "k",
+    "=": "k",
 
     "u8": "t",
     "u16": "t",
@@ -64,7 +66,7 @@ synhlt = {
     "false": "c",
     "null": "c",
     "self": "c",
-    "undef": "c",
+    "undefined": "c",
 }
 
 class Token:
@@ -97,7 +99,7 @@ def lex(mdcode):
                 current += 1
             tokens.append(Token(mdcode[start:current], TokenKind.WORD, line))
         elif mdcode[current].isdigit():
-            while mdcode[current].isdigit() or mdcode[current] == '.':
+            while mdcode[current].isalnum() or mdcode[current] == '.':
                 current += 1
             tokens.append(Token(mdcode[start:current], TokenKind.NUMBER, line))
         elif mdcode[current] == '"':
@@ -206,7 +208,7 @@ for i, _ in enumerate(tokens):
             tokens[i].lexeme = "<span class='n'>" + tokens[i].lexeme + "</span>"
         elif tokens[i].kind == TokenKind.COMMENT:
             tokens[i].lexeme = "<span class='com'>" + tokens[i].lexeme + "</span>"
-        elif tokens[i].kind == TokenKind.WORD and tokens[i].lexeme in synhlt:
+        elif tokens[i].lexeme in synhlt:
             tokens[i].lexeme = "<span class='" + synhlt[tokens[i].lexeme] + "'>" + tokens[i].lexeme + "</span>"
         elif tokens[i].lexeme == '@' and tokens[i+1].kind == TokenKind.WORD and tokens[i+2].lexeme == '(':
             tokens[i].lexeme = "<span class='i'>@"
