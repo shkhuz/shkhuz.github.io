@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 
-<title>Aria language reference</title>
+<title>Aria Language Reference</title>
 <link rel="apple-touch-icon" sizes="180x180" href="/assets/apple-touch-icon.png">
 <link rel="icon" type="image/png" sizes="32x32" href="/assets/favicon-32x32.png">
 <link rel="icon" type="image/png" sizes="16x16" href="/assets/favicon-16x16.png">
@@ -44,49 +44,297 @@
 
 <body>
 <article>
-<h1 id="huzaifa-aria-language-reference"><a href='/'>huzaifa</a> / Aria language reference</h1>
-<pre class='aria'><code><span class='k'>where</span> T;
+<h1 id="huzaifa-aria-language-reference"><a href='/'>huzaifa</a> / Aria Language Reference</h1>
+<h2 id="functions">Functions</h2>
+<pre class='aria'><code><span class='com'>// Default function (no args, void return)</span>
+<span class='k'>func</span> main() {
+}
 
+<span class='com'>// Function with a return type</span>
+<span class='k'>func</span> main() <span class='t'>u8</span> {
+}
+
+<span class='com'>// Function with arguments</span>
+<span class='k'>func</span> main(argc: <span class='t'>u8</span>, argv: **<span class='t'>u8</span>) {
+}
+
+<span class='com'>// Generic function</span>
+<span class='k'>func</span> parse::T(s: []<span class='t'>u8</span>) T {
+    <span class='k'>return</span> <span class='k'>if</span> (<span class='i'>@typeof</span>(s) <span class='k'>=</span><span class='k'>=</span> .int) parse_int(s);
+    <span class='k'>else</span> <span class='k'>if</span> (<span class='i'>@typeof</span>(s) <span class='k'>=</span><span class='k'>=</span> .float) parse_float(s);
+}
+</code></pre>
+<h2 id="variables">Variables</h2>
+<pre class='aria'><code><span class='com'>// Immutable (with a mandatory initialisation expression)</span>
+<span class='k'>imm</span> count <span class='k'>=</span> <span class='n'>12</span>;
+
+<span class='com'>// Mutable</span>
+<span class='k'>mut</span> count: <span class='t'>u8</span>;
+
+<span class='com'>// Mutable with an initialisation expression</span>
+<span class='k'>mut</span> count <span class='k'>=</span> <span class='n'>12</span>;
+</code></pre>
+<h2 id="pointers">Pointers</h2>
+<pre class='aria'><code><span class='k'>mut</span> size: <span class='t'>u32</span> <span class='k'>=</span> <span class='n'>4</span>;
+
+<span class='com'>// Immutable pointer</span>
+<span class='k'>imm</span> ptr: *<span class='k'>imm</span> <span class='t'>u32</span> <span class='k'>=</span> &size;
+
+<span class='com'>// Mutable pointer (data is mutable, pointer itself is immutable in both cases)</span>
+<span class='k'>imm</span> ptr: *<span class='t'>u32</span> <span class='k'>=</span> &size;
+
+<span class='com'>// Const-ness if not specified will depend on the pointee (mutable in this case)</span>
+<span class='k'>imm</span> ptr <span class='k'>=</span> &size;
+
+<span class='com'>// Dereferencing a pointer</span>
+set_players(ptr.*);
+ptr.* <span class='k'>=</span> <span class='n'>5</span>;
+</code></pre>
+<h2 id="arrays">Arrays</h2>
+<pre class='aria'><code><span class='com'>// Size and type specified</span>
+<span class='k'>imm</span> colors: [<span class='n'>3</span>]<span class='t'>u8</span> <span class='k'>=</span> [<span class='n'>0x1</span>, <span class='n'>0x2</span>, <span class='n'>0x3</span>];
+
+<span class='com'>// Only type specified</span>
+<span class='k'>imm</span> colors: [_]<span class='t'>u8</span> <span class='k'>=</span> [<span class='n'>0x1</span>, <span class='n'>0x2</span>, <span class='n'>0x3</span>];
+
+<span class='com'>// Only size specified</span>
+<span class='k'>imm</span> colors <span class='k'>=</span> [<span class='n'>0x1</span>, <span class='n'>0x2</span>, <span class='n'>0x3</span>];
+</code></pre>
+<h2 id="slices">Slices</h2>
+<pre class='aria'><code><span class='k'>mut</span> colors: [_]<span class='t'>u32</span> <span class='k'>=</span> [<span class='n'>0x1</span>, <span class='n'>0x2</span>, <span class='n'>0x3</span>];
+
+<span class='com'>// Immutable slice</span>
+<span class='k'>imm</span> slice: []<span class='k'>imm</span> <span class='t'>u32</span> <span class='k'>=</span> &size;
+
+<span class='com'>// Mutable slice (data is mutable, slice itself is immutable in both cases)</span>
+<span class='k'>imm</span> slice: []<span class='t'>u32</span> <span class='k'>=</span> &size;
+
+<span class='com'>// Const-ness if not specified will depend on the pointee (mutable in this case)</span>
+<span class='k'>imm</span> slice <span class='k'>=</span> &size;
+
+<span class='com'>// Using a slice</span>
+show_color(slice[<span class='n'>0</span>]);
+slice[<span class='n'>0</span>] <span class='k'>=</span> <span class='n'>0x4</span>;
+
+<span class='com'>// Slices have a ptr and a len field</span>
+<span class='k'>imm</span> len <span class='k'>=</span> slice.len;
+<span class='k'>imm</span> ptr <span class='k'>=</span> slice.ptr;
+</code></pre>
+<h2 id="structs">Structs</h2>
+<pre class='aria'><code><span class='com'>// Empty struct</span>
+<span class='k'>type</span> Info <span class='k'>=</span> <span class='k'>struct</span> {
+};
+
+<span class='com'>// Struct with fields</span>
+<span class='k'>type</span> Info <span class='k'>=</span> <span class='k'>struct</span> {
+    player_count: <span class='t'>u32</span>,
+    enemy_count: <span class='t'>u32</span>,
+};
+
+<span class='com'>// Struct with generic type</span>
+<span class='k'>type</span> Vec <span class='k'>=</span> <span class='k'>struct</span>::T {
+    data: []T,
+};
+
+<span class='com'>// Struct with constrained generic type</span>
+<span class='k'>type</span> Vec <span class='k'>=</span> <span class='k'>struct</span>::(T <span class='k'>=</span> ToString) {
+    data: []T,
+};
+
+<span class='com'>// Constrained using where clause</span>
+<span class='k'>type</span> HashMap <span class='k'>=</span> <span class='k'>struct</span>::(K, V)
+<span class='k'>where</span>
+    K <span class='k'>=</span> ToIntegral,
+    V <span class='k'>=</span> ToString + Serialize,
+{
+    data: []<span class='k'>struct</span> {k: K, v: V},
+};
+
+<span class='com'>// Instatiating a struct</span>
+<span class='k'>imm</span> info: Info;
+
+<span class='com'>// Instatiating a struct with generic type</span>
+<span class='k'>mut</span> v: Vec::<span class='t'>u32</span>;
+
+<span class='com'>// Multiple generic types</span>
+<span class='k'>mut</span> h: HashMap::(<span class='t'>u32</span>, []<span class='t'>u8</span>);
+
+<span class='com'>// Instantialing a struct with a struct literal</span>
+<span class='k'>mut</span> v <span class='k'>=</span> Vec::(<span class='t'>u32</span>) [
+    .data <span class='k'>=</span> <span class='i'>@cast</span>(malloc(<span class='n'>64</span>), *<span class='t'>u32</span>),
+];
+</code></pre>
+<h2 id="intrinsic-functions">Intrinsic functions</h2>
+<pre class='aria'><code><span class='com'>// @import()</span>
 <span class='k'>type</span> std <span class='k'>=</span> <span class='i'>@import</span>(<span class='s'>"std"</span>);
 
-data: []T,
-cap: <span class='t'>usize</span>,
-len: <span class='t'>usize</span>,
+<span class='com'>// @cast()</span>
+<span class='k'>imm</span> count: *<span class='t'>u8</span> <span class='k'>=</span> <span class='i'>@cast</span>(<span class='n'>0x0</span>, *<span class='t'>u8</span>);
+</code></pre>
+<h2 id="return">Return</h2>
+<pre class='aria'><code><span class='k'>return</span> <span class='c'>true</span>;
 
-<span class='k'>imm</span> default_cap <span class='k'>=</span> <span class='n'>8</span>;
-
-<span class='k'>pub</span> <span class='k'>fn</span> new() !<span class='t'>Self</span> {
-    <span class='k'>return</span> <span class='t'>Self</span> [
-        .data <span class='k'>=</span> std.malloc(<span class='i'>@sizeof</span>(T) * default_cap)!,
-        .cap <span class='k'>=</span> default_cap,
-        .len <span class='k'>=</span> <span class='n'>0</span>,
-    ];
+<span class='com'>// Return void</span>
+<span class='k'>return</span>;
+</code></pre>
+<h2 id="yield">Yield</h2>
+<pre class='aria'><code><span class='k'>imm</span> count <span class='k'>=</span> {
+    <span class='k'>imm</span> players <span class='k'>=</span> Info.players();
+    <span class='k'>if</span> (players < <span class='n'>32</span>) players <span class='k'>=</span> <span class='n'>32</span>;
+    <span class='k'>yield</span> players;
+};
+</code></pre>
+<h2 id="if">If</h2>
+<pre class='aria'><code><span class='k'>if</span> (allowed) {
+    <span class='k'>return</span> <span class='c'>true</span>;
 }
 
-<span class='k'>pub</span> <span class='k'>fn</span> from_slice(slice: []<span class='k'>imm</span> T) !<span class='t'>Self</span> {
-    <span class='k'>return</span> <span class='t'>Self</span> [
-        .data <span class='k'>=</span> {
-            <span class='k'>mut</span> buf: *T <span class='k'>=</span> std.malloc(<span class='i'>@sizeof</span>(T) * slice.len)!;
-            std.mem.cpy(buf, slice.ptr, slice.len)!;
-            <span class='k'>yield</span> buf;
-        },
-        .cap <span class='k'>=</span> slice.len,
-        .len <span class='k'>=</span> slice.len,
-    ];
+<span class='com'>// If with prologue declaration</span>
+<span class='k'>if</span> <span class='k'>with</span>(x <span class='k'>=</span> opts()) (x.enabled) {
+    <span class='k'>return</span> x.flag;
+}
+
+<span class='com'>// If with variable capture</span>
+<span class='k'>if</span> (get_global_state()) <span class='k'>|</span>s<span class='k'>|</span> {
+    s.exit();
 }
 </code></pre>
-<div class="code-snippet-filename">
-Vec.ar
-</div>
-<pre class='aria'><code><span class='k'>type</span> Vec <span class='k'>=</span> <span class='i'>@import</span>(<span class='s'>"Vec.ar"</span>);
+<h2 id="while">While</h2>
+<pre class='aria'><code><span class='k'>while</span> (is_running()) {
+}
 
-<span class='k'>fn</span> main() !<span class='t'>void</span> {
-    <span class='k'>mut</span> v <span class='k'>=</span> Vec<<span class='t'>usize</span>>.from_slice(&[<span class='n'>1</span>, <span class='n'>4</span>, <span class='n'>9</span>])!;
+<span class='com'>// While with variable capture</span>
+<span class='k'>while</span> (next()) <span class='k'>|</span>x<span class='k'>|</span> {
+}
+
+<span class='com'>// While with prologue declaration</span>
+<span class='k'>while</span> <span class='k'>with</span>(n <span class='k'>=</span> next()) (n.enabled) {
 }
 </code></pre>
-<div class="code-snippet-filename">
-main.ar
-</div>
+<h2 id="for">For</h2>
+<pre class='aria'><code><span class='com'>// Looping a slice with variable capture</span>
+<span class='k'>for</span> (players) <span class='k'>|</span>p<span class='k'>|</span> {
+}
+
+<span class='com'>// Optional index</span>
+<span class='k'>for</span> (players) <span class='k'>|</span>p, i<span class='k'>|</span> {
+}
+
+<span class='com'>// C-style for</span>
+<span class='k'>for</span> (<span class='k'>mut</span> i <span class='k'>=</span> <span class='n'>0</span>; i < <span class='n'>10</span>; i +<span class='k'>=</span> <span class='n'>1</span>) {
+}
+</code></pre>
+<h2 id="optionals">Optionals</h2>
+<pre class='aria'><code><span class='k'>mut</span> val: ?<span class='t'>u32</span> <span class='k'>=</span> <span class='c'>null</span>;
+<span class='k'>mut</span> unwrapped: <span class='t'>u32</span> <span class='k'>=</span> <span class='i'>@unwrap_or</span>(val, <span class='n'>0</span>);
+</code></pre>
+<pre class='aria'><code><span class='k'>func</span> get_active_player() ?<span class='t'>u32</span> {
+    <span class='k'>imm</span> ctx <span class='k'>=</span> get_current_ctx()?;
+    ctx.enabled <span class='k'>=</span> <span class='c'>true</span>;
+    <span class='k'>return</span> ctx.player;
+}
+</code></pre>
+<h2 id="errors">Errors</h2>
+<pre class='aria'><code><span class='k'>mut</span> val: !<span class='t'>u8</span> <span class='k'>=</span> parse_int(<span class='s'>"38"</span>);
+<span class='k'>if</span> (val) <span class='k'>|</span>n<span class='k'>|</span> printf(<span class='s'>"Parsed as {}"</span>, n);
+<span class='k'>else</span> <span class='k'>|</span>err<span class='k'>|</span> <span class='k'>when</span> (err) {
+    Err.Invalid => <span class='i'>@panic</span>();
+    <span class='k'>else</span> => {},
+}
+</code></pre>
+<pre class='aria'><code><span class='com'>// Verbose</span>
+<span class='k'>func</span> read_file(f: []<span class='t'>u8</span>) ![]<span class='t'>u8</span> {
+    <span class='k'>return</span> (fs.open_file(f) catch <span class='k'>|</span>err<span class='k'>|</span> <span class='k'>return</span> err).read() catch <span class='k'>|</span>err<span class='k'>|</span> <span class='k'>return</span> err;
+}
+
+<span class='com'>// Compact</span>
+<span class='k'>func</span> read_file(f: []<span class='t'>u8</span>) ![]<span class='t'>u8</span> {
+    <span class='k'>return</span> fs.open_file(f)?.read()?;
+}
+</code></pre>
+<pre class='aria'><code><span class='k'>trait</span> Integral {
+    <span class='k'>type</span> Ty;
+    <span class='k'>func</span> value() Ty;
+}
+
+<span class='k'>type</span> Integer <span class='k'>=</span> <span class='k'>struct</span> { i: <span class='t'>i32</span> }
+<span class='k'>impl</span> Integral <span class='k'>for</span> Integer {
+    <span class='k'>type</span> Ty <span class='k'>=</span> <span class='t'>i32</span>;
+    <span class='k'>func</span> value() Ty {
+        <span class='k'>return</span> <span class='c'>self</span>.i;
+    }
+}
+
+<span class='k'>type</span> s <span class='k'>=</span> <span class='k'>struct</span>::(T <span class='k'>=</span> Integer) {
+    x: T,
+    y: T,
+};
+</code></pre>
+<pre class='aria'><code><span class='com'>// test.ar</span>
+<span class='k'>mod</span> std <span class='k'>=</span> <span class='i'>@import</span>(<span class='s'>"std"</span>);
+<span class='k'>use</span> std.Debug;
+
+<span class='k'>func</span> main() {
+    <span class='k'>imm</span> n <span class='k'>=</span> <span class='n'>12</span>;
+    <span class='k'>imm</span> n_str <span class='k'>=</span> n.to_string();
+}
+
+<span class='k'>mod</span> std <span class='k'>=</span> <span class='i'>@import</span>(<span class='s'>"std"</span>);
+<span class='k'>use</span> std.{String, Vec, HashMap};
+
+<span class='k'>type</span> allocator <span class='k'>=</span> std.alloc.TempAllocator;
+
+<span class='k'>imm</span> str <span class='k'>=</span> String.new(allocator, <span class='s'>"Hey!"</span>);
+
+<span class='k'>impl</span>::T Clone <span class='k'>for</span> !T
+<span class='k'>where</span>
+    T <span class='k'>=</span> Integer,
+{
+
+}
+</code></pre>
+<pre class='aria'><code><span class='com'>// vec.ar</span>
+<span class='k'>pub</span> <span class='k'>type</span> Vec <span class='k'>=</span> <span class='k'>struct</span>::T {
+    data: []T,
+    len: <span class='t'>usize</span>,
+    cap: <span class='t'>usize</span>,
+}
+
+<span class='k'>impl</span>::T Vec::T {
+    <span class='k'>pub</span> <span class='k'>func</span> new() <span class='t'>Self</span> {
+        <span class='k'>return</span> <span class='t'>Self</span> [
+            .data <span class='k'>=</span> <span class='i'>@cast</span>(malloc(<span class='n'>32</span>), []T),
+            .len <span class='k'>=</span> <span class='n'>0</span>,
+            .cap <span class='k'>=</span> <span class='n'>0</span>,
+        ];
+    }
+}
+
+<span class='k'>impl</span>::T Iterator <span class='k'>for</span> Vec::T {
+    <span class='k'>type</span> Item <span class='k'>=</span> T;
+    <span class='k'>func</span> next(<span class='c'>self</span>) Item {
+
+    }
+}
+</code></pre>
+<pre class='aria'><code><span class='com'>// std.ar</span>
+<span class='k'>pub</span> <span class='k'>type</span> Vec <span class='k'>=</span> <span class='i'>@import</span>(<span class='s'>"vec.ar"</span>).Vec;
+</code></pre>
+<pre class='aria'><code><span class='com'>// main.ar</span>
+<span class='k'>mod</span> std <span class='k'>=</span> <span class='i'>@import</span>(<span class='s'>"std.ar"</span>);
+<span class='k'>use</span> std.{Vec, io.println};
+
+<span class='k'>pub</span> <span class='k'>func</span> main() {
+    <span class='k'>mut</span> v <span class='k'>=</span> Vec::<span class='t'>u32</span>.new();
+    v.push(<span class='n'>0</span>);
+    v.push(<span class='n'>1</span>);
+    v.push(<span class='n'>2</span>);
+
+    <span class='k'>for</span> (v.iter()) <span class='k'>|</span>e<span class='k'>|</span> {
+        println(<span class='s'>"{}"</span>, e);
+    }
+}
+</code></pre>
 </article>
 </body>
 </html>

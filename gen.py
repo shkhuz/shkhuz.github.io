@@ -19,8 +19,8 @@ class TokenKind(Enum):
     TRIPLE_LBRACK, \
     TRIPLE_RBRACK, \
     TRIPLE_BACKTICK, \
-    DOUBLE_COLON, \
     COMMENT, \
+    FAT_ARROW, \
     ELSE = range(12)
 
 PRE_ARIA = 0
@@ -31,22 +31,30 @@ synhlt = {
     "imm": "k",
     "mut": "k",
     "pub": "k",
-    "fn": "k",
+    "func": "k",
     "type": "k",
     "struct": "k",
     "extern": "k",
     "if": "k",
     "else": "k",
+    "for": "k",
+    "while": "k",
+    "when": "k",
     "return": "k",
     "yield": "k",
+    "trait": "k",
+    "mod": "k",
+    "use": "k",
+    "impl": "k",
     "where": "k",
+    "with": "k",
     "for": "k",
     "in": "k",
     "as": "k",
     "and": "k",
     "or": "k",
-    "not": "k",
     "=": "k",
+    "|": "k",
 
     "u8": "t",
     "u16": "t",
@@ -125,9 +133,9 @@ def lex(mdcode):
         elif mdcode[current] == ']' and mdcode[current+1] == ']' and mdcode[current+2] == ']':
             current += 3
             tokens.append(Token(mdcode[start:current], TokenKind.TRIPLE_RBRACK, line))
-        elif mdcode[current] == ':' and mdcode[current+1] == ':':
+        elif mdcode[current] == '=' and mdcode[current+1] == '>':
             current += 2
-            tokens.append(Token(mdcode[start:current], TokenKind.DOUBLE_COLON, line))
+            tokens.append(Token(mdcode[start:current], TokenKind.FAT_ARROW, line))
         elif mdcode[current] == '/' and mdcode[current+1] == '/':
             current += 2
             while mdcode[current] != '\n' and mdcode[current] != '\0':
@@ -215,10 +223,6 @@ for i, _ in enumerate(tokens):
             i += 1
             tokens[i].lexeme += "</span>"
             i += 1
-        elif tokens[i].kind == TokenKind.WORD and tokens[i+1].kind == TokenKind.DOUBLE_COLON:
-            tokens[i].lexeme = "<span class='struct-acc'>" + tokens[i].lexeme
-            i += 1
-            tokens[i].lexeme = "::</span>"
 
 mdcode_modified = ""
 for tok in tokens:
@@ -315,3 +319,4 @@ handle.write(
 </html>""")
 handle.close()
 print(" ok")
+
