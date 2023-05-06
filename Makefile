@@ -1,7 +1,7 @@
 ALL_MD_FILES := $(shell find . -name "*.md")
 HTML_FILES := $(addsuffix .html, $(basename $(ALL_MD_FILES)))
 
-all: $(HTML_FILES)	
+all: $(HTML_FILES)
 
 run: $(HTML_FILES)
 	http-server -p8080 .
@@ -10,6 +10,6 @@ run: $(HTML_FILES)
 	@python3 gen.py $^
 
 clean:
-	rm $(HTML_FILES)
+	rm -f $(HTML_FILES)
 
 .PHONY: all run clean

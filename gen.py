@@ -21,7 +21,9 @@ class TokenKind(Enum):
     TRIPLE_BACKTICK, \
     COMMENT, \
     FAT_ARROW, \
-    ELSE = range(12)
+    LANGBR, \
+    RANGBR, \
+    ELSE = range(14)
 
 PRE_ARIA = 0
 PRE_CONSOLE = 1
@@ -31,7 +33,7 @@ synhlt = {
     "imm": "k",
     "mut": "k",
     "pub": "k",
-    "func": "k",
+    "fn": "k",
     "type": "k",
     "struct": "k",
     "extern": "k",
@@ -39,17 +41,15 @@ synhlt = {
     "else": "k",
     "for": "k",
     "while": "k",
-    "when": "k",
     "return": "k",
     "yield": "k",
     "trait": "k",
-    "mod": "k",
     "use": "k",
+    "import": "k",
     "impl": "k",
     "where": "k",
     "with": "k",
     "for": "k",
-    "in": "k",
     "as": "k",
     "and": "k",
     "or": "k",
@@ -136,6 +136,12 @@ def lex(mdcode):
         elif mdcode[current] == '=' and mdcode[current+1] == '>':
             current += 2
             tokens.append(Token(mdcode[start:current], TokenKind.FAT_ARROW, line))
+        elif mdcode[current] == '<':
+            current += 1
+            tokens.append(Token(mdcode[start:current], TokenKind.LANGBR, line))
+        elif mdcode[current] == '>':
+            current += 1
+            tokens.append(Token(mdcode[start:current], TokenKind.RANGBR, line))
         elif mdcode[current] == '/' and mdcode[current+1] == '/':
             current += 2
             while mdcode[current] != '\n' and mdcode[current] != '\0':
@@ -206,6 +212,11 @@ for i, _ in enumerate(tokens):
         tokens[i].lexeme = "<aside>\n"
     elif tokens[i].kind == TokenKind.TRIPLE_RBRACK:
         tokens[i].lexeme = "\n</aside>"
+
+    elif tokens[i].kind == TokenKind.LANGBR and pre:
+        tokens[i].lexeme = "&lt;"
+    elif tokens[i].kind == TokenKind.RANGBR and pre:
+        tokens[i].lexeme = "&gt;"
 
     elif pretype == PRE_ARIA:
         if tokens[i].kind == TokenKind.STRING:
