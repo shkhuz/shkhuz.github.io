@@ -48,7 +48,12 @@
 <pre class='aria'><code><span class='k'>import</span> <span class='s'>"std"</span>;
 <span class='k'>import</span> <span class='s'>"GameObject.ar"</span>;
 
-<span class='k'>use</span> std::{Vec, HashMap, io::stdin, math::Vector2};
+<span class='k'>use</span> std.{
+    Vec,
+    HashMap,
+    io.stdin,
+    math.Vector2,
+};
 
 <span class='k'>struct</span> Player&lt;T: Integer&gt; {
     pos: Vector2,
@@ -56,23 +61,44 @@
     id: T,
 }
 
-<span class='k'>fn</span> main() {
-    <span class='k'>imm</span> v <span class='k'>=</span> Vec::&lt;<span class='t'>u32</span>&gt;::new();
+<span class='k'>fn</span> print&lt;T&gt;(fmt: []<span class='t'>u8</span>, args: T) <span class='t'>void</span>
+<span class='k'>where</span> T: Tuple
+{
+}
+
+<span class='k'>fn</span> main() <span class='t'>void</span> {
+    print(<span class='s'>"hello, {}"</span>, [<span class='s'>"df"</span>]);
+    <span class='k'>imm</span> v <span class='k'>=</span> Vec::&lt;<span class='t'>u32</span>&gt;.new();
     v.push(<span class='n'>1</span>);
     v.push(<span class='n'>2</span>);
+    <span class='k'>imm</span> sum <span class='k'>=</span> v
+        .sum()
+        .collect::&lt;<span class='t'>u32</span>&gt;();
+    <span class='k'>imm</span> pairs: [_][<span class='t'>usize</span>, []<span class='t'>u8</span>] <span class='k'>=</span> [[<span class='n'>0</span>, <span class='s'>"zero"</span>], [<span class='n'>1</span>, <span class='s'>"one"</span>]];
     <span class='k'>imm</span> size <span class='k'>=</span> <span class='i'>@sizeof</span>(<span class='t'>u32</span>);
-    <span class='k'>mut</span> player <span class='k'>=</span> Player {
-        .pos <span class='k'>=</span> Vector2::from_double(<span class='n'>1.0</span>, <span class='n'>2.0</span>),
-        .vel <span class='k'>=</span> Vector2::zero,
+    <span class='k'>mut</span> player <span class='k'>=</span> Player [
+        .pos <span class='k'>=</span> Vector2.from_double(<span class='n'>1.0</span>, <span class='n'>2.0</span>),
+        .vel <span class='k'>=</span> Vector2.zero,
         .id <span class='k'>=</span> {
             <span class='k'>imm</span> ptr <span class='k'>=</span> get_default_id_ref();
             ptr.* +<span class='k'>=</span> <span class='n'>1</span>;
-            yeild ptr.* - <span class='n'>1</span>;
+            <span class='k'>yield</span> ptr.* - <span class='n'>1</span>;
         },
-    };
+    ];
     game.register_player(player);
 }
+
+<span class='k'>error</span> FileError {
+    invalid_path: []<span class='t'>u8</span>,
+    cannot_open: []<span class='t'>u8</span>,
+}
+
+<span class='k'>fn</span> read_file(path: []<span class='t'>u8</span>) FileError![]<span class='t'>u8</span> {
+}
 </code></pre>
+<div class="code-snippet-filename">
+main.ar
+</div>
 </article>
 </body>
 </html>

@@ -36,6 +36,7 @@ synhlt = {
     "fn": "k",
     "type": "k",
     "struct": "k",
+    "error": "k",
     "extern": "k",
     "if": "k",
     "else": "k",
