@@ -19,11 +19,12 @@ class TokenKind(Enum):
     TRIPLE_LBRACK, \
     TRIPLE_RBRACK, \
     TRIPLE_BACKTICK, \
+    TRIPLE_EQUAL, \
     COMMENT, \
     FAT_ARROW, \
     LANGBR, \
     RANGBR, \
-    ELSE = range(14)
+    ELSE = range(15)
 
 PRE_ARIA = 0
 PRE_CONSOLE = 1
@@ -45,13 +46,12 @@ synhlt = {
     "for": "k",
     "while": "k",
     "return": "k",
+    "break": "k",
+    "continue": "k",
     "yield": "k",
-    "trait": "k",
     "use": "k",
     "import": "k",
-    "impl": "k",
     "where": "k",
-    "with": "k",
     "for": "k",
     "as": "k",
     "and": "k",
@@ -73,13 +73,12 @@ synhlt = {
     "f64": "t",
     "bool": "t",
     "void": "t",
+    "noreturn": "t",
     "Self": "t",
 
     "true": "c",
     "false": "c",
     "null": "c",
-    "self": "c",
-    "undefined": "c",
 }
 
 class Token:
@@ -138,6 +137,9 @@ def lex(mdcode):
         elif mdcode[current] == ']' and mdcode[current+1] == ']' and mdcode[current+2] == ']':
             current += 3
             tokens.append(Token(mdcode[start:current], TokenKind.TRIPLE_RBRACK, line))
+        elif mdcode[current] == '=' and mdcode[current+1] == '=' and mdcode[current+2] == '=':
+            current += 3
+            tokens.append(Token(mdcode[start:current], TokenKind.TRIPLE_EQUAL, line))
         elif mdcode[current] == '=' and mdcode[current+1] == '>':
             current += 2
             tokens.append(Token(mdcode[start:current], TokenKind.FAT_ARROW, line))
@@ -182,16 +184,15 @@ with mdpath.open('rb') as handle:
 tokens, newline_pos = lex(contents)
 
 title = ""
-for tok in tokens[2:newline_pos[0]]:
-    title += tok.lexeme
-
+change_title = False
 if mdpath != Path("index.md"):
-    tokens[2].lexeme = "<a href='/'>huzaifa</a> / " + tokens[2].lexeme
-    if Path("blog/") in mdpath.parents:
-        mdpathspl = str(mdpath).split('/')
-        author = "<br><span class='author'>By Huzaifa Shaikh, " + subprocess.check_output(["date", "-d", "{}/{}/{}".format(mdpathspl[-4], mdpathspl[-3], mdpathspl[-2]), "+%b %d, %Y"]).decode("utf-8").strip() + "</span>\n"
-        tokens[newline_pos[0]].lexeme = author + tokens[newline_pos[0]].lexeme
+    change_title = True
+    #if Path("blog/") in mdpath.parents:
+    #    mdpathspl = str(mdpath).split('/')
+    #    author = "<br><span class='author'>By Huzaifa Shaikh, " + subprocess.check_output(["date", "-d", "{}/{}/{}".format(mdpathspl[-4], mdpathspl[-3], mdpathspl[-2]), "+%b %d, %Y"]).decode("utf-8").strip() + "</span>\n"
+    #    tokens[newline_pos[0]].lexeme = author + tokens[newline_pos[0]].lexeme
 
+nav = False
 pre = False
 pretype = PRE_NONE
 
@@ -213,6 +214,13 @@ for i, _ in enumerate(tokens):
                 tokens[i].lexeme = "</code></pre>"
             pretype = PRE_NONE
 
+    elif tokens[i].kind == TokenKind.TRIPLE_EQUAL:
+        nav = not nav
+        if nav:
+            tokens[i].lexeme = "<nav>"
+        else:
+            tokens[i].lexeme = "</nav>"
+
     elif tokens[i].kind == TokenKind.TRIPLE_LBRACK:
         tokens[i].lexeme = "<aside>\n"
     elif tokens[i].kind == TokenKind.TRIPLE_RBRACK:
@@ -222,6 +230,13 @@ for i, _ in enumerate(tokens):
         tokens[i].lexeme = "&lt;"
     elif tokens[i].kind == TokenKind.RANGBR and pre:
         tokens[i].lexeme = "&gt;"
+
+    elif tokens[i].lexeme == '#' and nav:
+        for tok in tokens[i+1:newline_pos[tokens[i].line]]:
+            title += tok.lexeme
+        if change_title:
+            tokens[i+1].lexeme = "<a href='/'>huzaifa</a> / " + tokens[i+1].lexeme
+        tokens[i].lexeme = '# ';
 
     elif pretype == PRE_ARIA:
         if tokens[i].kind == TokenKind.STRING:

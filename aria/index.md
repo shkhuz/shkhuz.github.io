@@ -1,11 +1,21 @@
-# Aria Programming Language
+===
+# Aria programming language and toolchain
 
-Aria is an experimental low-level programming language built to improve on C. 
+- [Source Code](https://github.com/shkhuz/aria) 
+- [Documentation](documentation/)
+===
 
-<a class="button extern-link" href="https://github.com/shkhuz/aria">GitHub</a>
+Aria is an experimental systems programming language built to improve on C. 
 
 ```aria
-fn main() {
-    std.print("Hello World!");
+import "std";
+
+fn main() void {
+    std.writestring("Hello World!");
 }
+```
+
+```sh
+$ aria hello_world.ar
+Hello World!
 ```

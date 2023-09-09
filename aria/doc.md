@@ -1,1 +1,0 @@
-# Aria Programming Language: Documentation
