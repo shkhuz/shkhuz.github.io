@@ -20,11 +20,12 @@ class TokenKind(Enum):
     TRIPLE_RBRACK, \
     TRIPLE_BACKTICK, \
     TRIPLE_EQUAL, \
+    TRIPLE_TILDE, \
     COMMENT, \
     FAT_ARROW, \
     LANGBR, \
     RANGBR, \
-    ELSE = range(15)
+    ELSE = range(16)
 
 PRE_ARIA = 0
 PRE_CONSOLE = 1
@@ -140,6 +141,9 @@ def lex(mdcode):
         elif mdcode[current] == '=' and mdcode[current+1] == '=' and mdcode[current+2] == '=':
             current += 3
             tokens.append(Token(mdcode[start:current], TokenKind.TRIPLE_EQUAL, line))
+        elif mdcode[current] == '~' and mdcode[current+1] == '~' and mdcode[current+2] == '~':
+            current += 3
+            tokens.append(Token(mdcode[start:current], TokenKind.TRIPLE_TILDE, line))
         elif mdcode[current] == '=' and mdcode[current+1] == '>':
             current += 2
             tokens.append(Token(mdcode[start:current], TokenKind.FAT_ARROW, line))
@@ -195,6 +199,8 @@ if mdpath != Path("index.md"):
 nav = False
 pre = False
 pretype = PRE_NONE
+toc = False
+toc_add_idx = 0
 
 for i, _ in enumerate(tokens):
     if tokens[i].kind == TokenKind.TRIPLE_BACKTICK:
@@ -217,7 +223,7 @@ for i, _ in enumerate(tokens):
     elif tokens[i].kind == TokenKind.TRIPLE_EQUAL:
         nav = not nav
         if nav:
-            tokens[i].lexeme = "<nav>"
+            tokens[i].lexeme = "<nav id='main-nav'>"
         else:
             tokens[i].lexeme = "</nav>"
 
@@ -226,12 +232,16 @@ for i, _ in enumerate(tokens):
     elif tokens[i].kind == TokenKind.TRIPLE_RBRACK:
         tokens[i].lexeme = "\n</aside>"
 
+    elif tokens[i].kind == TokenKind.TRIPLE_TILDE:
+        toc = True
+        toc_add_idx = i
+
     elif tokens[i].kind == TokenKind.LANGBR and pre:
         tokens[i].lexeme = "&lt;"
     elif tokens[i].kind == TokenKind.RANGBR and pre:
         tokens[i].lexeme = "&gt;"
 
-    elif tokens[i].lexeme == '#' and nav:
+    elif tokens[i].lexeme == '#' and nav and not toc:
         for tok in tokens[i+1:newline_pos[tokens[i].line]]:
             title += tok.lexeme
         if change_title:
@@ -254,6 +264,15 @@ for i, _ in enumerate(tokens):
             i += 1
             tokens[i].lexeme += "</span>"
             i += 1
+
+if toc:
+    pandoctocproc = subprocess.Popen(["pandoc", "--toc", "--template=toc-only.html5"], stdout=subprocess.PIPE, stdin=subprocess.PIPE)
+    pandoctocproc.stdin.write(''.join(contents).encode("utf-8"))
+    pandoctocout, pandoctocerr = pandoctocproc.communicate()
+    pandoctocproc.wait()
+
+    pandoctocoutstr = pandoctocout.decode("utf-8")
+    tokens[toc_add_idx].lexeme = "<details><summary><span>Table of contents</span></summary>" + pandoctocoutstr + "</details>"
 
 mdcode_modified = ""
 for tok in tokens:
@@ -321,6 +340,8 @@ pandocproc.wait()
 pandocoutstr = pandocout.decode("utf-8")
 pandocoutstr = re.sub("(<table.*>)", "<div class='table-wrapper'>\n\\1", pandocoutstr)
 pandocoutstr = re.sub("</table>", "</table>\n</div>", pandocoutstr)
+pandocoutstr = re.sub("<summary>\n", "<summary>", pandocoutstr)
+pandocoutstr = re.sub("\n</summary>", "</summary>", pandocoutstr)
 
 handle.write(pandocoutstr)
 

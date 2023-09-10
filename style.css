@@ -24,11 +24,12 @@
 
     /* dark */
     /* ---------------------------------------------------------------------- */
-    --primary-color: #e8e8e8;
+    --primary-color: #d8d8d8;
     --bg-color: #0f0f0f;
     --theme-color: #6d7dee;
 
     --container-bg-color: #191919;
+    --toc-bg-color: #22222b;
 
     --button-start-color: rgba(16,16,16,1);
     --button-end-color: rgba(37,37,37,1);
@@ -99,17 +100,17 @@ h1 a:hover {
 }
 
 nav {
-    margin-bottom: 1em;
+    margin-bottom: 1.5rem;
 }
 
-nav h1 {
+#main-nav h1 {
     margin-top: 0;
     padding-top: 0;
     margin-bottom: 0;
     font-size: 1.8rem;
 }
 
-nav ul {
+#main-nav ul {
     margin: 5px 0 0 0;
     padding: 0;
     list-style: none;
@@ -117,8 +118,29 @@ nav ul {
     flex-wrap: wrap;
 }
 
-nav ul li {
+#main-nav ul li {
     padding-right: 1rem;
+}
+
+details > summary {
+    padding: 0.5rem 1rem;
+    background-color: var(--toc-bg-color);
+    cursor: pointer;
+}
+
+details > summary > span {
+    margin-left: 3px;
+}
+
+#TOC ul {
+    margin-top: 0;
+    padding-left: 2rem;
+}
+
+#TOC {
+    border-left: solid 5px var(--toc-bg-color);
+    /*background-color: var(--bg-color);*/
+    padding-top: 0.5rem;
 }
 
 h2 {
@@ -140,11 +162,6 @@ aside {
 
 pre, code, .code-snippet-filename {
     font: 0.85em/1 "Source Code Pro", monospace;
-}
-
-pre, code {
-    /* No padding for now; looks good without it */
-    /*padding: 0 4px;*/
 }
 
 pre {
@@ -253,6 +270,10 @@ hr {
 @media print {
     body {
         max-width: none;
+    }
+
+    details {
+        display: none;
     }
 }
 
