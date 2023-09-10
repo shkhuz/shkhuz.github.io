@@ -139,7 +139,6 @@ details > summary > span {
 
 #TOC {
     border-left: solid 5px var(--toc-bg-color);
-    /*background-color: var(--bg-color);*/
     padding-top: 0.5rem;
 }
 
