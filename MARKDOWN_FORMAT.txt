@@ -9,6 +9,8 @@ standard markdown grammar.
     - [About](/about)
     ===                     <-- end (</nav>)
 
+- ~~~ emits a table of contents.
+
 - [[[ and ]]] open and close an aside.
 
 - pre blocks:
