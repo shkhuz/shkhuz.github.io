@@ -241,7 +241,7 @@ for i, _ in enumerate(tokens):
     elif tokens[i].kind == TokenKind.RANGBR and pre:
         tokens[i].lexeme = "&gt;"
 
-    elif tokens[i].lexeme == '#' and nav and not toc:
+    elif tokens[i].lexeme == '#' and tokens[i-1].kind == TokenKind.NEWLINE and nav and not toc:
         for tok in tokens[i+1:newline_pos[tokens[i].line]]:
             title += tok.lexeme
         if change_title:
