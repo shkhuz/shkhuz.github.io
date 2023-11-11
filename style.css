@@ -164,8 +164,12 @@ h3 {
 aside {
     font-size: 0.75em;
     margin: 1.4em auto;
-    border-top: 1px solid var(--aside-border-color);
-    border-bottom: 1px solid var(--aside-border-color);
+    border: 1px solid var(--aside-border-color);
+    background-color: #1C1C1C;
+}
+
+aside p {
+    padding: 0 1.4em;
 }
 
 pre, code, .code-snippet-filename {

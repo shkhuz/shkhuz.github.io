@@ -27,18 +27,17 @@ an algebraic calculator.
 
 ## Downloads
 
-[version 1.0.7](assets/abascia-1.0.7-release.apk)
+- [version 1.0.8](assets/abascia-1.0.8-release.apk)
+- [version 1.0.7](assets/abascia-1.0.7-release.apk)
 
 [[[
 Note: When installing the .apk file, Play Protect may show a popup something like "Play 
 Protect doesn't recognise this app's developer. Apps from unknown developers can 
 sometimes be unsafe." -- this is because I have not published the app to the Play
-Store. It is completely safe to install it.
+Store. It is completely safe to install.
 ]]]
 
 ## Screenshots
 
-![](assets/screenshot_calculations.jpg)
-![](assets/screenshot_settings.jpg)
-![](assets/screenshot_default.jpg)
+![](assets/screenshot_2x2.jpg)
 
