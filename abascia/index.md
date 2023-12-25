@@ -27,6 +27,7 @@ an algebraic calculator.
 
 ## Downloads
 
+- [version 1.0.9](assets/abascia-1.0.9-release.apk)
 - [version 1.0.8](assets/abascia-1.0.8-release.apk)
 - [version 1.0.7](assets/abascia-1.0.7-release.apk)
 
@@ -39,5 +40,5 @@ Store. It is completely safe to install.
 
 ## Screenshots
 
-![](assets/screenshot_2x2.jpg)
+![](assets/screenshots.jpg)
 
