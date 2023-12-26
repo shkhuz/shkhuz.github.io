@@ -4,7 +4,7 @@ HTML_FILES := $(addsuffix .html, $(basename $(ALL_MD_FILES)))
 all: $(HTML_FILES)
 
 run: $(HTML_FILES)
-	simple-http-server -p8080 .
+	http-server -p8080 .
 
 %.html: %.md
 	@python3 gen.py $^
