@@ -30,6 +30,7 @@ an algebraic calculator.
 - [version 1.0.9](assets/abascia-1.0.9-release.apk)
 - [version 1.0.8](assets/abascia-1.0.8-release.apk)
 - [version 1.0.7](assets/abascia-1.0.7-release.apk)
+- [sha256sum.txt](assets/sha256sum.txt)
 
 [[[
 Note: When installing the .apk file, Play Protect may show a popup something like "Play 
