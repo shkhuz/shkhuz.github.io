@@ -1,0 +1,12 @@
+{
+  "files": {
+    "main.css": "/mental_math/static/css/main.887e9af6.css",
+    "main.js": "/mental_math/static/js/main.bae16d77.js",
+    "static/js/206.98c5be8b.chunk.js": "/mental_math/static/js/206.98c5be8b.chunk.js",
+    "index.html": "/mental_math/index.html"
+  },
+  "entrypoints": [
+    "static/css/main.887e9af6.css",
+    "static/js/main.bae16d77.js"
+  ]
+}

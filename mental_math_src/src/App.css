@@ -1,0 +1,72 @@
+html, body {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+.main-ui {
+    position: fixed;
+    height: 100%;
+    width: 100%;
+    background-color: #111;
+    display: flex;
+    flex-direction: column;
+    /* min-height: 100dvh; */
+    align-items: center;
+    justify-content: center;
+    font-family: monospace;
+    font-size: calc(10px + 6vmin);
+    color: white;
+}
+
+.question {
+    margin: auto;
+    padding: 0 15px;
+    word-break: break-all;
+}
+
+.keypad {
+    width: 100%;
+    max-width: 600px;
+    height: 50%;
+    max-height: 25rem;
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+}
+
+button {
+    border: solid 1px #111;
+    padding: 0;
+}
+
+.keypad button {
+    width: 100%;
+    font-family: monospace;
+    font-size: 1em;
+    color: #ccc;
+    background-color: #333;
+}
+
+button.C {
+    background-color: #933333;
+}
+
+.input {
+    color: #b4f3c8;
+}
+
+.header p {
+    margin-top: 5px;
+    padding: 0;
+    font-size: 0.55em;
+}
+
+table {
+    empty-cells: show;
+    table-layout: fixed;
+}
+
+td {
+    padding: 0;
+}
+
