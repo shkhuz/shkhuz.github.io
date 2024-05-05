@@ -1,5 +1,5 @@
-all:
+all: 
+	mkdir -p ../mental_math
 	npm run build
-	cp -R build/* ../
 
 .PHONY: all
