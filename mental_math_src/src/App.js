@@ -1,4 +1,6 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
+import { FaGear } from "react-icons/fa6";
+import { IoClose } from "react-icons/io5";
 import './App.css';
 
 function Question(props) {
@@ -24,15 +26,16 @@ function getRandomNumber(including) {
 }
 
 function getRandomOp() {
-    const rand = getRandomNumber(3);
-    var op = "";
-    switch (rand) {
-        case 1: op = '+'; break;
-        case 2: op = '-'; break;
-        case 3: op = '*'; break;
-        default: throw new Error("Cannot get random op");
-    }
-    return op;
+    // const rand = getRandomNumber(3);
+    // var op = "";
+    // switch (rand) {
+    //     case 1: op = '+'; break;
+    //     case 2: op = '-'; break;
+    //     case 3: op = '*'; break;
+    //     default: throw new Error("Cannot get random op");
+    // }
+    // return op;
+    return '*';
 }
 
 function getRandomQuestion() {
@@ -57,15 +60,39 @@ function getRandomQuestion() {
     return { first, op, second};
 }
 
+function isTouchDevice() {
+  return (('ontouchstart' in window) ||
+     (navigator.maxTouchPoints > 0) ||
+     (navigator.msMaxTouchPoints > 0));
+}
+
 function App() {
     const [{
         first, 
         op, 
         second,
     }, setQuestion] = useState(getRandomQuestion());
+
     const [input, setInput] = useState("");
     const [numDone, setNumDone] = useState(0);
     const [numIncorrect, setNumIncorrect] = useState(0);
+    const [sidebarOpen, setSidebarOpen] = useState(false);
+
+    const handleTouch = (ev) => {
+        var changedTouch = ev.changedTouches[0];
+        var elem = document
+            .elementFromPoint(changedTouch.clientX, changedTouch.clientY);
+        if (elem !== ev.target) return;
+        if (ev.target.classList.contains("custom-btn")) {
+            handleKeypadButton(ev.target.innerHTML);
+        }
+    };
+
+    const handleMouseup = (ev) => {
+        if (ev.target.classList.contains("custom-btn")) {
+            handleKeypadButton(ev.target.innerHTML);
+        }
+    }
 
     const handleKeypadButton = (name) => {
         var newInput = input;
@@ -100,29 +127,47 @@ function App() {
             setNumIncorrect((prev) => prev + 1); 
         }
     };
+    
+    const toggleSidebar = () => {
+        if (sidebarOpen) {
+            document.getElementById("sidebar").style.width = "0";
+        } else {
+            document.getElementById("sidebar").style.width = "100%";
+        }
+        setSidebarOpen((prev) => !prev);
+    }
 
     return (
         <div className="main-ui">
-            <div className="header">
-                <p>{numDone} completed / {numIncorrect} incorrect</p>
+            <div id="header">
+                <div className="open-sidebar" onClick={toggleSidebar}><FaGear /></div>
+                <p className="header-middle noselect">{numDone} completed / {numIncorrect} incorrect</p>
             </div>
-            <Question arg1={first} op={op} arg2={second} input={input} />
-            <div className="keypad">
-                <Button name="1" onClick={handleKeypadButton} />
-                <Button name="2" onClick={handleKeypadButton} />
-                <Button name="3" onClick={handleKeypadButton} />
-                <Button name="4" onClick={handleKeypadButton} />
-                <Button name="5" onClick={handleKeypadButton} />
-                <Button name="6" onClick={handleKeypadButton} />
-                <Button name="7" onClick={handleKeypadButton} />
-                <Button name="8" onClick={handleKeypadButton} />
-                <Button name="9" onClick={handleKeypadButton} />
-                <Button name="-" onClick={handleKeypadButton} />
-                <Button name="0" onClick={handleKeypadButton} />
-                <Button name="C" onClick={handleKeypadButton} className="C" />
+            <div className="body">
+                <div id="sidebar">
+                </div>
+                <Question arg1={first} op={op} arg2={second} input={input} />
+                <div className="keypad">
+                    <CustomButton onMouseUp={handleMouseup} onTouchEnd={handleTouch} name="1" />
+                    <CustomButton onMouseUp={handleMouseup} onTouchEnd={handleTouch} name="2" />
+                    <CustomButton onMouseUp={handleMouseup} onTouchEnd={handleTouch} name="3" />
+                    <CustomButton onMouseUp={handleMouseup} onTouchEnd={handleTouch} name="4" />
+                    <CustomButton onMouseUp={handleMouseup} onTouchEnd={handleTouch} name="5" />
+                    <CustomButton onMouseUp={handleMouseup} onTouchEnd={handleTouch} name="6" />
+                    <CustomButton onMouseUp={handleMouseup} onTouchEnd={handleTouch} name="7" />
+                    <CustomButton onMouseUp={handleMouseup} onTouchEnd={handleTouch} name="8" />
+                    <CustomButton onMouseUp={handleMouseup} onTouchEnd={handleTouch} name="9" />
+                    <CustomButton onMouseUp={handleMouseup} onTouchEnd={handleTouch} name="-" />
+                    <CustomButton onMouseUp={handleMouseup} onTouchEnd={handleTouch} name="0" />
+                    <CustomButton onMouseUp={handleMouseup} onTouchEnd={handleTouch} className="C" name="C" />
+                </div>
             </div>
         </div>
     );
+}
+
+function CustomButton(props) {
+    return <div onMouseUp={!isTouchDevice() ? props.onMouseUp : undefined} onTouchEnd={props.onTouchEnd} className={(props.className ? props.className : "") + " custom-btn noselect"}>{props.name}</div>
 }
 
 export default App;

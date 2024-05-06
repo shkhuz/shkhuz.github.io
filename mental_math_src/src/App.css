@@ -4,7 +4,8 @@ html, body {
     padding: 0;
 }
 
-.main-ui {
+.main-ui,
+.body {
     position: fixed;
     height: 100%;
     width: 100%;
@@ -17,6 +18,22 @@ html, body {
     font-family: monospace;
     font-size: calc(10px + 6vmin);
     color: white;
+}
+
+.main-ui .body {
+    position: relative;
+}
+
+#sidebar {
+    position: absolute;
+    height: 100%;
+    width: 0;
+    z-index: 1;
+    top: 0;
+    left: 0;
+    background-color: #333;
+    overflow-x: hidden;
+    padding-top: 60px;
 }
 
 .question {
@@ -47,7 +64,8 @@ button {
     background-color: #333;
 }
 
-button.C {
+.keypad button.C,
+.keypad div.C {
     background-color: #933333;
 }
 
@@ -55,10 +73,31 @@ button.C {
     color: #b4f3c8;
 }
 
-.header p {
-    margin-top: 5px;
-    padding: 0;
+#header {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+    text-align: center;
+    width: 100%;
+    background-color: #232;
     font-size: 0.55em;
+}
+
+.header-middle {
+    margin: 5px 12px;
+    padding: 0;
+}
+
+div.open-sidebar {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    color: white;
+    margin: 0 12px;
+    padding: 0;
+    font-size: calc(10px + 2vmin);
 }
 
 table {
@@ -70,3 +109,31 @@ td {
     padding: 0;
 }
 
+.keypad .custom-btn {
+    -webkit-tap-highlight-color:  rgba(255, 255, 255, 0); 
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    
+    box-sizing: border-box;
+    width: 100%;
+    padding: 0;
+    margin: 0;
+    
+    cursor: pointer;
+    font-family: monospace;
+    font-size: 1em;
+    color: #ccc;
+    background-color: #333;
+    border: solid 1px #111;
+}
+
+.noselect {
+    -webkit-touch-callout: none; /* iOS Safari */
+      -webkit-user-select: none; /* Safari */
+       -khtml-user-select: none; /* Konqueror HTML */
+         -moz-user-select: none; /* Old versions of Firefox */
+          -ms-user-select: none; /* Internet Explorer/Edge */
+              user-select: none; /* Non-prefixed version, currently
+                                    supported by Chrome, Edge, Opera and Firefox */
+}
