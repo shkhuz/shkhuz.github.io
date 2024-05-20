@@ -13,17 +13,27 @@ cv.width  = cv.offsetWidth;
 cv.height = cv.offsetHeight;
 
 var lmb_down = false;
-var lastX = 0, lastY = 0;
+var mouseX, mouseY;
 var updateFpsInterval, renderFpsInterval, startTime, now, updateThen, renderThen, elapsed;
 
-const blobRadStates = [1, 3];
+const blobRadStates = [3, 5, 7, 9];
 var curBlobRadState = 0;
-const forceStates = [0.05, 0.1, 0.2, 0.3, 0.4, 0.5];
+const forceStates = [0, 0.05, 0.1, 0.2, 0.3, 0.4, 0.5, 1, 2, 3, 5, 10];
 var curForceState = 0;
 
-const deltaDragToPlace = 30 * window.devicePixelRatio;
-
 document.getElementById("force-btn").textContent = "Force: " + forceStates[curForceState].toString();
+
+function updateMousePosByEvent(ev) {
+    if (ev.type == 'touchstart' || ev.type == 'touchmove' || ev.type == 'touchend' || ev.type == 'touchcancel') {
+        const { touches, changedTouches } = ev.originalEvent ?? ev;
+        const touch = touches[0] ?? changedTouches[0];
+        mouseX = touch.pageX;
+        mouseY = touch.pageY;
+    } else if (ev.type == 'mousedown' || ev.type == 'mouseup' || ev.type == 'mousemove' || ev.type == 'mouseover'|| ev.type=='mouseout' || ev.type=='mouseenter' || ev.type=='mouseleave') {
+        mouseX = ev.clientX;
+        mouseY = ev.clientY;
+    }
+}
 
 class Grid {
     constructor(rows) {
@@ -39,39 +49,6 @@ class Grid {
     }
 
     mouseDragOrDown(ev) {
-        if (lmb_down) {
-            var x;
-            var y;
-            if (ev.type == 'touchstart' || ev.type == 'touchmove' || ev.type == 'touchend' || ev.type == 'touchcancel') {
-                const { touches, changedTouches } = ev.originalEvent ?? ev;
-                const touch = touches[0] ?? changedTouches[0];
-                x = touch.pageX;
-                y = touch.pageY;
-            } else if (ev.type == 'mousedown' || ev.type == 'mouseup' || ev.type == 'mousemove' || ev.type == 'mouseover'|| ev.type=='mouseout' || ev.type=='mouseenter' || ev.type=='mouseleave') {
-                x = ev.clientX;
-                y = ev.clientY;
-            }
-
-            if (x >= cvoff.left && y >= cvoff.top) {
-                x -= cvoff.left;
-                y -= cvoff.top;
-                if ((ev.type != 'mousemove' && ev.type != 'touchmove') || Math.abs(x-lastX) + Math.abs(y-lastY) > deltaDragToPlace) {
-                    lastX = x;
-                    lastY = y;
-                    const col = Math.floor(x / this.dim);
-                    const row = Math.floor(y / this.dim);
-                    if (row >= 0 && row <= this.rows-1 &&
-                        col >= 0 && col <= this.cols-1) {
-                        const halfRad = Math.floor(blobRadStates[curBlobRadState] * 0.5);
-                        for (let i = -halfRad; i <= halfRad; i++) {
-                            for (let j = -halfRad; j <= halfRad; j++) {
-                                this.setval(row+i, col+j, 1);
-                            }
-                        }
-                    }
-                }
-            }
-        }
     }
 
     mouseDrag(ev) {
@@ -120,6 +97,26 @@ class Grid {
     }
 
     update() {
+        if (lmb_down) {
+            if (mouseX >= cvoff.left && mouseY >= cvoff.top) {
+                const x = mouseX - cvoff.left;
+                const y = mouseY - cvoff.top;
+                const col = Math.floor(x / this.dim);
+                const row = Math.floor(y / this.dim);
+                if (row >= 0 && row <= this.rows-1 &&
+                    col >= 0 && col <= this.cols-1) {
+                    const halfRad = Math.floor(blobRadStates[curBlobRadState] * 0.5);
+                    for (let i = -halfRad; i <= halfRad; i++) {
+                        for (let j = -halfRad; j <= halfRad; j++) {
+                            if (Math.random() > 0.5) {
+                                this.setval(row+i, col+j, 1);
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
         for (let r = this.rows-1; r >= 0; r--) {
             for (let c = this.cols-1; c >= 0; c--) {
                 if (this.accval(r, c) == 1) {
@@ -182,7 +179,7 @@ class Grid {
     }
 }
 
-var grid = new Grid(100);
+var grid = new Grid(200);
 
 window.addEventListener("resize", (ev) => {
     cvoff = getOffset(cv);
@@ -194,21 +191,25 @@ window.addEventListener("resize", (ev) => {
 window.addEventListener("mousedown", (ev) => {
     if (ev.which == 1) {
         lmb_down = true;
-        grid.mouseDown(ev);
+        updateMousePosByEvent(ev);
     }
 });
 window.addEventListener("touchstart", (ev) => {
     lmb_down = true;
-    grid.mouseDown(ev);
+    updateMousePosByEvent(ev);
 });
 
 window.addEventListener("mouseup", (ev) => {
     if (ev.which == 1) lmb_down = false;
+    grid.mouseDown(ev);
 });
-window.addEventListener("touchend", (ev) => lmb_down = false);
+window.addEventListener("touchend", (ev) => {
+    lmb_down = false
+    grid.mouseDown(ev);
+});
 
-window.addEventListener('mousemove', (ev) => grid.mouseDrag(ev));
-window.addEventListener('touchmove', (ev) => grid.mouseDrag(ev));
+window.addEventListener('mousemove', (ev) => updateMousePosByEvent(ev));
+window.addEventListener('touchmove', (ev) => updateMousePosByEvent(ev));
 
 function update() {
     grid.update();

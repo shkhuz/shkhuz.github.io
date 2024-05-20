@@ -245,7 +245,7 @@ for i, _ in enumerate(tokens):
         for tok in tokens[i+1:newline_pos[tokens[i].line]]:
             title += tok.lexeme
         if change_title:
-            tokens[i+1].lexeme = "<a href='/'>huzaifa</a> / " + tokens[i+1].lexeme
+            tokens[i+1].lexeme = "<a href='/'>~</a> / " + tokens[i+1].lexeme
         tokens[i].lexeme = '# ';
 
     elif pretype == PRE_ARIA:
@@ -266,7 +266,7 @@ for i, _ in enumerate(tokens):
             i += 1
 
 if toc:
-    pandoctocproc = subprocess.Popen(["pandoc", "--toc", "--template=toc-only.html5"], stdout=subprocess.PIPE, stdin=subprocess.PIPE)
+    pandoctocproc = subprocess.Popen(["pandoc", "--toc", "--template=toc-only.html5", "--metadata=title=\"\"", "--variable=title=\"\""], stdout=subprocess.PIPE, stdin=subprocess.PIPE)
     pandoctocproc.stdin.write(''.join(contents).encode("utf-8"))
     pandoctocout, pandoctocerr = pandoctocproc.communicate()
     pandoctocproc.wait()
@@ -281,24 +281,24 @@ for tok in tokens:
 htmlpath = mdpath.with_suffix(".html")
 handle = htmlpath.open('w')
 
-handle.write("""<!DOCTYPE html>
-<html lang=\"en\">
+handle.write(r"""<!DOCTYPE html>
+<html lang="en">
 <head>
-<meta charset=\"utf-8\">
-<meta name=\"viewport\" content=\"width=device-width, initial-scale=1\">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
 
 <title>""")
 handle.write(title)
 handle.write(
-"""</title>
-<link rel=\"apple-touch-icon\" sizes=\"180x180\" href=\"/assets/apple-touch-icon.png\">
-<link rel=\"icon\" type=\"image/png\" sizes=\"32x32\" href=\"/assets/favicon-32x32.png\">
-<link rel=\"icon\" type=\"image/png\" sizes=\"16x16\" href=\"/assets/favicon-16x16.png\">
-<link rel=\"manifest\" href=\"/assets/site.webmanifest\">
-<link rel=stylesheet href=\"/style.css\">
+r"""</title>
+<link rel="apple-touch-icon" sizes="180x180" href="/assets/apple-touch-icon.png">
+<link rel="icon" type="image/png" sizes="32x32" href="/assets/favicon-32x32.png">
+<link rel="icon" type="image/png" sizes="16x16" href="/assets/favicon-16x16.png">
+<link rel="manifest" href="/assets/site.webmanifest">
+<link rel=stylesheet href="/style.css">
 
 <!-- Google tag (gtag.js) -->
-<script async src=\"https://www.googletagmanager.com/gtag/js?id=G-QQS3D5BETB\"></script>
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-QQS3D5BETB"></script>
 <script>
   window.dataLayer = window.dataLayer || [];
   function gtag(){dataLayer.push(arguments);}
@@ -307,9 +307,9 @@ handle.write(
   gtag('config', 'G-QQS3D5BETB');
 </script>
 
-<script data-host=\"https://microanalytics.io\" data-dnt=\"false\" src=\"https://microanalytics.io/js/script.js\" id="ZwSg9rf6GA" async defer></script>
+<script data-host="https://microanalytics.io" data-dnt="false" src="https://microanalytics.io/js/script.js" id="ZwSg9rf6GA" async defer></script>
 
-<script id=\"MathJax-script\" async src=\"https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js\"></script>
+<script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js"></script>
 
 <script>
 (function() {
@@ -356,7 +356,8 @@ if mdpath == Path("index.md"):
                         if post.endswith(".md"):
                             posttitle = ""
                             with open(post) as postfile:
-                                posttitle = postfile.readline()[2:].strip()
+                                postcontents = postfile.readlines()
+                                posttitle = postcontents[1][2:].strip()
                             handle.write("<li>{}/{}/{}: <a href='{}.html'>{}</a></li>\n".format(
                                 os.path.basename(year),
                                 os.path.basename(month),

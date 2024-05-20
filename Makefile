@@ -11,6 +11,5 @@ run: $(HTML_FILES)
 
 clean:
 	rm -f $(HTML_FILES)
-	rm -rf mental_math
 
 .PHONY: all run clean
