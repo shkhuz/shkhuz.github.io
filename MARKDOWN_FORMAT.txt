@@ -1,21 +1,24 @@
 The markdown format used in this repository is a little different than the
 standard markdown grammar.
 
-- navbar:
-    ===                     <-- mandatory if <nav> is needed
-    # Title                 <-- note: title issues when not using ===
+===                         <-- mandatory if <nav> is needed
+# Title                     <-- note: title issues when not using ===
                                 (standalone)
-    - [Home](/)             <-- navigation list
-    - [About](/about)
-    ===                     <-- end (</nav>)
+- [Home](/)                 <-- navigation list
+- [About](/about)
+===                         <-- end (</nav>)
 
-- ~~~ emits a table of contents.
+~~~                         <-- emits a table of contents.
 
-- [[[ and ]]] open and close an aside.
+Lorem ipsum dolor sit       <-- regular text
 
-- pre blocks:
-    ```python               <-- (optional) specifies the syntax highlighter
-        ...
-    ```name_of_file.ar      <-- (optional) specifies the filename to show
-                                below the code block (for illustration, doesn't
-                                actually read the file from disk)
+[[[                         
+Lorem ipsum dolor sit       <-- aside text
+consectetur adipiscing 
+]]]
+
+```python                   <-- pre with optional syntax highlighter
+    ...
+```name_of_file.ar          <-- pre end with optional filename specifier to show
+                                name of file below code block (for illustration, 
+                                doesn't actually read the file from disk)
