@@ -1,0 +1,217 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+
+<title> Hed -- a highly efficient text editor</title>
+<link rel="apple-touch-icon" sizes="180x180" href="/assets/apple-touch-icon.png">
+<link rel="icon" type="image/png" sizes="32x32" href="/assets/favicon-32x32.png">
+<link rel="icon" type="image/png" sizes="16x16" href="/assets/favicon-16x16.png">
+<link rel="manifest" href="/assets/site.webmanifest">
+<link rel=stylesheet href="/style.css">
+
+<!-- Google tag (gtag.js) -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-QQS3D5BETB"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'G-QQS3D5BETB');
+</script>
+
+<script data-host="https://microanalytics.io" data-dnt="false" src="https://microanalytics.io/js/script.js" id="ZwSg9rf6GA" async defer></script>
+
+<script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js"></script>
+
+<script>
+(function() {
+  var h, a, f;
+  a = document.getElementsByTagName('link');
+  for (h = 0; h < a.length; h++) {
+    f = a[h];
+    if (f.rel.toLowerCase().match(/stylesheet/) && f.href) {
+      var g = f.href.replace(/(&|\?)rnd=\d+/, '');
+      f.href = g + (g.match(/\?/) ? '&' : '?');
+      f.href += 'rnd=' + (new Date().valueOf());
+    }
+  } // for
+})()
+</script>
+
+</head>
+
+<body>
+<article>
+<nav id="main-nav">
+<h1 id="hed-a-highly-efficient-text-editor"><a href='/'>~</a> / Hed – a
+highly efficient text editor</h1>
+<ul>
+<li><a href="https://github.com/shkhuz/hed">Source Code</a></li>
+<li><a href="https://github.com/shkhuz/hed">Download</a></li>
+</ul>
+</nav>
+<p>Hed is a highly efficient modal text editor which uses keyboard-only
+actions to edit text.</p>
+<p><strong>Why another text editor?</strong> Hed has much going for
+it:</p>
+<ul>
+<li>Lightweight: ~230KB on x64 linux</li>
+<li>Mark editing: operate on regions defined by a mark</li>
+<li>Modal editing: like Vim you know and love</li>
+<li>Intuitive &amp; sane default keybinds: based on finger positions and
+not on “first-letter-of-word”, etc.</li>
+<li>Just a single executable–no runtimes or external dependencies</li>
+</ul>
+<p><strong>Why you shouldn’t consider this editor:</strong> I made this
+editor to be as simple and lightweight as possible: if you need:</p>
+<ul>
+<li>An IDE-like editing experience,</li>
+<li>LSP-support,</li>
+<li>tree-sitter,</li>
+<li>Emacs-like customizability,</li>
+<li>GUI, etc</li>
+</ul>
+<p>then this editor is not for you.</p>
+<h3 id="keybindings-normal-mode">Keybindings (Normal mode)</h3>
+<div class='table-wrapper'>
+<table>
+<colgroup>
+<col style="width: 12%" />
+<col style="width: 37%" />
+<col style="width: 12%" />
+<col style="width: 37%" />
+</colgroup>
+<thead>
+<tr class="header">
+<th>Key</th>
+<th>Action</th>
+<th>Key</th>
+<th>Action</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><code>i</code></td>
+<td>switch to insert mode</td>
+<td><code>,</code></td>
+<td>open line below cursor</td>
+</tr>
+<tr class="even">
+<td><code>w</code></td>
+<td>delete character under cursor</td>
+<td><code>d</code></td>
+<td>set mark</td>
+</tr>
+<tr class="odd">
+<td><code>&lt;backtick&gt;</code></td>
+<td>exit editor</td>
+<td><code>f</code></td>
+<td>cut marked region</td>
+</tr>
+<tr class="even">
+<td><code>U</code></td>
+<td>scroll page up</td>
+<td><code>c</code></td>
+<td>paste from clipboard</td>
+</tr>
+<tr class="odd">
+<td><code>M</code></td>
+<td>scroll page down</td>
+<td><code>b</code></td>
+<td>repeat search forward</td>
+</tr>
+<tr class="even">
+<td><code>a</code></td>
+<td>goto beginning of line</td>
+<td><code>B</code></td>
+<td>repeat search backward</td>
+</tr>
+<tr class="odd">
+<td><code>;</code></td>
+<td>goto end of line</td>
+<td><code>&lt;Alt-m&gt;</code></td>
+<td>switch to command mode</td>
+</tr>
+<tr class="even">
+<td><code>h</code></td>
+<td>left</td>
+<td><code>&lt;Alt-s&gt;</code></td>
+<td>save file</td>
+</tr>
+<tr class="odd">
+<td><code>j</code></td>
+<td>down</td>
+<td><code>/</code></td>
+<td>switch to search mode</td>
+</tr>
+<tr class="even">
+<td><code>k</code></td>
+<td>up</td>
+<td><code>gg</code></td>
+<td>goto first row</td>
+</tr>
+<tr class="odd">
+<td><code>l</code></td>
+<td>right</td>
+<td><code>G</code></td>
+<td>goto last row</td>
+</tr>
+<tr class="even">
+<td><code>o</code></td>
+<td>forward word</td>
+<td><code>e</code></td>
+<td>undo</td>
+</tr>
+<tr class="odd">
+<td><code>n</code></td>
+<td>backward word</td>
+<td><code>E</code></td>
+<td>redo</td>
+</tr>
+</tbody>
+</table>
+</div>
+<h3 id="keybindings-insert-mode">Keybindings (Insert mode)</h3>
+<div class='table-wrapper'>
+<table>
+<thead>
+<tr class="header">
+<th>Key</th>
+<th>Action</th>
+<th>Key</th>
+<th>Action</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><code>&lt;bksp&gt;</code></td>
+<td>delete character to the left of cursor</td>
+<td><code>&lt;tab&gt;</code></td>
+<td>indent</td>
+</tr>
+<tr class="even">
+<td><code>&lt;left&gt;</code></td>
+<td>left</td>
+<td><code>&lt;right&gt;</code></td>
+<td>right</td>
+</tr>
+<tr class="odd">
+<td><code>&lt;up&gt;</code></td>
+<td>up</td>
+<td><code>&lt;down&gt;</code></td>
+<td>down</td>
+</tr>
+<tr class="even">
+<td><code>esc</code></td>
+<td>switch to normal mode</td>
+<td></td>
+<td></td>
+</tr>
+</tbody>
+</table>
+</div>
+</article>
+</body>
+</html>
