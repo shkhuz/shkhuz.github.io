@@ -151,6 +151,10 @@ details > summary > span {
     padding-top: 0.5rem;
 }
 
+ul p {
+    margin: 0;
+}
+
 h2 {
     padding-top: 5px;
     font-size: 1.25em;

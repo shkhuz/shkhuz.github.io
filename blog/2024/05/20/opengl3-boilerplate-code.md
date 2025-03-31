@@ -2,7 +2,7 @@
 # OpenGL3 Boilerplate Code
 ===
 
-This is a single-file OpenGL "hello world" boilerplate implementation. It 
+This is a single-file OpenGL "hello world" boilerplate implementation. It
 assumes that SDL and GLEW are already installed.
 
 ```cpp
@@ -108,7 +108,7 @@ int main() {
         return 1;
     }
 
-    const unsigned char *version = glGetString(GL_VERSION);
+    const unsigned char* version = glGetString(GL_VERSION);
     if (version == NULL) {
         fprintf(stderr, "Error in getting the OpenGL version\n");
         return 1;
@@ -151,6 +151,7 @@ int main() {
 
     GLuint triangle_vbo;
     glGenBuffers(1, &triangle_vbo);
+
     glBindBuffer(GL_ARRAY_BUFFER, triangle_vbo);
     glBufferData(
         GL_ARRAY_BUFFER,
@@ -158,7 +159,11 @@ int main() {
         triangle_vertices,
         GL_STATIC_DRAW
     );
-    glBindBuffer(GL_ARRAY_BUFFER, 0);
+    glEnableVertexAttribArray(0);
+    glEnableVertexAttribArray(1);
+    glVertexAttribPointer(0, 4, GL_FLOAT, GL_FALSE, 0, 0);
+    glVertexAttribPointer(1, 4, GL_FLOAT, GL_FALSE, 0, (void*)48);
+    glBindVertexArray(0);
 
     bool running = true;
     while (running) {
@@ -170,19 +175,12 @@ int main() {
             }
         }
 
-        glClearColor(0.0,0.0,0.0,0.0);
+        glClearColor(0.0, 0.0, 0.0, 0.0);
         glClear(GL_COLOR_BUFFER_BIT);
 
         glUseProgram(shader_program);
-        glBindBuffer(GL_ARRAY_BUFFER, triangle_vbo);
-        glEnableVertexAttribArray(0);
-        glEnableVertexAttribArray(1);
-        glVertexAttribPointer(0, 4, GL_FLOAT, GL_FALSE, 0, 0);
-        glVertexAttribPointer(1, 4, GL_FLOAT, GL_FALSE, 0, (void*)48);
+        glBindVertexArray(vao);
         glDrawArrays(GL_TRIANGLES, 0, 3);
-
-        glDisableVertexAttribArray(0);
-        glDisableVertexAttribArray(1);
         glUseProgram(0);
 
         SDL_GL_SwapWindow(window);
