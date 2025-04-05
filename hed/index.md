@@ -46,6 +46,11 @@ Key | Action                                  | Key | Action
 `o` | forward word                            | `e` | undo
 `n` | backward word                           | `E` | redo
 
+Maybe:
+
+< -> open line above cursor
+s -> undo / redo
+
 ### Keybindings (Insert mode)
 
 Key | Action                                  | Key | Action
