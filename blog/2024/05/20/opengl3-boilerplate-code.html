@@ -1,18 +1,19 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang='en'>
 <head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta charset='utf-8'>
+<meta name='viewport' content='width=device-width, initial-scale=1'>
 
-<title> OpenGL3 Boilerplate Code</title>
-<link rel="apple-touch-icon" sizes="180x180" href="/assets/apple-touch-icon.png">
-<link rel="icon" type="image/png" sizes="32x32" href="/assets/favicon-32x32.png">
-<link rel="icon" type="image/png" sizes="16x16" href="/assets/favicon-16x16.png">
-<link rel="manifest" href="/assets/site.webmanifest">
-<link rel=stylesheet href="/style.css">
+<title>
+OpenGL3 Boilerplate Code</title>
+<link rel='apple-touch-icon' sizes='180x180' href='/assets/apple-touch-icon.png'>
+<link rel='icon' type='image/png' sizes='32x32' href='/assets/favicon-32x32.png'>
+<link rel='iconj type='image/png' sizes='16x16' href='/assets/favicon-16x16.png'>
+<link rel='manifest' href='/assets/site.webmanifest'>
+<link rel=stylesheet href='/style.css'>
 
 <!-- Google tag (gtag.js) -->
-<script async src="https://www.googletagmanager.com/gtag/js?id=G-QQS3D5BETB"></script>
+<script async src='https://www.googletagmanager.com/gtag/js?id=G-QQS3D5BETB'></script>
 <script>
   window.dataLayer = window.dataLayer || [];
   function gtag(){dataLayer.push(arguments);}
@@ -21,9 +22,9 @@
   gtag('config', 'G-QQS3D5BETB');
 </script>
 
-<script data-host="https://microanalytics.io" data-dnt="false" src="https://microanalytics.io/js/script.js" id="ZwSg9rf6GA" async defer></script>
+<script data-host='https://microanalytics.io' data-dnt='false' src='https://microanalytics.io/js/script.js' id='ZwSg9rf6GA' async defer></script>
 
-<script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js"></script>
+<script id='MathJax-script' async src='https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js'></script>
 
 <script>
 (function() {
@@ -44,13 +45,11 @@
 
 <body>
 <article>
-<nav id="main-nav">
-<h1 id="opengl3-boilerplate-code"><a href='/'>~</a> / OpenGL3
-Boilerplate Code</h1>
+<nav id='main-nav'>
+<h1><a href='/'>~</a> / OpenGL3 Boilerplate Code</h1>
 </nav>
-<p>This is a single-file OpenGL “hello world” boilerplate
-implementation. It assumes that SDL and GLEW are already installed.</p>
-<pre class='cpp'><code>#include &lt;GL/glew.h&gt;
+<p>This is a single-file OpenGL "hello world" boilerplate implementation. It assumes that SDL and GLEW are already installed.</p>
+<pre><code>#include &lt;GL/glew.h&gt;
 #include &lt;SDL2/SDL.h&gt;
 #include &lt;stdio.h&gt;
 #include &lt;string&gt;
@@ -79,14 +78,14 @@ const std::string fs =
 
 bool create_shader(GLenum shader_kind, const char* shader_src, GLuint* out_shader) {
     GLuint shader = glCreateShader(shader_kind);
-    glShaderSource(shader, 1, &shader_src, NULL);
+    glShaderSource(shader, 1, &amp;shader_src, NULL);
     glCompileShader(shader);
 
     GLint status;
-    glGetShaderiv(shader, GL_COMPILE_STATUS, &status);
+    glGetShaderiv(shader, GL_COMPILE_STATUS, &amp;status);
     if (status == GL_FALSE) {
         GLint log_len;
-        glGetShaderiv(shader, GL_INFO_LOG_LENGTH, &log_len);
+        glGetShaderiv(shader, GL_INFO_LOG_LENGTH, &amp;log_len);
 
         GLchar log[4096];
         glGetShaderInfoLog(shader, log_len, NULL, log);
@@ -108,8 +107,8 @@ bool build_shader_program(const char* vs, const char* fs, GLuint* out_program) {
     GLuint vshader;
     GLuint fshader;
 
-    if (!create_shader(GL_VERTEX_SHADER, vs, &vshader)) return false;
-    if (!create_shader(GL_FRAGMENT_SHADER, fs, &fshader)) return false;
+    if (!create_shader(GL_VERTEX_SHADER, vs, &amp;vshader)) return false;
+    if (!create_shader(GL_FRAGMENT_SHADER, fs, &amp;fshader)) return false;
 
     GLuint program = glCreateProgram();
 
@@ -119,10 +118,10 @@ bool build_shader_program(const char* vs, const char* fs, GLuint* out_program) {
     glLinkProgram(program);
 
     GLint status;
-    glGetProgramiv(program, GL_LINK_STATUS, &status);
+    glGetProgramiv(program, GL_LINK_STATUS, &amp;status);
     if (status == GL_FALSE) {
         GLint log_len;
-        glGetProgramiv(program, GL_INFO_LOG_LENGTH, &log_len);
+        glGetProgramiv(program, GL_INFO_LOG_LENGTH, &amp;log_len);
 
         GLchar log[4096];
         glGetProgramInfoLog(program, log_len, NULL, log);
@@ -184,17 +183,17 @@ int main() {
     };
 
     GLuint shader_program;
-    if (!build_shader_program(vs.c_str(), fs.c_str(), &shader_program)) {
+    if (!build_shader_program(vs.c_str(), fs.c_str(), &amp;shader_program)) {
         SDL_Quit();
         return 0;
     }
 
     GLuint vao;
-    glGenVertexArrays(1, &vao);
+    glGenVertexArrays(1, &amp;vao);
     glBindVertexArray(vao);
 
     GLuint triangle_vbo;
-    glGenBuffers(1, &triangle_vbo);
+    glGenBuffers(1, &amp;triangle_vbo);
 
     glBindBuffer(GL_ARRAY_BUFFER, triangle_vbo);
     glBufferData(
@@ -212,9 +211,9 @@ int main() {
     bool running = true;
     while (running) {
         SDL_Event e;
-        while (SDL_PollEvent(&e)) {
+        while (SDL_PollEvent(&amp;e)) {
             if (e.type == SDL_QUIT ||
-                (e.type == SDL_KEYUP && e.key.keysym.sym == SDLK_ESCAPE)) {
+                (e.type == SDL_KEYUP &amp;&amp; e.key.keysym.sym == SDLK_ESCAPE)) {
                 running = false;
             }
         }
@@ -236,13 +235,10 @@ int main() {
     return 0;
 }
 </code></pre>
-<div class="code-snippet-filename">
-sdl2-opengl.cpp
-</div>
 <p>Compile with:</p>
-<pre class='sh'><code>g++ sdl2-opengl.cpp -Wall -lSDL2 -lGL -lGLEW
+<pre><code>g++ sdl2-opengl.cpp -Wall -lSDL2 -lGL -lGLEW
 </code></pre>
-<p><img src="opengl3-boilerplate-result.png" /></p>
+<p><img src="opengl3-boilerplate-result.png" alt="" /></p>
 </article>
 </body>
 </html>

@@ -7,7 +7,7 @@ run: $(HTML_FILES)
 	http-server -c-1 -p8080 .
 
 %.html: %.md
-	@python3 gen.py $^
+	@java -classpath ~/dev/md2html Use $^
 
 clean:
 	rm -f $(HTML_FILES)

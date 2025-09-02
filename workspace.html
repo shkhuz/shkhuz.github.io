@@ -1,18 +1,19 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang='en'>
 <head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta charset='utf-8'>
+<meta name='viewport' content='width=device-width, initial-scale=1'>
 
-<title> Workspace</title>
-<link rel="apple-touch-icon" sizes="180x180" href="/assets/apple-touch-icon.png">
-<link rel="icon" type="image/png" sizes="32x32" href="/assets/favicon-32x32.png">
-<link rel="icon" type="image/png" sizes="16x16" href="/assets/favicon-16x16.png">
-<link rel="manifest" href="/assets/site.webmanifest">
-<link rel=stylesheet href="/style.css">
+<title>
+Workspace</title>
+<link rel='apple-touch-icon' sizes='180x180' href='/assets/apple-touch-icon.png'>
+<link rel='icon' type='image/png' sizes='32x32' href='/assets/favicon-32x32.png'>
+<link rel='iconj type='image/png' sizes='16x16' href='/assets/favicon-16x16.png'>
+<link rel='manifest' href='/assets/site.webmanifest'>
+<link rel=stylesheet href='/style.css'>
 
 <!-- Google tag (gtag.js) -->
-<script async src="https://www.googletagmanager.com/gtag/js?id=G-QQS3D5BETB"></script>
+<script async src='https://www.googletagmanager.com/gtag/js?id=G-QQS3D5BETB'></script>
 <script>
   window.dataLayer = window.dataLayer || [];
   function gtag(){dataLayer.push(arguments);}
@@ -21,9 +22,9 @@
   gtag('config', 'G-QQS3D5BETB');
 </script>
 
-<script data-host="https://microanalytics.io" data-dnt="false" src="https://microanalytics.io/js/script.js" id="ZwSg9rf6GA" async defer></script>
+<script data-host='https://microanalytics.io' data-dnt='false' src='https://microanalytics.io/js/script.js' id='ZwSg9rf6GA' async defer></script>
 
-<script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js"></script>
+<script id='MathJax-script' async src='https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js'></script>
 
 <script>
 (function() {
@@ -44,10 +45,10 @@
 
 <body>
 <article>
-<nav id="main-nav">
-<h1 id="workspace"><a href='/'>~</a> / Workspace</h1>
+<nav id='main-nav'>
+<h1><a href='/'>~</a> / Workspace</h1>
 </nav>
-<pre class='c'><code>#define CLAY_IMPLEMENTATION
+<pre><code>#define CLAY_IMPLEMENTATION
 #include "clay.h"
 #include "clay_renderer_raylib.c"
 
@@ -156,7 +157,7 @@ void UpdateDrawFrame(Font* fonts)
     //----------------------------------------------------------------------------------
     // Handle scroll containers
     Clay_Vector2 mousePosition = RAYLIB_VECTOR2_TO_CLAY_VECTOR2(GetMousePosition());
-    Clay_SetPointerState(mousePosition, IsMouseButtonDown(0) && !scrollbarData.mouseDown);
+    Clay_SetPointerState(mousePosition, IsMouseButtonDown(0) &amp;&amp; !scrollbarData.mouseDown);
     Clay_SetLayoutDimensions((Clay_Dimensions) { (float)GetScreenWidth(), (float)GetScreenHeight() });
 
     /*
@@ -164,7 +165,7 @@ void UpdateDrawFrame(Font* fonts)
         scrollbarData.mouseDown = false;
     }
 
-    if (IsMouseButtonDown(0) && !scrollbarData.mouseDown && Clay_PointerOver(Clay__HashString(CLAY_STRING("ScrollBar"), 0, 0))) {
+    if (IsMouseButtonDown(0) &amp;&amp; !scrollbarData.mouseDown &amp;&amp; Clay_PointerOver(Clay__HashString(CLAY_STRING("ScrollBar"), 0, 0))) {
         Clay_ScrollContainerData scrollContainerData = Clay_GetScrollContainerData(Clay__HashString(CLAY_STRING("MainContent"), 0, 0));
         scrollbarData.clickOrigin = mousePosition;
         scrollbarData.positionOrigin = *scrollContainerData.scrollPosition;
