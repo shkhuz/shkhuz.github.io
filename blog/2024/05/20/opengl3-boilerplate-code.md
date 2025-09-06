@@ -5,7 +5,7 @@
 This is a single-file OpenGL "hello world" boilerplate implementation. It
 assumes that SDL and GLEW are already installed.
 
-```cpp
+```[nowrap]cpp
 #include <GL/glew.h>
 #include <SDL2/SDL.h>
 #include <stdio.h>
@@ -195,8 +195,8 @@ int main() {
 
 Compile with:
 
-```sh
-g++ sdl2-opengl.cpp -Wall -lSDL2 -lGL -lGLEW
+```console
+$ g++ sdl2-opengl.cpp -Wall -lSDL2 -lGL -lGLEW
 ```
 
 ![](opengl3-boilerplate-result.png)

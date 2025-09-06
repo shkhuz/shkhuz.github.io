@@ -48,7 +48,7 @@
 <h1><a href='/'>~</a> / OpenGL3 Boilerplate Code</h1>
 </nav>
 <p>This is a single-file OpenGL "hello world" boilerplate implementation. It assumes that SDL and GLEW are already installed.</p>
-<pre><code>#include &lt;GL/glew.h&gt;
+<pre class='pre-nowrap pretype-c-cpp'><code>#include &lt;GL/glew.h&gt;
 #include &lt;SDL2/SDL.h&gt;
 #include &lt;stdio.h&gt;
 #include &lt;string&gt;
@@ -234,8 +234,9 @@ int main() {
     return 0;
 }
 </code></pre>
+<div class='code-snippet-filename'>sdl2-opengl.cpp</div>
 <p>Compile with:</p>
-<pre><code>g++ sdl2-opengl.cpp -Wall -lSDL2 -lGL -lGLEW
+<pre class=' pretype-console'><code><span class='prompt'>$ </span><span class='sh'>g++ sdl2-opengl.cpp -Wall -lSDL2 -lGL -lGLEW</span>
 </code></pre>
 <p><img src="opengl3-boilerplate-result.png" alt="" /></p>
 </article>

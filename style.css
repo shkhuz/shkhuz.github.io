@@ -188,6 +188,13 @@ pre {
     margin-bottom: 0;
     margin-top: 1em;
     overflow-x: auto;
+    white-space: pre-wrap;
+    overflow-wrap: break-word;
+}
+
+.pre-nowrap {
+    white-space: pre;
+    overflow-wrap: normal;
 }
 
 pre > code {
@@ -293,45 +300,60 @@ hr {
     }
 }
 
-.aria .k {
+.pretype-aria .k {
     color: var(--theme-color);
     font-weight: bold;
 }
 
-.aria .t {
+.pretype-aria .t {
     color: var(--theme-color);
     font-weight: bold;
 }
 
-.aria .c {
+.pretype-aria .c {
     color: var(--theme-color);
 }
 
-.aria .n {
+.pretype-aria .n {
     color: var(--theme-color);
 }
 
-.aria .i {
+.pretype-aria .i {
     color: var(--code-aria-intrinsic-func-color);
     font-weight: bold;
 }
 
-.aria .s {
+.pretype-aria .s {
     color: var(--code-string-color);
 }
 
-.aria .ch {
+.pretype-aria .ch {
     color: var(--theme-color);
 }
 
-.aria .struct-acc {
+.pretype-aria .struct-acc {
     color: var(--code-aria-struct-acc-color);
 }
 
-.aria .com {
+.pretype-aria .com {
     color: var(--code-comment-color);
 }
 
-.console .i {
-    font-weight: bold;
+.pretype-console {
+    color: var(--code-comment-color); 
+}
+
+.pretype-console .prompt {
+    color: var(--theme-color);
+
+    -webkit-user-select: none;
+    -khtml-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    -o-user-select: none;
+    user-select: none;
+}
+
+.pretype-console .sh {
+    color: var(--primary-color);
 }
