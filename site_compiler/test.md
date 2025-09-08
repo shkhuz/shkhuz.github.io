@@ -1,4 +1,4 @@
-- but dfd
+- `but` dfd
   - A
   wow
   nice dude
@@ -14,3 +14,7 @@
   - oh no!
     1. wow!
 4) doing?
+
+```c
+fdf
+```

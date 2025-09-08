@@ -113,6 +113,26 @@ public class Parser {
                     }
                 } break;
 
+                case prespan: {
+                    out.add(new PrespanNode(t.lexeme));
+                } break;
+
+                case preblock: {
+                    String lang = null;
+                    boolean nowrap = false;
+                    if (t.extra != null) {
+                        String extra = t.extra;
+                        int i = 0;
+                        if (i < extra.length() && Character.isLetter(extra.charAt(i))) {
+                            while (i < extra.length() 
+                                   && Character.isLetter(extra.charAt(i))) i++;
+                            lang = extra.substring(0, i); 
+                        }
+                        if (i < extra.length() && extra.charAt(i) == '=') nowrap = true;
+                    }
+                    out.add(new PreblockNode(lang, nowrap, t.lexeme));
+                } break;
+
                 case newline: {
                     out.add(new TextNode(" "));
                 } break;
@@ -241,7 +261,21 @@ public class Parser {
             TextNode t = (TextNode) node;
             System.out.println(pad + "Text: \"" + t.text + "\"");
         }
-
+        else if (node instanceof PrespanNode) {
+            PrespanNode t = (PrespanNode) node;
+            System.out.println(pad + "Prespan: \"" + t.code + "\"");
+        }
+        else if (node instanceof PreblockNode) {
+            PreblockNode t = (PreblockNode) node;
+            System.out.print(pad 
+                    + "Preblock lang=" 
+                    + (t.lang != null ? t.lang : "[none]") 
+                    + ", nowrap=" 
+                    + (t.nowrap ? "true" : "false") 
+                    + ": \"" 
+                    + Lexer.escape(t.code)
+                    + "\"");
+        }
         else if (node instanceof EmNode) {
             EmNode e = (EmNode) node;
             System.out.println(pad + "Em " + (e.strong ? "bold" : "italic"));
