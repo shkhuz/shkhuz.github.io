@@ -120,10 +120,13 @@ public class Lexer {
             int idx = current;
             while (Character.isDigit(at(idx))) idx++;
             if (is(idx, '.') || is(idx, ')')) {
-                fin();
                 idx++;
-                current = idx;
-                appendTok(TKind.orderedMarker, 1);
+                if (is(idx, ' ')) {
+                    fin();
+                    idx++;
+                    current = idx;
+                    appendTok(TKind.orderedMarker, 1);
+                }
             }
         }
 

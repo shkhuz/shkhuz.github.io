@@ -174,16 +174,20 @@ public class Parser {
 
     private Node parseList() {
         Token marker = at();
+        boolean ordered = marker.kind == TKind.orderedMarker;
         List<ListItemNode> items = new ArrayList<>();
         
         while (at() != null) {
-            if (!(at().kind.isListMarker() && at().indent == marker.indent))
+            Token item = at();
+            if (!(item.kind.isListMarker() && item.indent == marker.indent))
                 break;
+            boolean itemOrdered = item.kind == TKind.orderedMarker;
+            if (itemOrdered != ordered) break;
             advance();
             items.add(parseListItem(marker));
         }
 
-        return new ListNode(false, items);
+        return new ListNode(ordered, items);
     }
 
     private Node parseBlock() {
