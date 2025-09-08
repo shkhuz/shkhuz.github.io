@@ -17,7 +17,7 @@ Lorem ipsum dolor sit       <-- aside text
 consectetur adipiscing 
 ]]]
 
-```[nowrap]python           <-- pre with optional flags and syntax highlighter
+```python=                  <-- pre with optional unwrapping and syntax highlighter
     ...
 ```name_of_file.ar          <-- pre end with optional filename specifier to show
                                 name of file below code block (for illustration, 
