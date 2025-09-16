@@ -10,7 +10,7 @@ run: all
 	http-server -c-1 -p8080 .
 
 %.html: %.md
-	@java -classpath site_compiler Use $^
+	java -classpath site_compiler/classes Use $^
 
 clean:
 	rm -f $(HTML_FILES)

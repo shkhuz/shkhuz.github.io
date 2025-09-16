@@ -117,22 +117,6 @@ public class Parser {
                     out.add(new PrespanNode(t.lexeme));
                 } break;
 
-                case preblock: {
-                    String lang = null;
-                    boolean nowrap = false;
-                    if (t.extra != null) {
-                        String extra = t.extra;
-                        int i = 0;
-                        if (i < extra.length() && Character.isLetter(extra.charAt(i))) {
-                            while (i < extra.length() 
-                                   && Character.isLetter(extra.charAt(i))) i++;
-                            lang = extra.substring(0, i); 
-                        }
-                        if (i < extra.length() && extra.charAt(i) == '=') nowrap = true;
-                    }
-                    out.add(new PreblockNode(lang, nowrap, t.lexeme));
-                } break;
-
                 case newline: {
                     out.add(new TextNode(" "));
                 } break;
@@ -210,13 +194,35 @@ public class Parser {
         return new ListNode(ordered, items);
     }
 
-    private Node parseBlock() {
+    private Node parsePreblock() {
         Token t = at();
-        Node n;
-        if (t.kind == TKind.pound) n = parseHeading();
-        else if (t.kind.isListMarker()) n = parseList();
-        else n = parseParagraph();
-        return n;
+        advance();
+        String lang = null;
+        boolean wrap = false;
+        if (t.extra != null) {
+            String extra = t.extra;
+            int i = 0;
+            if (i < extra.length() && Character.isLetter(extra.charAt(i))) {
+                while (i < extra.length() 
+                       && Character.isLetter(extra.charAt(i))) i++;
+                lang = extra.substring(0, i); 
+            }
+            if (i < extra.length() && extra.charAt(i) == '=') wrap = true;
+        }
+        while (match(TKind.newline)) {}
+        return new PreblockNode(lang, wrap, t.lexeme);
+    }
+
+    private Node parseBlock() {
+        // Each block element's parseInline() function handles 
+        // skipping newlines at the end. Only in parsePreblock() do we
+        // manually skip newlines. If a new block element is added, the
+        // code to skip nl should it's responsibility, not parseBlock().
+        Token t = at();
+        if (t.kind == TKind.pound) return parseHeading();
+        else if (t.kind.isListMarker()) return parseList();
+        else if (t.kind == TKind.preblock) return parsePreblock();
+        else return parseParagraph();
     }
 
     public static void printNode(Node node, int indent) {
@@ -267,11 +273,11 @@ public class Parser {
         }
         else if (node instanceof PreblockNode) {
             PreblockNode t = (PreblockNode) node;
-            System.out.print(pad 
+            System.out.println(pad 
                     + "Preblock lang=" 
                     + (t.lang != null ? t.lang : "[none]") 
-                    + ", nowrap=" 
-                    + (t.nowrap ? "true" : "false") 
+                    + ", wrap=" 
+                    + (t.wrap ? "true" : "false") 
                     + ": \"" 
                     + Lexer.escape(t.code)
                     + "\"");

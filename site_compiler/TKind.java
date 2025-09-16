@@ -49,5 +49,4 @@ public enum TKind {
         }
         return false;
     }
-
 }

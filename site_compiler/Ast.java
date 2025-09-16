@@ -48,12 +48,12 @@ class EmNode implements Node {
 
 class PreblockNode implements Node {
     String lang;
-    boolean nowrap;
+    boolean wrap;
     String code;
 
-    public PreblockNode(String lang, boolean nowrap, String code) {
+    public PreblockNode(String lang, boolean wrap, String code) {
         this.lang = lang;
-        this.nowrap = nowrap;
+        this.wrap = wrap;
         this.code = code;
     }
 }
@@ -83,3 +83,4 @@ class ListItemNode implements Node {
         this.children = children; 
     }
 }
+

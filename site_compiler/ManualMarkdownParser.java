@@ -55,12 +55,10 @@ public class ManualMarkdownParser {
 "\n" +
 "</head>\n" +
 "\n" +
-"<body>\n" +
-"<article>\n";
+"<body>\n";
 
     private String blob3 =
-"</article>\n" +
-"</body>\n" +
+"\n</body>\n" +
 "</html>\n";
 
     private String changeExt(String path, String newExt) {
@@ -90,10 +88,10 @@ public class ManualMarkdownParser {
             List<Token> tokens = l.lex();
             Parser p = new Parser(tokens, l.indentsList);
             Node root = p.parse();
-            // Renderer r = new Renderer(root);
-            // String html = r.render();
-            String html = "";
-            // System.out.println(html);
+            Renderer r = new Renderer(root);
+            String html = r.render();
+            // String html = "";
+            System.out.println(html);
 
             try (FileWriter writer = new FileWriter(changeExt(filePath, ".html"))) {
                 writer.write(blob1);

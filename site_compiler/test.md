@@ -8,13 +8,23 @@
   - what?
   + cool
 
-1. hi
-2) what
+1. *hi*, what's `up!`
+2) __nice__ is a letter.
 3. u
   - oh no!
     1. wow!
 4) doing?
 
-```c
+```c=
+fdfdf
+df
+d
+fd
+
+
 fdf
 ```
+
+this is a para
+
+## this is a heading

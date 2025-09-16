@@ -188,13 +188,13 @@ pre {
     margin-bottom: 0;
     margin-top: 1em;
     overflow-x: auto;
-    white-space: pre-wrap;
-    overflow-wrap: break-word;
-}
-
-.pre-nowrap {
     white-space: pre;
     overflow-wrap: normal;
+}
+
+.pre-wrap {
+    white-space: pre-wrap;
+    overflow-wrap: break-word;
 }
 
 pre > code {

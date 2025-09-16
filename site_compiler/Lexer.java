@@ -126,6 +126,7 @@ public class Lexer {
                     idx++;
                     current = idx;
                     appendTok(TKind.orderedMarker, 1);
+                    return;
                 }
             }
         }
