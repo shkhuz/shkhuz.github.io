@@ -64,6 +64,18 @@ class EmNode implements Node {
     }
 }
 
+class AnchorNode implements Node {
+    boolean image;
+    String text;
+    String url;
+
+    public AnchorNode(boolean image, String text, String url) {
+        this.image = image;
+        this.text = text;
+        this.url = url;
+    }
+}
+
 class PreblockNode implements Node {
     String lang;
     boolean wrap;

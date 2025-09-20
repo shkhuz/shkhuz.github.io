@@ -69,6 +69,14 @@ public class Lexer {
         return false;
     }
 
+    private boolean expect(char c) {
+        if (!match(c)) {
+            System.err.println("Expected '" + c + "'");
+            return false;
+        }
+        return true;
+    }
+
     private Token lastTok() {
         return tokens.size() > 0 ? tokens.get(tokens.size()-1) : null;
     }
@@ -135,6 +143,13 @@ public class Lexer {
                     return;
                 }
             }
+        }
+        else if (is('!') && is(current+1, '[')) {
+            // skip `!` cuz lexAnchor() expects to start
+            // from `[`.
+            current++;
+            lexAnchor(true);
+            return;
         }
 
         switch (state) {
@@ -217,6 +232,34 @@ public class Lexer {
         currentToken.extra = String.format("%d%d", leftFlanking ? 1 : 0, rightFlanking ? 1 : 0);
     }
 
+    private void lexAnchor(boolean image) {
+        fin();
+        match('[');
+        start = current;
+        while (!match(']')) {
+            if (is('\n') || is('\0')) {
+                System.err.println("Unterminated '['");
+                return;
+            }
+            current++;
+        }
+        appendTokWithSubstrTill(TKind.anchor, image ? -1 : 1, current-1);
+
+        expect('(');
+        start = current;
+        while (!match(')')) {
+            if (is('\n') || is('\0')) {
+                System.err.println("Unterminated '('");
+                return;
+            }
+            current++;
+        }
+
+        String link = srcfile.substring(start, current-1);
+        lastTok().extra = link;
+        start = current;
+    }
+
     public List<Token> lex() {
         for (;;) {
             if (current == srcfile.length()) {
@@ -287,7 +330,12 @@ public class Lexer {
                 // text tokens if the count doesn't equal 3.
                 // We first check if the count == 3 and if it is, we 
                 // fin() and append.
-                case '[':  appendIf3ElseCont('[', TKind.lbrack3); break;
+                case '[': {
+                    if (!is(current + 1, '[')) {
+                        lexAnchor(false);
+                    }
+                    else appendIf3ElseCont('[', TKind.lbrack3); 
+                } break;
                 case ']':  appendIf3ElseCont(']', TKind.rbrack3); break;
                 case '=':  appendIf3ElseCont('=', TKind.equal3); break;
 

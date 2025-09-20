@@ -113,6 +113,13 @@ public class Parser {
                     }
                 } break;
 
+                case anchor: {
+                    out.add(new AnchorNode(
+                                t.count == -1 ? true : false,
+                                t.lexeme,
+                                t.extra));
+                } break;
+
                 case prespan: {
                     out.add(new PrespanNode(t.lexeme));
                 } break;
@@ -338,6 +345,15 @@ public class Parser {
             for (Node child : e.children) {
                 printNode(child, indent + 1);
             }
+        }
+        else if (node instanceof AnchorNode) {
+            AnchorNode a = (AnchorNode) node;
+            System.out.println(pad 
+                    + (a.image ? "Image" : "Link") 
+                    + " text="
+                    + a.text
+                    + ", url="
+                    + a.url);
         }
         else {
             System.out.println(pad + "Unknown node: " + node.getClass().getSimpleName());

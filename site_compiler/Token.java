@@ -1,5 +1,8 @@
 public class Token {
     TKind kind;
+
+    // for anchors: count is -1 for images
+    // 1 for links
     int count;
     int indent;
     int line;

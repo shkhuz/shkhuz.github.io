@@ -14,10 +14,24 @@ public class Renderer {
     public boolean isInlineNode(Node node) {
         if (node instanceof TextNode 
             || node instanceof EmNode 
+            || node instanceof AnchorNode 
             || node instanceof PrespanNode) {
             return true;
         }
-        return false;
+        else if (node instanceof RootNode
+            || node instanceof ParagraphNode
+            || node instanceof AsideNode
+            || node instanceof NavbarNode
+            || node instanceof HeadingNode
+            || node instanceof PreblockNode
+            || node instanceof ListNode
+            || node instanceof ListItemNode) {
+            return false;
+        }
+        else {
+            System.err.println("Add to Renderer.isInlineNode()");
+            return false;
+        }
     }
 
     private void nlIndentIfNotDone(Node node, Node prev, int indent) {
@@ -119,6 +133,15 @@ public class Renderer {
                 renderNode(e.children.get(i), i == 0 ? node : e.children.get(i-1), indent + 1);
             }
             out.append(e.strong ? "</strong>" : "</em>");
+        }
+        else if (node instanceof AnchorNode) {
+            AnchorNode a = (AnchorNode) node;
+            nlIndentIfNotDone(node, prev, indent);
+            if (a.image) {
+                out.append("<img src='" + a.url + "' alt='" + a.text + "'>");
+            } else {
+                out.append("<a href='" + a.url + "'>" + a.text + "</a>");
+            }
         }
     }
 

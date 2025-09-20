@@ -176,6 +176,10 @@ aside p {
     padding: 0 1.4em;
 }
 
+code {
+    overflow-wrap: break-word; 
+}
+
 pre, code, .code-snippet-filename {
     font: 0.85em/1 "Source Code Pro", monospace;
 }

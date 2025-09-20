@@ -4,7 +4,6 @@ public enum TKind {
     lbrack3,
     rbrack3,
     pound,
-    star,
     minus,
     plus,
     orderedMarker,
@@ -13,6 +12,8 @@ public enum TKind {
     text,
     prespan,
     underscore,
+    star,
+    anchor,
 
     eof;
 
@@ -23,7 +24,6 @@ public enum TKind {
             case lbrack3:
             case rbrack3:
             case pound:
-            case star:
             case minus:
             case plus:
             case orderedMarker:
@@ -34,6 +34,8 @@ public enum TKind {
             case text:
             case prespan:
             case underscore:
+            case star:
+            case anchor:
                 return false;
         }
         throw new Error("Add " + this + " to isInlineTerminator()");
