@@ -281,7 +281,7 @@ public class Lexer {
                 return tokens;
             }
 
-            if (state == State.preblock && !is('`')) {
+            if ((state == State.preblock || state == State.prespan) && !is('`')) {
                 current++;
                 continue;
             }
