@@ -1,6 +1,6 @@
-===
 # Aria programming language and toolchain
 
+===
 - [Source Code](https://github.com/shkhuz/aria)
 - [Documentation](doc/)
 ===

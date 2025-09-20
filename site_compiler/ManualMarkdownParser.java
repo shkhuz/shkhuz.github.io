@@ -116,11 +116,5 @@ public class ManualMarkdownParser {
     private void append(String text) {
         out.append(text);
     }
-
-    private String escapeHtml(String s) {
-        return s.replace("&", "&amp;")
-                .replace("<", "&lt;")
-                .replace(">", "&gt;");
-    }
 }
 

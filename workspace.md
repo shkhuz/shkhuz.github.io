@@ -1,6 +1,4 @@
-===
 # Workspace
-===
 
 ```c
 #define CLAY_IMPLEMENTATION

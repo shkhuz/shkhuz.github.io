@@ -4,7 +4,7 @@
 <meta charset='utf-8'>
 <meta name='viewport' content='width=device-width, initial-scale=1'>
 
-<title>Hed -- a highly efficient text editor</title>
+<title></title>
 <link rel='apple-touch-icon' sizes='180x180' href='/assets/apple-touch-icon.png'>
 <link rel='icon' type='image/png' sizes='32x32' href='/assets/favicon-32x32.png'>
 <link rel='iconj type='image/png' sizes='16x16' href='/assets/favicon-16x16.png'>
@@ -44,38 +44,80 @@
 
 <body>
 <article>
-<nav id='main-nav'>
-<h1><a href='/'>~</a> / Hed -- a highly efficient text editor</h1>
-<ul>
-<li><a href="https://github.com/shkhuz/hed" rel="noopener noreferrer">Source Code</a></li>
-<li><a href="https://github.com/shkhuz/hed" rel="noopener noreferrer">Download</a></li>
-</ul>
-</nav>
-<p>Hed is a highly efficient modal text editor which uses keyboard-only actions to edit text.</p>
-<p><strong>Why another text editor?</strong> Hed has much going for it:</p>
-<ul>
-<li>Lightweight: ~230KB on x64 linux</li>
-<li>Mark editing: operate on regions defined by a mark</li>
-<li>Modal editing: like Vim you know and love</li>
-<li>Intuitive & sane default keybinds: based on finger positions and not on</li>
-<p>"first-letter-of-word", etc.<li>Just a single executable--no runtimes or external dependencies</li>
-</p>
-</ul>
-<p><strong>Why you shouldn't consider this editor:</strong> I made this editor to be as simple and lightweight as possible: if you need:</p>
-<ul>
-<li>An IDE-like editing experience,</li>
-<li>LSP-support,</li>
-<li>tree-sitter,</li>
-<li>Emacs-like customizability,</li>
-<li>GUI, etc</li>
-</ul>
-<p>then this editor is not for you.</p>
-<h3>Keybindings (Normal mode)</h3>
-<p>Key | Action                                  | Key | Action --- | ---------                               | --- | --------- <code>i</code> | switch to insert mode                   | <code>,</code> | open line below cursor <code>w</code> | delete character under cursor           | <code>d</code> | set mark <code><backtick></code> | exit editor                    | <code>f</code> | cut marked region <code>U</code> | scroll page up                          | <code>c</code> | paste from clipboard <code>M</code> | scroll page down                        | <code>b</code> | repeat search forward <code>a</code> | goto beginning of line                  | <code>B</code> | repeat search backward <code>;</code> | goto end of line                        | <code><Alt-m></code> | switch to command mode <code>h</code> | left                                    | <code><Alt-s></code> | save file <code>j</code> | down                                    | <code>/</code> | switch to search mode <code>k</code> | up                                      | <code>gg</code> | goto first row <code>l</code> | right                                   | <code>G</code> | goto last row <code>o</code> | forward word                            | <code>e</code> | undo <code>n</code> | backward word                           | <code>E</code> | redo</p>
-<p>Maybe:</p>
-<p>< -> open line above cursor s -> undo / redo</p>
-<h3>Keybindings (Insert mode)</h3>
-<p>Key | Action                                  | Key | Action --- | ------------                            | --- | ------------ <code><bksp></code> | delete character to the left of cursor | <code><tab></code> | indent <code><left></code> | left                                 | <code><right></code> | right <code><up></code> | up                                     | <code><down></code> | down <code>esc</code> | switch to normal mode                 | |</p>
+  <nav id='main-nav'>
+    <h1>
+      Hed -- a highly efficient text editor
+    </h1>
+    <ul>
+      <li>
+        [Source Code](https://github.com/shkhuz/hed)
+      </li>
+      <li>
+        [Download](https://github.com/shkhuz/hed)
+      </li>
+    </ul>
+  </nav>
+  <p>
+    Hed is a highly efficient modal text editor which uses keyboard-only actions to edit text.
+  </p>
+  <p>
+    <strong>Why another text editor?</strong> Hed has much going for it:
+  </p>
+  <ul>
+    <li>
+      Lightweight: ~230KB on x64 linux
+    </li>
+    <li>
+      Mark editing: operate on regions defined by a mark
+    </li>
+    <li>
+      Modal editing: like Vim you know and love
+    </li>
+    <li>
+      Intuitive & sane default keybinds: based on finger positions and not on "first-letter-of-word", etc.
+    </li>
+    <li>
+      Just a single executable--no runtimes or external dependencies.
+    </li>
+  </ul>
+  <p>
+    <strong>Why you shouldn't consider this editor:</strong> I made this editor to be as simple and lightweight as possible: if you need:
+  </p>
+  <ul>
+    <li>
+      An IDE-like editing experience,
+    </li>
+    <li>
+      LSP-support,
+    </li>
+    <li>
+      tree-sitter,
+    </li>
+    <li>
+      Emacs-like customizability,
+    </li>
+    <li>
+      GUI, etc
+    </li>
+  </ul>
+  <p>
+    then this editor is not for you.
+  </p>
+  <h3>
+    Keybindings (Normal mode)
+  </h3>
+  <p>
+    <table><thead> <tr> <th>Key</th> <th>Action</th> <th>Key</th> <th>Action</th> </tr></thead> <tbody> <tr> <td><code>i</code></td> <td>switch to insert mode</td> <td><code>,</code></td> <td>open line below cursor</td> </tr> <tr> <td><code>w</code></td> <td>delete char under cursor</td> <td><code>d</code></td> <td>set mark</td> </tr> <tr> <td><code>&lt;backtick&gt;</code></td> <td>exit editor</td> <td><code>f</code></td> <td>cut marked region</td> </tr> <tr> <td><code>U</code></td> <td>scroll page up</td> <td><code>c</code></td> <td>paste from clipboard</td> </tr> <tr> <td><code>M</code></td> <td>scroll page down</td> <td><code>b</code></td> <td>repeat search forward</td> </tr> <tr> <td><code>a</code></td> <td>goto beginning of line</td> <td><code>B</code></td> <td>repeat search backward</td> </tr> <tr> <td><code>;</code></td> <td>goto end of line</td> <td><code>&lt;A-m&gt;</code></td> <td>switch to command mode</td> </tr> <tr> <td><code>h</code></td> <td>left</td> <td><code>&lt;A-s&gt;</code></td> <td>save file</td> </tr> <tr> <td><code>j</code></td> <td>down</td> <td><code>/</code></td> <td>switch to search mode</td> </tr> <tr> <td><code>k</code></td> <td>up</td> <td><code>gg</code></td> <td>goto first line</td> </tr> <tr> <td><code>l</code></td> <td>right</td> <td><code>G</code></td> <td>goto last line</td> </tr> <tr> <td><code>o</code></td> <td>forward word</td> <td><code>e</code></td> <td>undo</td> </tr> <tr> <td><code>n</code></td> <td>backward word</td> <td><code>E</code></td> <td>redo</td> </tr> </tbody></table>
+  </p>
+  <p>
+    <!-- < -> open line above cursor s -> undo / redo -->
+  </p>
+  <h3>
+    Keybindings (Insert mode)
+  </h3>
+  <p>
+    <table><thead> <tr> <th>Key</th> <th>Action</th> <th>Key</th> <th>Action</th> </tr></thead> <tbody> <tr> <td><code>&lt;bksp&gt;</code></td> <td>delete char to left</td> <td><code>&lt;tab&gt;</code></td> <td>indent</td> </tr> <tr> <td><code>&lt;left&gt;</code></td> <td>left</td> <td><code>&lt;right&gt;</code></td> <td>right</td> </tr> <tr> <td><code>&lt;up&gt;</code></td> <td>up</td> <td><code>&lt;down&gt;</code></td> <td>down</td> </tr> <tr> <td><code>&lt;esc&gt;</code></td> <td>switch to normal mode</td> <td></td> <td></td> </tr> </tbody> </table>
+  </p>
 </article>
 </body>
 </html>

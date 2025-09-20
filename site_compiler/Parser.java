@@ -57,7 +57,7 @@ public class Parser {
                 if (nt == null) return i;
                 if (nt.kind == TKind.newline) return i;
                 if (nt.kind.isInlineTerminator()) return i;
-                if (nt.indent < minIndent) return i;
+                //if (nt.indent < minIndent) return i;
             }
             i++;
         }
@@ -137,7 +137,22 @@ public class Parser {
         int level = t.count;
         List<Node> inline = new ArrayList<>();
         parseInline(inline, t);
-        return new HeadingNode(level, inline);
+
+        Node heading = new HeadingNode(level, inline);
+        if (level == 1) {
+            Node navlist = null;
+            if (match(TKind.equal3)) {
+                while (match(TKind.newline)) {}
+                navlist = parseList();
+                if (!match(TKind.equal3)) {
+                    System.err.println("Expected '='"); 
+                }
+                while (match(TKind.newline)) {}
+            }
+            return new NavbarNode(heading, navlist);
+        } else {
+            return heading;
+        }
     }
 
     private Node parseParagraph() {
@@ -198,6 +213,7 @@ public class Parser {
         Token t = at();
         advance();
         String lang = null;
+        String filepath = null;
         boolean wrap = false;
         if (t.extra != null) {
             String extra = t.extra;
@@ -207,10 +223,28 @@ public class Parser {
                        && Character.isLetter(extra.charAt(i))) i++;
                 lang = extra.substring(0, i); 
             }
-            if (i < extra.length() && extra.charAt(i) == '=') wrap = true;
+            if (i < extra.length() && extra.charAt(i) == '=') {
+                wrap = true;
+                i++;
+            }
+            if (i < extra.length() && extra.charAt(i) == '|') {
+                i++;
+                filepath = extra.substring(i, extra.length());
+            }
         }
         while (match(TKind.newline)) {}
-        return new PreblockNode(lang, wrap, t.lexeme);
+        return new PreblockNode(lang, wrap, t.lexeme, filepath);
+    }
+
+    private Node parseAside() {
+        advance();
+        while (match(TKind.newline)) {}
+        List<Node> children = new ArrayList<>();
+        while (!match(TKind.rbrack3)) {
+            children.add(parseBlock());  
+        }
+        while (match(TKind.newline)) {}
+        return new AsideNode(children);
     }
 
     private Node parseBlock() {
@@ -222,6 +256,7 @@ public class Parser {
         if (t.kind == TKind.pound) return parseHeading();
         else if (t.kind.isListMarker()) return parseList();
         else if (t.kind == TKind.preblock) return parsePreblock();
+        else if (t.kind == TKind.lbrack3) return parseAside();
         else return parseParagraph();
     }
 
@@ -239,6 +274,19 @@ public class Parser {
             ParagraphNode p = (ParagraphNode) node;
             System.out.println(pad + "Paragraph");
             for (Node child : p.children) {
+                printNode(child, indent + 1);
+            }
+        }
+        else if (node instanceof NavbarNode) {
+            NavbarNode n = (NavbarNode) node;
+            System.out.println(pad + "Navbar");
+            printNode(n.title, indent + 1);
+            if (n.navlist != null) printNode(n.navlist, indent + 1);
+        }
+        else if (node instanceof AsideNode) {
+            AsideNode a = (AsideNode) node;
+            System.out.println(pad + "Aside");
+            for (Node child : a.children) {
                 printNode(child, indent + 1);
             }
         }
@@ -278,6 +326,8 @@ public class Parser {
                     + (t.lang != null ? t.lang : "[none]") 
                     + ", wrap=" 
                     + (t.wrap ? "true" : "false") 
+                    + ", filepath="
+                    + (t.filepath != null ? t.filepath : "[none]")
                     + ": \"" 
                     + Lexer.escape(t.code)
                     + "\"");

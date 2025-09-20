@@ -43,7 +43,6 @@ public enum TKind {
         switch (this) {
             case plus:
             case minus:
-            case star:
             case orderedMarker:
                 return true;
         }

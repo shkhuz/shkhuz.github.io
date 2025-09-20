@@ -4,7 +4,7 @@
 <meta charset='utf-8'>
 <meta name='viewport' content='width=device-width, initial-scale=1'>
 
-<title>Aria programming language and toolchain</title>
+<title></title>
 <link rel='apple-touch-icon' sizes='180x180' href='/assets/apple-touch-icon.png'>
 <link rel='icon' type='image/png' sizes='32x32' href='/assets/favicon-32x32.png'>
 <link rel='iconj type='image/png' sizes='16x16' href='/assets/favicon-16x16.png'>
@@ -44,23 +44,29 @@
 
 <body>
 <article>
-<nav id='main-nav'>
-<h1><a href='/'>~</a> / Aria programming language and toolchain</h1>
-<ul>
-<li><a href="https://github.com/shkhuz/aria" rel="noopener noreferrer">Source Code</a></li>
-<li><a href="doc/" rel="noopener noreferrer">Documentation</a></li>
-</ul>
-</nav>
-<p>Aria is an experimental systems programming language built to improve on C.</p>
-<pre><code>import "std";
+  <nav id='main-nav'>
+    <h1>
+      Aria programming language and toolchain
+    </h1>
+    <ul>
+      <li>
+        [Source Code](https://github.com/shkhuz/aria)
+      </li>
+      <li>
+        [Documentation](doc/)
+      </li>
+    </ul>
+  </nav>
+  <p>
+    Aria is an experimental systems programming language built to improve on C.
+  </p>
+  <pre class='lang-aria'><code>import "std";
 
 fn main() void {
     std.writestring("Hello World!");
-}
-</code></pre>
-<pre><code>$ aria hello_world.ar
-Hello World!
-</code></pre>
+}</code></pre>
+  <pre class='lang-sh'><code>$ aria hello_world.ar
+Hello World!</code></pre>
 </article>
 </body>
 </html>

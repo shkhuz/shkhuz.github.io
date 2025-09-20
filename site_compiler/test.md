@@ -1,3 +1,8 @@
+# title
+===
+- hi
+===
+
 - `but` dfd
   - A
   wow
@@ -15,6 +20,15 @@
     1. wow!
 4) doing?
 
+[[[
+this is a para inside aside
+
+- list
+- inside 
+  - aside!
+]]]
+
+
 ```c=
 fdfdf
 df
@@ -23,7 +37,7 @@ fd
 
 
 fdf
-```
+```/home/huzaifa/index.html
 
 this is a para
 

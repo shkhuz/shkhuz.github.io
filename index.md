@@ -1,6 +1,4 @@
-===
 # /home/huzaifa
-===
 
 Welcome to my home on the web. This is a dumping-ground for all my endeavours.
 

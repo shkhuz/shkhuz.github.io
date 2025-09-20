@@ -1,12 +1,12 @@
 The markdown format used in this repository is a little different than the
 standard markdown grammar.
 
-===                         <-- mandatory if <nav> is needed
-# Title                     <-- note: title issues when not using ===
-                                (standalone)
+# Title                     <-- title
+
+===                         <-- mandatory if nav list is needed
 - [Home](/)                 <-- navigation list
 - [About](/about)
-===                         <-- end (</nav>)
+===                         <-- end nav list
 
 ~~~                         <-- emits a table of contents.
 
@@ -17,7 +17,7 @@ Lorem ipsum dolor sit       <-- aside text
 consectetur adipiscing 
 ]]]
 
-```python=                  <-- pre with optional unwrapping and syntax highlighter
+```python=                  <-- pre with optional wrapping and syntax highlighter
     ...
 ```name_of_file.ar          <-- pre end with optional filename specifier to show
                                 name of file below code block (for illustration, 

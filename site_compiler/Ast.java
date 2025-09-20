@@ -18,6 +18,24 @@ class ParagraphNode implements Node {
     }
 }
 
+class AsideNode implements Node {
+    List<Node> children;
+
+    public AsideNode(List<Node> children) {
+        this.children = children; 
+    }
+}
+
+class NavbarNode implements Node {
+    Node title;
+    Node navlist; 
+
+    public NavbarNode(Node title, Node navlist) {
+        this.title = title;
+        this.navlist = navlist;
+    }
+}
+
 class HeadingNode implements Node {
     int level;
     List<Node> children;
@@ -50,11 +68,13 @@ class PreblockNode implements Node {
     String lang;
     boolean wrap;
     String code;
+    String filepath;
 
-    public PreblockNode(String lang, boolean wrap, String code) {
+    public PreblockNode(String lang, boolean wrap, String code, String filepath) {
         this.lang = lang;
         this.wrap = wrap;
         this.code = code;
+        this.filepath = filepath;
     }
 }
 

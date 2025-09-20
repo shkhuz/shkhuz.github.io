@@ -1,11 +1,9 @@
-===
 # OpenGL3 Boilerplate Code
-===
 
 This is a single-file OpenGL "hello world" boilerplate implementation. It
 assumes that SDL and GLEW are already installed.
 
-```[nowrap]cpp
+```cpp
 #include <GL/glew.h>
 #include <SDL2/SDL.h>
 #include <stdio.h>

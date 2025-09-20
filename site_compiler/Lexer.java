@@ -87,6 +87,12 @@ public class Lexer {
         appendTokWithSubstrTill(kind, count, current);
     }
 
+    public static String escapeHtml(String s) {
+        return s.replace("&", "&amp;")
+                .replace("<", "&lt;")
+                .replace(">", "&gt;");
+    }
+
     public static String escape(String input) {
         StringBuilder sb = new StringBuilder();
         for (char c : input.toCharArray()) {
@@ -257,6 +263,12 @@ public class Lexer {
                         if (state == State.prespan) continue;
                         else if (state == State.preblock) {
                             appendTokWithSubstrTill(TKind.preblock, 1, current-count);
+                            if (!is('\n') && !is('\0')) {
+                                int beg = current;
+                                while (!is('\n') && !is('\0')) current++;
+                                preblock_extra += "|";
+                                preblock_extra += srcfile.substring(beg, current); 
+                            }
                             lastTok().extra = preblock_extra;
                         } else {
                             state = State.preblock;

@@ -46,6 +46,21 @@ public class Renderer {
             }
             out.append("\n" + pad + "</p>");
         }
+        else if (node instanceof AsideNode) {
+            AsideNode a = (AsideNode) node;
+            out.append("\n" + pad + "<aside>");
+            for (int i = 0; i < a.children.size(); i++) {
+                renderNode(a.children.get(i), i == 0 ? node : a.children.get(i-1), indent + 1);
+            }
+            out.append("\n" + pad + "</aside>");
+        }
+        else if (node instanceof NavbarNode) {
+            NavbarNode n = (NavbarNode) node;
+            out.append("\n" + pad + "<nav id='main-nav'>");
+            renderNode(n.title, n, indent + 1);
+            if (n.navlist != null) renderNode(n.navlist, n.title, indent + 1);
+            out.append("\n" + pad + "</nav>");
+        }
         else if (node instanceof HeadingNode) {
             HeadingNode h = (HeadingNode) node;
             out.append("\n" + pad + "<h" + h.level + ">");
@@ -89,8 +104,12 @@ public class Renderer {
             out.append("\n" + pad + "<pre");
             if (classes != "") out.append(" class='" + classes + "'");
             out.append("><code>");
-            out.append(t.code.trim());
+            out.append(Lexer.escapeHtml(t.code.trim()));
             out.append("</code></pre>");
+
+            if (t.filepath != null) {
+                out.append("\n" + pad + "<div class='code-snippet-filename'>" + t.filepath + "</div>");
+            }
         }
         else if (node instanceof EmNode) {
             EmNode e = (EmNode) node;
