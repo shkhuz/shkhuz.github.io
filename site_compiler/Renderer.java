@@ -24,6 +24,7 @@ public class Renderer {
             || node instanceof NavbarNode
             || node instanceof HeadingNode
             || node instanceof PreblockNode
+            || node instanceof MathblockNode
             || node instanceof ListNode
             || node instanceof ListItemNode) {
             return false;
@@ -124,6 +125,10 @@ public class Renderer {
             if (t.filepath != null) {
                 out.append("\n" + pad + "<div class='code-snippet-filename'>" + t.filepath + "</div>");
             }
+        }
+        else if (node instanceof MathblockNode) {
+            MathblockNode m = (MathblockNode) node;
+            out.append("\n" + pad + m.text);
         }
         else if (node instanceof EmNode) {
             EmNode e = (EmNode) node;

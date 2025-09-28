@@ -29,15 +29,17 @@ this is a para inside aside
 ]]]
 
 
-```c=
+```c!(/hello)
 fdfdf
 df
 d
 fd
-
-
 fdf
-```/home/huzaifa/index.html
+```
+
+$$
+\sin(\pi) = 0
+$$
 
 this is a para
 

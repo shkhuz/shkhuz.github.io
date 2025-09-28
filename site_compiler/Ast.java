@@ -90,6 +90,14 @@ class PreblockNode implements Node {
     }
 }
 
+class MathblockNode implements Node {
+    String text;
+
+    public MathblockNode(String text) {
+        this.text = text;
+    }
+}
+
 class PrespanNode implements Node {
     String code;
 

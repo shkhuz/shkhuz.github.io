@@ -230,17 +230,31 @@ public class Parser {
                        && Character.isLetter(extra.charAt(i))) i++;
                 lang = extra.substring(0, i); 
             }
-            if (i < extra.length() && extra.charAt(i) == '=') {
+            if (i < extra.length() && extra.charAt(i) == '!') {
                 wrap = true;
                 i++;
             }
-            if (i < extra.length() && extra.charAt(i) == '|') {
+            if (i < extra.length() && extra.charAt(i) == '(') {
                 i++;
-                filepath = extra.substring(i, extra.length());
+                int beg = i;
+                while (i < extra.length()
+                       && extra.charAt(i) != ')') {
+                    if (extra.charAt(i) == '\n' || extra.charAt(i) == '\0') 
+                        System.err.println("Unterminated '('");
+                    i++;
+                }
+                filepath = extra.substring(beg, i);
             }
         }
         while (match(TKind.newline)) {}
         return new PreblockNode(lang, wrap, t.lexeme, filepath);
+    }
+
+    private Node parseMathblock() {
+        Token t = at();
+        advance();
+        while (match(TKind.newline)) {}
+        return new MathblockNode(t.lexeme);
     }
 
     private Node parseAside() {
@@ -263,6 +277,7 @@ public class Parser {
         if (t.kind == TKind.pound) return parseHeading();
         else if (t.kind.isListMarker()) return parseList();
         else if (t.kind == TKind.preblock) return parsePreblock();
+        else if (t.kind == TKind.mathblock) return parseMathblock();
         else if (t.kind == TKind.lbrack3) return parseAside();
         else return parseParagraph();
     }
@@ -337,6 +352,13 @@ public class Parser {
                     + (t.filepath != null ? t.filepath : "[none]")
                     + ": \"" 
                     + Lexer.escape(t.code)
+                    + "\"");
+        }
+        else if (node instanceof MathblockNode) {
+            MathblockNode t = (MathblockNode) node;
+            System.out.println(pad 
+                    + "Mathblock: \"" 
+                    + t.text
                     + "\"");
         }
         else if (node instanceof EmNode) {

@@ -7,6 +7,7 @@ public class Lexer {
     enum State {
         text, 
         preblock,
+        mathblock,
         prespan,
         other,
     }
@@ -150,14 +151,20 @@ public class Lexer {
             current++;
             lexAnchor(true);
             return;
+        } 
+        else if (is('$') && is(current+1, '$')) {
+            fin();
+            current += 2;
+            if (state == State.mathblock) {
+                appendTok(TKind.mathblock, 1);
+            } else {
+                state = State.mathblock;
+            }
+            return;
         }
 
         switch (state) {
             case text: {
-            } break;
-
-            case prespan:
-            case preblock: {
             } break;
 
             case other: {
@@ -281,7 +288,13 @@ public class Lexer {
                 return tokens;
             }
 
-            if ((state == State.preblock || state == State.prespan) && !is('`')) {
+            if (state == State.prespan && !is('`')) {
+                current++;
+                continue;
+            } else if (state == State.preblock && !(is('`') && is(current+1, '`') && is(current+2, '`'))) {
+                current++;
+                continue;
+            } else if (state == State.mathblock && !(is('$') && is(current+1, '$'))) {
                 current++;
                 continue;
             }
@@ -306,12 +319,12 @@ public class Lexer {
                         if (state == State.prespan) continue;
                         else if (state == State.preblock) {
                             appendTokWithSubstrTill(TKind.preblock, 1, current-count);
-                            if (!is('\n') && !is('\0')) {
-                                int beg = current;
-                                while (!is('\n') && !is('\0')) current++;
-                                preblock_extra += "|";
-                                preblock_extra += srcfile.substring(beg, current); 
-                            }
+                            // if (!is('\n') && !is('\0')) {
+                            //     int beg = current;
+                            //     while (!is('\n') && !is('\0')) current++;
+                            //     preblock_extra += "|";
+                            //     preblock_extra += srcfile.substring(beg, current); 
+                            // }
                             lastTok().extra = preblock_extra;
                         } else {
                             state = State.preblock;

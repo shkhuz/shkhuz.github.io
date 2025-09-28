@@ -1,5 +1,6 @@
 public enum TKind {
     preblock,
+    mathblock,
     equal3,
     lbrack3,
     rbrack3,
@@ -20,6 +21,7 @@ public enum TKind {
     public boolean isInlineTerminator() {
         switch (this) {
             case preblock:
+            case mathblock:
             case equal3:
             case lbrack3:
             case rbrack3:
