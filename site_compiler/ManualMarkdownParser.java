@@ -1,7 +1,7 @@
 import java.io.*;
 import java.nio.file.*;
-import java.util.List;
-import java.util.ArrayList;
+import java.util.*;
+import java.util.regex.Pattern;
 
 public class ManualMarkdownParser {
     private StringBuilder out = new StringBuilder();
@@ -84,6 +84,9 @@ public class ManualMarkdownParser {
     public void convertAndOutput(String filePath) throws IOException {
         try {
             String markdown = readFile(filePath);
+            if (filePath.equals("index.md")) {
+                markdown += buildBlogIndex();
+            }
             Lexer l = new Lexer(markdown);
             List<Token> tokens = l.lex();
             Parser p = new Parser(tokens, l.indentsList);
@@ -107,6 +110,68 @@ public class ManualMarkdownParser {
             System.err.println("Error reading file: " + e.getMessage());
             return;
         }
+    }
+
+    private String buildBlogIndex() throws IOException {
+        Path blogDir = Paths.get("blog");
+        List<Path> posts = new ArrayList<>();
+
+        Files.walk(blogDir)
+            .filter(p -> {
+                Path abs = p.toAbsolutePath().normalize();
+                return !abs.startsWith(blogDir.resolve("diary").toAbsolutePath().normalize());
+            })
+            .filter(p -> p.toString().endsWith(".md"))
+            .forEach(posts::add);
+
+        Collections.sort(posts, new Comparator<Path>() {
+            public int compare(Path a, Path b) {
+                String da = extractDateString(blogDir, a);
+                String db = extractDateString(blogDir, b);
+                return db.compareTo(da); // reverse order
+            }
+        });
+
+        StringBuilder md = new StringBuilder();
+        md.append("\n## Blog\n\n- [Diary](blog/diary/index.html)\n");
+        for (Path p : posts) {
+            md.append(buildListItem(blogDir, p));
+        }
+        return md.toString();
+    }
+
+    private String buildListItem(Path blogDir, Path file) throws IOException {
+        String date = extractDateString(blogDir, file);
+        String title = extractTitle(file);
+        String link = file
+            .toString()
+            .replace(File.separatorChar, '/')
+            .replace(".md", ".html");
+        
+        return String.format("- %s: [%s](%s)%n", date, title, link);
+    }
+
+    private String extractDateString(Path blogDir, Path file) {
+        Path relative = blogDir.relativize(file);
+        String[] parts = relative.toString().split(Pattern.quote(File.separator));
+        if (parts.length >= 4) {
+            return String.format("%s.%s.%s", parts[0], parts[1], parts[2]);
+        }
+        return "0000.00.00";
+    }
+
+    private String extractTitle(Path file) throws IOException {
+        BufferedReader reader = Files.newBufferedReader(file);
+        try {
+            String firstLine = reader.readLine();
+            if (firstLine != null && firstLine.startsWith("#")) {
+                return firstLine.replaceFirst("^#+\\s*", "").trim();
+            }
+        } finally {
+            reader.close();
+        }
+        String name = file.getFileName().toString();
+        return name.replaceFirst("\\.md$", "");
     }
 
     private void appendln(String text) {

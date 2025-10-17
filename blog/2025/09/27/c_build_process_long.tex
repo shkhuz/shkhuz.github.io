@@ -1,0 +1,39 @@
+\documentclass[tikz,border=5pt]{standalone}
+\usetikzlibrary{arrows,positioning, calc}
+
+\begin{document}
+\begin{tikzpicture}[
+    node/.style={draw, minimum width=1cm, minimum height=0.5cm, align=center},
+    ->, >=angle 60,font=\ttfamily, node distance = 8mm, draw=white, text=white
+]
+
+% Nodes
+\node (mainc) {main.c};
+\node[node,right=of mainc] (cc) {cc};
+\node[node,right=20mm of cc] (ld) {ld};
+\node[right=of ld] (aout) {a.out};
+\node[below=10mm of ld] (libc) {libc};
+\node[left=of libc] (dylin) {ld-linux};
+\node[right=of libc] (crt) {crt*};
+
+% Arrows with outputs as labels
+\draw (mainc) -- (cc);
+\draw (cc) -- (ld) node[midway, below] {main.o};
+\draw (ld) -- (aout);
+\draw (libc) -- (ld);
+
+% Curved arrows on left side
+\draw (dylin.north) to[out=90,in=270] (ld.south);
+\draw (crt.north) to[out=90,in=270] (ld.south);
+
+\path let \p1 = (current bounding box.south west),
+          \p2 = (current bounding box.north east)
+      in coordinate (bbSW) at (\x1,\y1)
+         coordinate (bbNE) at (\x2,\y2);
+
+\pgfresetboundingbox
+\path[use as bounding box]
+  ($(bbSW)+(0mm,0mm)$) rectangle ($(bbNE)+(0mm,0mm)$);
+
+\end{tikzpicture}
+\end{document}

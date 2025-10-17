@@ -17,8 +17,10 @@ Lorem ipsum dolor sit       <-- aside text
 consectetur adipiscing 
 ]]]
 
-```python=                  <-- pre with optional wrapping and syntax highlighter
+```python!(name_of_file.ar) <-- pre 
+                                ! -> optionally wrap text
+                                (...) -> optional filename specifier to show
+                                         name of file below code block (for illustration, 
+                                         doesn't actually read the file from disk)
     ...
-```name_of_file.ar          <-- pre end with optional filename specifier to show
-                                name of file below code block (for illustration, 
-                                doesn't actually read the file from disk)
+```

@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang='en'>
+<head>
+<meta charset='utf-8'>
+<meta name='viewport' content='width=device-width, initial-scale=1'>
+
+<title></title>
+<link rel='apple-touch-icon' sizes='180x180' href='/assets/apple-touch-icon.png'>
+<link rel='icon' type='image/png' sizes='32x32' href='/assets/favicon-32x32.png'>
+<link rel='icon' type='image/png' sizes='16x16' href='/assets/favicon-16x16.png'>
+<link rel='manifest' href='/assets/site.webmanifest'>
+<link rel='stylesheet' href='/style.css'>
+
+<!-- Google tag (gtag.js) -->
+<script async src='https://www.googletagmanager.com/gtag/js?id=G-QQS3D5BETB'></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'G-QQS3D5BETB');
+</script>
+
+<script data-host='https://microanalytics.io' data-dnt='false' src='https://microanalytics.io/js/script.js' id='ZwSg9rf6GA' async defer></script>
+
+<script id='MathJax-script' async src='https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js'></script>
+
+<script>
+(function() {
+  var h, a, f;
+  a = document.getElementsByTagName('link');
+  for (h = 0; h < a.length; h++) {
+    f = a[h];
+    if (f.rel.toLowerCase().match(/stylesheet/) && f.href) {
+      var g = f.href.replace(/(&|\?)rnd=\d+/, '');
+      f.href = g + (g.match(/\?/) ? '&' : '?');
+      f.href += 'rnd=' + (new Date().valueOf());
+    }
+  } // for
+})()
+</script>
+
+</head>
+
+<body>
+<article>
+  <nav id='main-nav'>
+    <h1>
+      The Java .properties file fiasco
+    </h1>
+  </nav>
+  <p>
+    My task for today was to integrate a Git library into my blog app. I had a skeleton hand-rolled Java Android app with no build system -- only a Makefile. 
+  </p>
+  <p>
+    Searching the web, I came across <em>JGit</em>. It was written in Java and was near the top of Google Search. So I went with it. I asked ChatGPT what else I would need to add it as a dependency. It recommended <code>slf4j</code>, whatever that means. I was new to the Java ecosystem, so I just did what it told me to (I didn't want to waste any more time on a project only I'd use).
+  </p>
+  <p>
+    After downloading the JARs, I updated the Makefile so that <code>d8</code> includes them in the compilation step. When I ran the app, it gave me an error:
+  </p>
+  <pre class='lang-console'><code>Error: Translation bundle could not be found for [org.eclipse.jgit.internal.JGitText, en_US]</code></pre>
+  <p>
+    I ChatGPTed the error and found it was due to a missing <code>JGitText.properties</code> file. I didn't have a whole lot of experience working with JARs, so I extracted the <code>.jar</code> archive and searched for the file. 
+  </p>
+  <p>
+    Surprisingly, the <code>JGitText.properties</code> file existed and was at the right location in the JAR, so I asked my AI guru what the problem could be. It said that for the particular locale, a <code>JGitText_en_US.properties</code> file needs to exist, but also said that if the file is not found, <code>JGitText.properties</code> should be the fallback and will be used instead. 
+  </p>
+  <p>
+    I rechecked that the fallback file existed, and ran the app several times, copying the file with <code>_en_US</code> and <code>_en</code> suffixes between the runs. But it still didn't work. Neither the US English locale file nor the fallback file was being loaded by JGit at runtime.
+  </p>
+  <p>
+    I suspected that <code>d8</code> has something to do with it; maybe it's just converting the <code>.class</code> files in the JAR into <code>classes.dex</code>, and ignoring the <code>.properties</code> files in the JAR altogether. I once again asked my AI guru about it, and it asserted that indeed <code>d8</code> skips files not ending with <code>.class</code>, even if you specify the whole <code>.jar</code> file to <code>d8</code>.
+  </p>
+  <p>
+    Now here's where the AI ran into a frenzy. It told me to add the <code>.properties</code> files to the <code>.jar</code> <em>before</em> the dex step. But hold on: the JAR file already has the <code>.properties</code> files in it! I updated the <code>.jar</code> to have multiple copies of <code>JGitText.properties</code> with different suffixes for locales. Even if working with a single <code>JGitText.properties</code> file, it should already be present in the JAR, but the AI thinks it's not. Even after telling that the files exist in the JAR, it still prints the previous unhelpful output.
+  </p>
+  <p>
+    At the end, I got to work. The fix was much simpler: I copied the <code>.properties</code> files in the JAR <em>with the parent directories</em>, to the root of my project, and put in under a folder called <code>properties</code>. Just appending the newly-created <code>properties</code> directory path to <code>aapt</code> made it work. Unzipping the APK, I could now see the <code>org/eclipse/jgit/internal</code> directory with the <code>.properties</code> files inside. 
+  </p>
+</article>
+</body>
+</html>

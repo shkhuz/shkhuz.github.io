@@ -3,7 +3,7 @@
 This is a single-file OpenGL "hello world" boilerplate implementation. It
 assumes that SDL and GLEW are already installed.
 
-```cpp
+```cpp(sdl2-opengl.cpp)
 #include <GL/glew.h>
 #include <SDL2/SDL.h>
 #include <stdio.h>
@@ -189,7 +189,7 @@ int main() {
     SDL_Quit();
     return 0;
 }
-```sdl2-opengl.cpp
+```
 
 Compile with:
 

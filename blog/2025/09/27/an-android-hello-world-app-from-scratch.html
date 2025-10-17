@@ -1,0 +1,320 @@
+<!DOCTYPE html>
+<html lang='en'>
+<head>
+<meta charset='utf-8'>
+<meta name='viewport' content='width=device-width, initial-scale=1'>
+
+<title></title>
+<link rel='apple-touch-icon' sizes='180x180' href='/assets/apple-touch-icon.png'>
+<link rel='icon' type='image/png' sizes='32x32' href='/assets/favicon-32x32.png'>
+<link rel='icon' type='image/png' sizes='16x16' href='/assets/favicon-16x16.png'>
+<link rel='manifest' href='/assets/site.webmanifest'>
+<link rel='stylesheet' href='/style.css'>
+
+<!-- Google tag (gtag.js) -->
+<script async src='https://www.googletagmanager.com/gtag/js?id=G-QQS3D5BETB'></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'G-QQS3D5BETB');
+</script>
+
+<script data-host='https://microanalytics.io' data-dnt='false' src='https://microanalytics.io/js/script.js' id='ZwSg9rf6GA' async defer></script>
+
+<script id='MathJax-script' async src='https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js'></script>
+
+<script>
+(function() {
+  var h, a, f;
+  a = document.getElementsByTagName('link');
+  for (h = 0; h < a.length; h++) {
+    f = a[h];
+    if (f.rel.toLowerCase().match(/stylesheet/) && f.href) {
+      var g = f.href.replace(/(&|\?)rnd=\d+/, '');
+      f.href = g + (g.match(/\?/) ? '&' : '?');
+      f.href += 'rnd=' + (new Date().valueOf());
+    }
+  } // for
+})()
+</script>
+
+</head>
+
+<body>
+<article>
+  <nav id='main-nav'>
+    <h1>
+      An Android Hello World App from Scratch
+    </h1>
+  </nav>
+  <p>
+    For quite some time now, I have wanted to create a Java Android app entirely from scratch--without using build systems like Gradle or an IDE. Why?
+  </p>
+  <ol>
+    <li>
+      An empty project in Android Studio takes up a significant amount of disk space--around 40-50MB--and contains nearly 1,000 files. That’s quite overwhelming.
+    </li>
+    <li>
+      To truly understand how a system works, one must learn to build it from first principles. 
+    </li>
+  </ol>
+  <p>
+    I have a <em>very</em> strong dislike for Gradle, so this project will serve as a template for bootstrapping other Android projects. I can't emphasize enough how much I dislike it when people overcomplicate simple things.
+  </p>
+  <p>
+    A Hello World program written in C is perhaps the very definition of simple--everyone has written it at least once--even arts graduates who picked up C in their college's optional CS classes.
+  </p>
+  <pre class='lang-c'><code>#include &lt;stdio.h&gt;
+
+int main(void) {
+    printf("Hello world!");
+}</code></pre>
+  <p>
+    Now that is <em>simple</em>. It can be compiled into an executable using the system C compiler:
+  </p>
+  <pre class='lang-console'><code>$ cc main.c
+$ ./a.out
+Hello world!</code></pre>
+  <p>
+    Below is a diagram illustrating the process pipeline:
+  </p>
+  <p>
+    <img src='c_build_process.svg' alt=''>
+  </p>
+  <p>
+    In this case, the frontend C compiler abstracts the linking step of the executable. In reality, the frontend creates an object file and then uses a linker to combine it into an executable. The actual process looks something like this:
+  </p>
+  <p>
+    <img src='c_build_process_long.svg' alt=''>
+  </p>
+  <aside>
+    <p>
+      The process shown uses dynamic linking (which is the default in Linux) to link the standard C library (libc) and other shared libraries into the final output. In contrast, static linking does not require the dynamic linker (such as <code>ld-linux</code>) because the libraries are already included in the executable.
+    </p>
+  </aside>
+  <p>
+    Building a Hello World app for Android requires considerably more steps than the familiar C counterpart. These steps are done by Android Studio automatically when the "New Project" and "Run" buttons are pressed. Doing them by hand will not only scratch the itch the developers have to do everything by hand, but also help us understand what tools and files are necessary (and what aren't) to build an app.
+  </p>
+  <h2>
+    Setting Up the Build Environment
+  </h2>
+  <aside>
+    <p>
+      This file assumes that you're on Linux. If you are using another operating system (like Windows or macOS), the first thing you'll want to do is <em>drill a hole in your SSD</em>.
+    </p>
+  </aside>
+  <p>
+    We will need the JDK (Java Development Kit) to build apps for Android. The quickest way to get it is by using the distro package manager. Use any of <code>apt</code>, <code>pacman</code>, <code>yay</code>, <code>yum</code>, <code>dnf</code>, <code>nix-shell</code>, etc.
+  </p>
+  <p>
+    We'll also want the Android SDK installed. We just need the command-line utilities to build the app, so we only download the Android Commandline Tools, which can be found <a href='https://developer.android.com/studio/index.html#command-line-tools-only'>here</a>. 
+  </p>
+  <p>
+    We create a directory for the SDK:
+  </p>
+  <pre class='lang-console'><code>$ mkdir ~/android_sdk
+$ SDK=~/android_sdk
+$ cd $SDK</code></pre>
+  <p>
+    And download the cmdline-tools into that directory. <code>sdkmanager</code> is used to download the required tools and components for the target platform version.
+  </p>
+  <pre class='lang-console'><code>$ curl -LO https://dl.google.com/android/repository/commandlinetools-linux-11076708_latest.zip
+$ unzip -q commandlinetools-linux-11076708_latest.zip -d "$SDK"
+$ "$SDK/cmdline-tools/bin/sdkmanager" --sdk_root="$SDK" --install \
+      "platforms;android-34" "build-tools;34.0.0" "platform-tools" "ndk;26.2.11394342"</code></pre>
+  <p>
+    If for some reason <code>sdkmanager</code> is not to be used, we can also download the components manually. We'll need <code>build-tools</code> for <code>aapt</code>, <code>d8</code>, etc, <code>platform-tools</code> for <code>adb</code> and an Android platform to target. We can skip downloading <code>cmdline-tools</code> if we are downloading everything manually.
+  </p>
+  <pre class='lang-console'><code>$ curl -LO https://dl.google.com/android/repository/build-tools_r34-linux.zip
+$ mkdir "$SDK/build-tools"
+$ unzip -q build-tools_r34-linux.zip -d "$SDK/build-tools"
+$ mv "$SDK/build-tools/android-14" "$SDK/build-tools/34.0.0"
+
+$ curl -LO https://dl.google.com/android/repository/platform-34-ext7_r02.zip
+$ mkdir "$SDK/platforms"
+$ unzip -q platform-34-ext7_r02.zip -d "$SDK/platforms"
+
+$ curl -LO https://dl.google.com/android/repository/platform-tools_r34.0.5-linux.zip
+$ unzip -q platform-tools_r34.0.5-linux.zip -d "$SDK"</code></pre>
+  <p>
+    After downloading and unpacking everything, we set some variables for the different directories inside the SDK:
+  </p>
+  <pre class='lang-console'><code>$ BUILD_TOOLS="$SDK/build-tools/34.0.0"
+$ PLATFORM="$SDK/platforms/android-34"
+$ PLATFORM_TOOLS="$SDK/platform-tools"</code></pre>
+  <h2>
+    Hello, world!
+  </h2>
+  <p>
+    To create an app, we need GUI elements. We create a <code>TextView</code> for the text, and a <code>LinearLayout</code> parent to position it. Save this in <code>res/layout/activity_main.xml</code>:
+  </p>
+  <pre class='lang-xml'><code>&lt;?xml version="1.0" encoding="utf-8"?&gt;
+&lt;LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:gravity="center"
+    android:orientation="vertical"&gt;
+
+    &lt;TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/my_text"/&gt;
+&lt;/LinearLayout&gt;</code></pre>
+  <div class='code-snippet-filename'>res/layout/activity_main.xml</div>
+  <p>
+    Next up is <code>java/com/shkhuz/hello/MainActivity.java</code>. It's the entry point of the app, and in this small example is responsible for the behaviour of the <code>TextView</code>. 
+  </p>
+  <pre class='lang-java'><code>package com.shkhuz.hello;
+
+import android.app.Activity;
+import android.os.Bundle;
+import android.widget.TextView;
+
+public class MainActivity extends Activity {
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_main);
+
+        TextView text = (TextView)findViewById(R.id.my_text);
+        text.setText("Hello, world!");
+    }
+}</code></pre>
+  <div class='code-snippet-filename'>java/com/shkhuz/hello/MainActivity.java</div>
+  <p>
+    Android requires an app manifest (<code>AndroidManifest.xml</code>) at the root of the APK. It specifies the name of the app, the target platform version, permissions for various Android components, etc. The entry point (<code>MainActivity</code>) is also specified here.
+  </p>
+  <pre class='lang-xml'><code>&lt;?xml version="1.0" encoding="utf-8"?&gt;
+&lt;manifest xmlns:android="http://schemas.android.com/apk/res/android"
+          package="com.shkhuz.hello"
+          versionCode="1"
+          versionName="0.1"&gt;
+    &lt;uses-sdk android:minSdkVersion="32"/&gt;
+    &lt;application android:label="Hello, world!"&gt;
+        &lt;activity android:name=".MainActivity" android:exported="true"&gt;
+            &lt;intent-filter&gt;
+                &lt;action android:name="android.intent.action.MAIN"/&gt;
+                &lt;category android:name="android.intent.category.LAUNCHER"/&gt;
+            &lt;/intent-filter&gt;
+        &lt;/activity&gt;
+    &lt;/application&gt;
+&lt;/manifest&gt;</code></pre>
+  <div class='code-snippet-filename'>AndroidManifest.xml</div>
+  <h2>
+    Building
+  </h2>
+  <p>
+    We create some directories to store build artifacts:
+  </p>
+  <pre class='lang-console'><code>$ mkdir -p build/gen build/obj build/apk</code></pre>
+  <p>
+    First we need to generate <code>R.java</code>, which is used to refer to resources like <code>R.id.my_text</code> from Java. We use the Android Asset Packaging Tool (<code>aapt</code>) for this:
+  </p>
+  <pre class='lang-console'><code>$ "$BUILD_TOOLS/aapt" package -f -m -J build/gen/ -S res \
+      -M AndroidManifest.xml -I "$PLATFORM/android.jar"</code></pre>
+  <p>
+    This creates <code>build/gen/com/shkhuz/hello/R.java</code>. The flags are:
+  </p>
+  <ul>
+    <li>
+      <code>-f</code> to force overwrite existing,
+    </li>
+    <li>
+      <code>-m</code> to create package directories under output directory,
+    </li>
+    <li>
+      <code>-J</code> to generate <code>R.java</code> and set output directory,
+    </li>
+    <li>
+      <code>-S</code> to specify resources directory,
+    </li>
+    <li>
+      <code>-M</code> to specify the manifest, and
+    </li>
+    <li>
+      <code>-I</code> to use the platform jar as an "include file".
+    </li>
+  </ul>
+  <p>
+    Now we finally compile all our Java code, using <code>javac</code>:
+  </p>
+  <pre class='lang-console'><code>$ javac --release 11 -classpath "$PLATFORM/android.jar" -d build/obj \
+      build/gen/com/shkhuz/hello/R.java java/com/shkhuz/hello/MainActivity.java</code></pre>
+  <p>
+    This generates <code>.class</code> files with JVM bytecode. To run on Android devices, these need to be translated to <a href='https://en.wikipedia.org/wiki/Dalvik_%28software%29'>Dalvik</a> bytecode. Using <code>d8</code>:
+  </p>
+  <pre class='lang-console'><code>$ "$BUILD_TOOLS/d8" --release --lib "$PLATFORM/android.jar" \
+      --output build/apk/ build/obj/com/shkhuz/hello/*.class</code></pre>
+  <p>
+    We then package the contents of the <code>build/apk/</code> directory together with the manifest and resources into an Android Application Package (APK) file, again using the <code>aapt</code> tool:
+  </p>
+  <pre class='lang-console'><code>$ "$BUILD_TOOLS/aapt" package -f -M AndroidManifest.xml -S res/ \
+      -I "$PLATFORM/android.jar" \
+      -F build/hello.unsigned.apk build/apk/</code></pre>
+  <p>
+    Again, the command-line options are:
+  </p>
+  <ul>
+    <li>
+      <code>-f</code> to force overwrite,
+    </li>
+    <li>
+      <code>-M</code> to specify manifest,
+    </li>
+    <li>
+      <code>-S</code> to specify resources directory,
+    </li>
+    <li>
+      <code>-I</code> to refer to platform jar, and
+    </li>
+    <li>
+      <code>-F</code> to generate APK.
+    </li>
+  </ul>
+  <p>
+    An APK isn’t ready to run on a device right after it’s built. It has to be signed first: even debug builds won’t install without a signature. And if the goal is to eventually publish it on the Play Store, it also needs to go through zipalign'ment.
+  </p>
+  <p>
+    <code>zipalign</code> basically tidies up the APK by lining up uncompressed files on 4-byte boundaries and putting native libraries on page boundaries. 
+  </p>
+  <pre class='lang-console'><code>$ "$BUILD_TOOLS/zipalign" -f -p 4 \
+      build/hello.unsigned.apk build/hello.aligned.apk</code></pre>
+  <p>
+    Signing requires a key store and key. We use <code>keytool</code> to create one:
+  </p>
+  <pre class='lang-console'><code>$ keytool -genkeypair -keystore keystore.jks -alias androidkey \
+      -validity 10000 -keyalg RSA -keysize 2048 \
+      -storepass android -keypass android
+What is your first and last name?
+  [Unknown]:
+What is the name of your organizational unit?
+  [Unknown]:
+What is the name of your organization?
+  [Unknown]:
+What is the name of your City or Locality?
+  [Unknown]:
+What is the name of your State or Province?
+  [Unknown]:
+What is the two-letter country code for this unit?
+  [Unknown]:
+Is CN=Unknown, OU=Unknown, O=Unknown, L=Unknown, ST=Unknown, C=Unknown correct?
+  [no]:  yes</code></pre>
+  <p>
+    And use that key to sign our APK using <code>apksigner</code>:
+  </p>
+  <pre class='lang-console'><code>$ "$BUILD_TOOLS/apksigner" sign --ks keystore.jks \
+      --ks-key-alias androidkey --ks-pass pass:android \
+      --key-pass pass:android --out build/hello.apk \
+      build/hello.aligned.apk</code></pre>
+  <p>
+    Done! We successfully created an APK manually without that pesky <code>gradle</code>! The diagram below illustrates the whole process:
+  </p>
+  <p>
+    <img src='apk_build_process.svg' alt=''>
+  </p>
+</article>
+</body>
+</html>

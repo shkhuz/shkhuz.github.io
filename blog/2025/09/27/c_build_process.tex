@@ -1,0 +1,29 @@
+\documentclass[tikz,border={20pt 5pt}]{standalone}
+\usetikzlibrary{arrows,positioning, calc}
+
+\begin{document}
+\begin{tikzpicture}[
+    node/.style={draw, minimum width=10mm, minimum height=0.5cm, align=center},
+    ->, >=angle 60,font=\ttfamily, node distance = 8mm, draw=white, text=white
+]
+
+% Nodes
+\node (mainc) {main.c};
+\node[node,right=of mainc] (cc) {cc};
+\node[right=of cc] (aout) {a.out};
+
+% Arrows with outputs as labels
+\draw (mainc) -- (cc);
+\draw (cc) -- (aout);
+
+\path let \p1 = (current bounding box.south west),
+          \p2 = (current bounding box.north east)
+      in coordinate (bbSW) at (\x1,\y1)
+         coordinate (bbNE) at (\x2,\y2);
+
+\pgfresetboundingbox
+\path[use as bounding box]
+  ($(bbSW)+(0mm,0mm)$) rectangle ($(bbNE)+(0mm,0mm)$);
+
+\end{tikzpicture}
+\end{document}
