@@ -1,0 +1,202 @@
+{
+  "main": {
+    "id": "1e6ef79abad9d900",
+    "type": "split",
+    "children": [
+      {
+        "id": "b08b881c397d1dba",
+        "type": "tabs",
+        "children": [
+          {
+            "id": "00d2510e115ee65e",
+            "type": "leaf",
+            "state": {
+              "type": "diff-view",
+              "state": {
+                "aFile": "aria/index.md",
+                "bFile": "aria/index.md",
+                "aRef": ""
+              },
+              "icon": "git-pull-request",
+              "title": "Diff: index"
+            }
+          }
+        ]
+      }
+    ],
+    "direction": "vertical"
+  },
+  "left": {
+    "id": "93ca333e3663c810",
+    "type": "mobile-drawer",
+    "children": [
+      {
+        "id": "74e20b33cc62cac5",
+        "type": "leaf",
+        "state": {
+          "type": "file-explorer",
+          "state": {
+            "sortOrder": "alphabetical",
+            "autoReveal": false
+          },
+          "icon": "lucide-folder-closed",
+          "title": "Files"
+        }
+      },
+      {
+        "id": "2d03f54e5bdd99fd",
+        "type": "leaf",
+        "state": {
+          "type": "search",
+          "state": {
+            "query": "",
+            "matchingCase": false,
+            "explainSearch": false,
+            "collapseAll": false,
+            "extraContext": false,
+            "sortOrder": "alphabetical"
+          },
+          "icon": "lucide-search",
+          "title": "Search"
+        }
+      },
+      {
+        "id": "71e44290f9ebfe66",
+        "type": "leaf",
+        "state": {
+          "type": "tag",
+          "state": {
+            "sortOrder": "frequency",
+            "useHierarchy": true,
+            "showSearch": false,
+            "searchQuery": ""
+          },
+          "icon": "lucide-tags",
+          "title": "Tags"
+        }
+      },
+      {
+        "id": "fd3ab6beb4bc0f99",
+        "type": "leaf",
+        "state": {
+          "type": "bookmarks",
+          "state": {},
+          "icon": "lucide-bookmark",
+          "title": "Bookmarks"
+        }
+      }
+    ],
+    "currentTab": 0
+  },
+  "right": {
+    "id": "e256d942fbc7f5ab",
+    "type": "mobile-drawer",
+    "children": [
+      {
+        "id": "4b1f4b8d4079948c",
+        "type": "leaf",
+        "state": {
+          "type": "backlink",
+          "state": {
+            "collapseAll": false,
+            "extraContext": false,
+            "sortOrder": "alphabetical",
+            "showSearch": false,
+            "searchQuery": "",
+            "backlinkCollapsed": false,
+            "unlinkedCollapsed": true
+          },
+          "icon": "links-coming-in",
+          "title": "Backlinks"
+        }
+      },
+      {
+        "id": "6eb338433861fbe9",
+        "type": "leaf",
+        "state": {
+          "type": "outgoing-link",
+          "state": {
+            "linksCollapsed": false,
+            "unlinkedCollapsed": true
+          },
+          "icon": "links-going-out",
+          "title": "Outgoing links"
+        }
+      },
+      {
+        "id": "554bb3c0a78e18ac",
+        "type": "leaf",
+        "state": {
+          "type": "outline",
+          "state": {
+            "followCursor": false,
+            "showSearch": false,
+            "searchQuery": ""
+          },
+          "icon": "lucide-list",
+          "title": "Outline"
+        }
+      },
+      {
+        "id": "b0397f0be2e2af1b",
+        "type": "leaf",
+        "state": {
+          "type": "git-view",
+          "state": {},
+          "icon": "git-pull-request",
+          "title": "Source Control"
+        }
+      }
+    ],
+    "currentTab": 3
+  },
+  "left-ribbon": {
+    "hiddenItems": {
+      "switcher:Open quick switcher": false,
+      "graph:Open graph view": false,
+      "canvas:Create new canvas": false,
+      "daily-notes:Open today's daily note": false,
+      "templates:Insert template": false,
+      "command-palette:Open command palette": false,
+      "bases:Create new base": false,
+      "obsidian-git:Open Git source control": false
+    }
+  },
+  "active": "00d2510e115ee65e",
+  "lastOpenFiles": [
+    "aria/index.md",
+    "workspace.md",
+    "workspace.html",
+    "toc-only.html5",
+    "style.css",
+    "starfield/style.css",
+    "starfield/starfield.js",
+    "starfield/index.html",
+    "site_compiler/src/Use.java",
+    "site_compiler/src/Token.java",
+    "site_compiler/src/TKind.java",
+    "site_compiler/src/StreamingMarkdownParser.java",
+    "site_compiler/inline_test.md",
+    "site_compiler/index.md",
+    "site_compiler/blog/2023/09/23/hello.md",
+    "mental_math_src/public/logo512.png",
+    "mental_math_src/public/logo192.png",
+    "mental_math_src/README.md",
+    "mental_math/logo512.png",
+    "mental_math/logo192.png",
+    "index.md",
+    "hed/index.md",
+    "blog/diary/index.md",
+    "blog/diary/20251013001.jpg",
+    "blog/2025/09/27/c_build_process_long.svg",
+    "blog/2025/09/27/c_build_process.svg",
+    "blog/2025/09/27/apk_build_process.svg",
+    "blog/2025/09/27/an-android-hello-world-app-from-scratch.md",
+    "blog/2025/09/06/the-java-properties-file-fiasco.md",
+    "blog/2024/05/20/opengl3-boilerplate-result.png",
+    "blog/2024/05/20/opengl3-boilerplate-code.md",
+    "assets/favicon-32x32.png",
+    "aria/doc/index.md",
+    "abascia/index.md"
+  ]
+}
