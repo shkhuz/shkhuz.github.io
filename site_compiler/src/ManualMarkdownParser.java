@@ -83,15 +83,16 @@ public class ManualMarkdownParser {
 
     public void convertAndOutput(String filePath) throws IOException {
         try {
+            Path f = Paths.get(filePath).normalize();
             String markdown = readFile(filePath);
-            if (filePath.equals("index.md")) {
+            if (f.compareTo(Paths.get("index.md")) == 0) {
                 markdown += buildBlogIndex();
             }
             Lexer l = new Lexer(markdown);
             List<Token> tokens = l.lex();
             Parser p = new Parser(tokens, l.indentsList);
             Node root = p.parse();
-            Renderer r = new Renderer(root);
+            Renderer r = new Renderer(f, root);
             String html = r.render();
             // String html = "";
             System.out.println(html);

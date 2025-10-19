@@ -6,8 +6,11 @@ import java.util.ArrayList;
 public class Renderer {
     StringBuilder out = new StringBuilder();
     Node root;
+    Path filePath;
+    Path indexPath = Paths.get("index.md");
 
-    public Renderer(Node root) {
+    public Renderer(Path filePath, Node root) {
+        this.filePath = filePath;
         this.root = root;
     }
 
@@ -79,6 +82,9 @@ public class Renderer {
         else if (node instanceof HeadingNode) {
             HeadingNode h = (HeadingNode) node;
             out.append("\n" + pad + "<h" + h.level + ">");
+            if (h.level == 1 && filePath.compareTo(indexPath) != 0) {
+                out.append("<a href='/'>~/</a> ");
+            }
             for (int i = 0; i < h.children.size(); i++) {
                 renderNode(h.children.get(i), i == 0 ? node : h.children.get(i-1), indent + 1);
             }
