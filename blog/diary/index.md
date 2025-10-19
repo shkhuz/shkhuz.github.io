@@ -1,3 +1,15 @@
+## 18.10.25
+
+When I distro-hopped from Arch to NixOS about two months ago, for fun I also changed my WM from openbox to qtile. I last used a tiling WM about two years ago (dwm from suckless) and migrated to openbox then 'cuz I didn't appreciate the philosophy. I've now used qtile for about two months, and I'm going back to openbox.
+
+Why? tmux. I mainly switched to qtile because I needed a quick way to position my terminals without having to use the mouse again and again. Now that I'm multiplexing terminals under a single window, I frankly have no use for a tiling WM any more. 
+
+Why didn't I use tmux before? I did. Roughly about ~3-4 years ago. I just dipped my toes in to see what's so special. But at that time I was using Emacs as my main editor and most of my workflow didn't require a separate terminal -- Emacs had it all (compiling, gitting, searching, etc). Now that I use vim (after a brief stunt using my own editor), I require 2-4 terminals at any time so using tmux is a no-brainer.
+
+Of course, I also changed some things along with the WM. qtile had it's own status bar and openbox does not, so I reinstalled tint2. For notifications, I use dunst with notify-send (libnotify). 
+
+There is a subtle bug where when I download something from firefox and click the button to open the containing folder, it opens the terminal emulator, not the file manager (PCManFM). Yet when I start the file manager beforehand and then click the button in firefox, it correcly opens in it. I'll have to look into it.
+
 ## 14.10.25
 
 To even begin reading Spivak's Calculus, I need to have a few prerequisites under my belt:
@@ -26,4 +38,29 @@ One of the ways pitch recognition can be done without being born with it, is to 
 
 Also, about a week ago I came across a really cool vector calculus problem solution, thought I'd share it here:
 
-![](20250929001.jpg)
+$$\text{Prove that }\nabla^2 f(r) = \frac{d^2 f}{dr^2} + \frac{2}{r} \frac{df}{dr}$$
+
+Conventions used: \(\vec{r} = \) vector and \(r = \) magnitude of \(\vec{r}\).
+
+$$\begin{align*}
+y &= \text{LHS}\\ 
+  &= \nabla^2 f(r)\\
+  &= \nabla \cdot \nabla(f(r))\\
+  &= \nabla \cdot [f'(r)\nabla(r)]\\
+  &= \nabla \cdot \left[f'(r)\frac{\vec{r}}{r}\right]\\
+  &= f'(r)\nabla \cdot \left[\frac{\vec{r}}{r}\right] + \frac{\vec{r}}{r}\cdot
+     \nabla f'(r)\\
+  &= f'(r)\frac{r\nabla \cdot \vec{r} - \vec{r}\cdot \nabla r}{r^2} + \frac{\vec{r}}{r} \cdot \left( f''(r)\frac{\vec{r}}{r} \right)
+\end{align*}$$
+
+Same as the first step:
+
+$$\begin{align*}
+y &= f'(r) \frac{r \cdot 3 - \vec{r} \cdot \frac{\vec{r}}{r}}{r^2} + \frac{r^2}{r^2} f''(r)\\
+  &= f'(r) \cdot 2 \frac{r}{r^2} + f''(r)\\
+  &= f''(r) + \frac{2}{r} f'(r)\\
+  &= \text{RHS}
+\end{align*}$$
+
+QED.
+

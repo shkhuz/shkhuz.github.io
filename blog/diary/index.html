@@ -91,8 +91,31 @@
   <p>
     Also, about a week ago I came across a really cool vector calculus problem solution, thought I'd share it here:
   </p>
+  $$\text{Prove that }\nabla^2 f(r) = \frac{d^2 f}{dr^2} + \frac{2}{r} \frac{df}{dr}$$
   <p>
-    <img src='20250929001.jpg' alt=''>
+    Conventions used: \(\vec{r} = \) vector and \(r = \) magnitude of \(\vec{r}\).
+  </p>
+  $$\begin{align*}
+y &= \text{LHS}\\ 
+  &= \nabla^2 f(r)\\
+  &= \nabla \cdot \nabla(f(r))\\
+  &= \nabla \cdot [f'(r)\nabla(r)]\\
+  &= \nabla \cdot \left[f'(r)\frac{\vec{r}}{r}\right]\\
+  &= f'(r)\nabla \cdot \left[\frac{\vec{r}}{r}\right] + \frac{\vec{r}}{r}\cdot
+     \nabla f'(r)\\
+  &= f'(r)\frac{r\nabla \cdot \vec{r} - \vec{r}\cdot \nabla r}{r^2} + \frac{\vec{r}}{r} \cdot \left( f''(r)\frac{\vec{r}}{r} \right)
+\end{align*}$$
+  <p>
+    Same as the first step:
+  </p>
+  $$\begin{align*}
+y &= f'(r) \frac{r \cdot 3 - \vec{r} \cdot \frac{\vec{r}}{r}}{r^2} + \frac{r^2}{r^2} f''(r)\\
+  &= f'(r) \cdot 2 \frac{r}{r^2} + f''(r)\\
+  &= f''(r) + \frac{2}{r} f'(r)\\
+  &= \text{RHS}
+\end{align*}$$
+  <p>
+    QED.
   </p>
 </article>
 </body>

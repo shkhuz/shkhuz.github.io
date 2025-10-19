@@ -148,7 +148,7 @@ public class ManualMarkdownParser {
             .replace(File.separatorChar, '/')
             .replace(".md", ".html");
         
-        return String.format("- %s: [%s](%s)%n", date, title, link);
+        return String.format("- <span class='blog-entry-date'>%s</span> [%s](%s)%n", date, title, link);
     }
 
     private String extractDateString(Path blogDir, Path file) {
