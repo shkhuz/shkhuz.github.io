@@ -173,6 +173,11 @@ ul p {
 /*     margin: 1em 0; */
 /* } */
 
+mjx-container {
+    overflow-x: auto;
+    overflow-y: hidden;
+}
+
 .blog-entry-date {
     font-size: 0.8em;
     color: #999;

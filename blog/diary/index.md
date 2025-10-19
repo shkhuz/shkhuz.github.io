@@ -50,13 +50,15 @@ y &= \text{LHS}\\
   &= \nabla \cdot \left[f'(r)\frac{\vec{r}}{r}\right]\\
   &= f'(r)\nabla \cdot \left[\frac{\vec{r}}{r}\right] + \frac{\vec{r}}{r}\cdot
      \nabla f'(r)\\
-  &= f'(r)\frac{r\nabla \cdot \vec{r} - \vec{r}\cdot \nabla r}{r^2} + \frac{\vec{r}}{r} \cdot \left( f''(r)\frac{\vec{r}}{r} \right)
+  &= f'(r)\frac{r\nabla \cdot \vec{r} - \vec{r}\cdot \nabla r}{r^2} \\
+  &\quad+ \frac{\vec{r}}{r} \cdot \left( f''(r)\frac{\vec{r}}{r} \right)
 \end{align*}$$
 
 Same as the first step:
 
 $$\begin{align*}
-y &= f'(r) \frac{r \cdot 3 - \vec{r} \cdot \frac{\vec{r}}{r}}{r^2} + \frac{r^2}{r^2} f''(r)\\
+y &= f'(r) \frac{r \cdot 3 - \vec{r} \cdot \frac{\vec{r}}{r}}{r^2} 
+    + \frac{r^2}{r^2} f''(r)\\
   &= f'(r) \cdot 2 \frac{r}{r^2} + f''(r)\\
   &= f''(r) + \frac{2}{r} f'(r)\\
   &= \text{RHS}
