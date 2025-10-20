@@ -1,3 +1,13 @@
+## 20.10.25
+
+'How Do Aircraft Systems Communicate?'. It's been a while since I got a Ben Eater video recommended in my YT feed. Aha! I totally forgot about designing my own 8-bit "Computer" back when I blazed through his breadboard computer videos! 
+
+After seeing his SAP-1 Simple As Possible computer come to life, I too wanted to learn how to make one on my own. Cut to today, when I once again revisited his videos -- and most importantly -- found another great resource for learning this stuff: Sebastian Lague. I followed him from back when he participated in Ludum Dare jams and have ever since.
+
+Lague's videos on his Logic Simulator and his process of building different components of a computer were frankly one of the best on the internet. Even though I knew most of what he explained from Eater, his "why" approach where he first comes up with the easiest solutions and refines it so as to make us understand the reasons better, were so satisfying to watch -- he really has a knack for teaching stuff so effortlessly. 
+
+Seeing his simulator work, I wondered how much work would it take to make something like that in C with just SDL/raylib. So I setup a hello-world raylib project with a 2D camera and some zooming/panning. Tomorrow I'll work on the graphics side for a bit before starting on the main simulator code. 
+
 ## 18.10.25
 
 When I distro-hopped from Arch to NixOS about two months ago, for fun I also changed my WM from openbox to qtile. I last used a tiling WM about two years ago (dwm from suckless) and migrated to openbox then 'cuz I didn't appreciate the philosophy. I've now used qtile for about two months, and I'm going back to openbox.
