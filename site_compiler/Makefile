@@ -6,11 +6,11 @@ $(STAMP): $(JAVA_FILES)
 	javac -g --release 11 -Xlint:unchecked -d classes $^
 	touch $(STAMP)
 
-run: $(STAMP) index.md
-	java -classpath classes Use index.md
+run: $(STAMP) test.md
+	java -classpath classes Use test.md
 
-debug: $(STAMP)
-	jdb -classpath classes -sourcepath . Use index.md
+debug: $(STAMP) test.md
+	jdb -classpath classes -sourcepath . Use test.md
 
 clean: 
 	rm -rf classes
