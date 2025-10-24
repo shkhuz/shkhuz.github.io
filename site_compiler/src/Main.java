@@ -3,7 +3,7 @@ import java.nio.file.*;
 import java.util.*;
 import java.util.regex.Pattern;
 
-public class ManualMarkdownParser {
+public class Main {
     private StringBuilder out = new StringBuilder();
     public String title;
 
@@ -90,7 +90,7 @@ public class ManualMarkdownParser {
             }
             Lexer l = new Lexer(markdown);
             List<Token> tokens = l.lex();
-            Parser p = new Parser(tokens, l.indentsList);
+            Parser p = new Parser(markdown, tokens, l.indentsList, l.newlineList);
             Node root = p.parse();
             Renderer r = new Renderer(f, root);
             String html = r.render();

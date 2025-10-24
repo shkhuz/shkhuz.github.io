@@ -8,12 +8,21 @@ import java.util.ArrayDeque;
 public class Parser {
     int current = 0;
     int prev = 0;
+    String srcfile;
     List<Token> tokens;
     List<Integer> indentsList;
+    List<Integer> newlineList;
 
-    public Parser(List<Token> tokens, List<Integer> indentsList) {
+    public Parser(
+            String srcfile, 
+            List<Token> tokens, 
+            List<Integer> indentsList, 
+            List<Integer> newlineList
+    ) {
+        this.srcfile = srcfile;
         this.tokens = tokens;
         this.indentsList = indentsList;
+        this.newlineList = newlineList;
     }
 
     private Token at(int idx) {
@@ -250,6 +259,23 @@ public class Parser {
         return new PreblockNode(lang, wrap, t.lexeme, filepath);
     }
 
+    private Node parseIndentedPreblock() {
+        StringBuilder code = new StringBuilder();
+        while (at() != null) {
+            Token t = at();
+            advance();
+            if (t.indent == -1) continue;
+            if (t.indent >= 4) {
+                int prevNlOffset = t.line == 1 ? 4 : newlineList.get(t.line-1)+4 + 1; 
+                int curNlOffset = newlineList.get(t.line)+1;  
+                code.append(srcfile.substring(prevNlOffset, curNlOffset));
+            }
+            else break;
+        }
+        while (match(TKind.newline)) {}
+        return new PreblockNode(null, false, code.toString(), null);
+    }
+
     private Node parseMathblock() {
         Token t = at();
         advance();
@@ -275,10 +301,11 @@ public class Parser {
         // code to skip nl should it's responsibility, not parseBlock().
         Token t = at();
         if (t.kind == TKind.pound) return parseHeading();
-        else if (t.kind.isListMarker()) return parseList();
+        else if (t.kind.isListMarker() && t.indent == 0) return parseList();
         else if (t.kind == TKind.preblock) return parsePreblock();
         else if (t.kind == TKind.mathblock) return parseMathblock();
         else if (t.kind == TKind.lbrack3) return parseAside();
+        else if (t.indent >= 4) return parseIndentedPreblock();
         else return parseParagraph();
     }
 

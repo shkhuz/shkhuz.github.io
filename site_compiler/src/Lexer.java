@@ -20,6 +20,8 @@ public class Lexer {
 
     // Indentation of every line.
     public List<Integer> indentsList = new ArrayList<>();
+    // Offset in srcfile for every newline.
+    public List<Integer> newlineList = new ArrayList<>();
     int indent = 0;
     boolean indentAvail = false;
 
@@ -30,6 +32,8 @@ public class Lexer {
         this.srcfile = srcfile;
         // First line ALWAYS is at indentation 0.
         indentsList.add(0);
+        // 0th index has no newline. Lines start from 1.
+        newlineList.add(-1);
     }
 
     private boolean isWhitespace(char c) {
@@ -383,6 +387,7 @@ public class Lexer {
 
                 case '\n': {
                     fin(); 
+                    newlineList.add(current);
                     current++; 
                     appendTok(TKind.newline, 1); 
                     line++;

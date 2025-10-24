@@ -44,3 +44,11 @@ $$
 this is a para
 
 ## this is a heading
+
+    - comment
+    int main() {
+        return 0;
+    }
+    - nice
+
+it returns!

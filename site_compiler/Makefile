@@ -6,7 +6,7 @@ $(STAMP): $(JAVA_FILES)
 	javac -g --release 11 -Xlint:unchecked -d classes $^
 	touch $(STAMP)
 
-run: $(STAMP)
+run: $(STAMP) index.md
 	java -classpath classes Use index.md
 
 debug: $(STAMP)
