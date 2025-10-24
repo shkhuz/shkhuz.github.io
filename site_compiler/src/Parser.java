@@ -263,9 +263,12 @@ public class Parser {
         StringBuilder code = new StringBuilder();
         while (at() != null) {
             Token t = at();
-            advance();
-            if (t.indent == -1) continue;
+            if (t.indent == -1) {
+                advance();
+                continue;
+            }
             if (t.indent >= 4) {
+                advance();
                 int prevNlOffset = t.line == 1 ? 4 : newlineList.get(t.line-1)+4 + 1; 
                 int curNlOffset = newlineList.get(t.line)+1;  
                 code.append(srcfile.substring(prevNlOffset, curNlOffset));
