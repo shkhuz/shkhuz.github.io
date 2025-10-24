@@ -102,9 +102,17 @@ mut sz = b.len;</code></pre>
   <pre><code>for (mut i = 0u8; i &lt; 10; i += 1) {}    // normal loop
 for (b; e) {}                           // iterating over slice
 for (b; *e) {}                          // iterating over slice with ptr
+for (b; *e, i) {}
 while (true) {}         
 while (a; n) {}                         // iterating while optional is 
                                         // not null</code></pre>
+  <h2>
+    Continue & Break
+  </h2>
+  <pre><code>for (a; n, i) {
+    if (i == 10) break;
+    else if (i == 15) continue;
+}</code></pre>
   <h2>
     If 
   </h2>
@@ -197,6 +205,17 @@ p();</code></pre>
     Built-in functions
   </h2>
   <pre><code>imm img = %embedFile("img.bmp");</code></pre>
+  <h2>
+    Compile-time code evaluation
+  </h2>
+  <pre><code>fn add(a: u32, b: u32) u32 {
+    return a + b;
+}
+
+mut a = 2u32;
+mut b = 3u32;
+// 'c' is known at compile-time
+mut c = eval add(a, b);</code></pre>
 </article>
 </body>
 </html>
