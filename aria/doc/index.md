@@ -52,9 +52,18 @@
     for (mut i = 0u8; i < 10; i += 1) {}    // normal loop
     for (b; e) {}                           // iterating over slice
     for (b; *e) {}                          // iterating over slice with ptr
+    for (b; *e, i) {}
     while (true) {}         
     while (a; n) {}                         // iterating while optional is 
                                             // not null
+
+## Continue & Break
+
+    for (a; n, i) {
+        if (i == 10) break;
+        else if (i == 15) continue;
+    }
+
 ## If 
 
     if (a) 1 else 0;
@@ -146,3 +155,14 @@
 ## Built-in functions
 
     imm img = %embedFile("img.bmp");
+
+## Compile-time code evaluation
+
+    fn add(a: u32, b: u32) u32 {
+        return a + b;
+    }
+    
+    mut a = 2u32;
+    mut b = 3u32;
+    // 'c' is known at compile-time
+    mut c = eval add(a, b);
