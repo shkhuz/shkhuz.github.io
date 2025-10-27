@@ -165,4 +165,5 @@
     mut a = 2u32;
     mut b = 3u32;
     // 'c' is known at compile-time
-    mut c = eval add(a, b);
+    mut c = ct add(a, b);
+    
