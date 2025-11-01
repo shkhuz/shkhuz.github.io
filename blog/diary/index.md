@@ -30,12 +30,6 @@ To even begin reading Spivak's Calculus, I need to have a few prerequisites unde
 
 Currently I'm working on finishing the 2nd part. Even though I'm in Semester III in my college which involves Calc III, I feel like we weren't taught stuff properly, which is why I'm relying on Paul's notes to get basics of Calc 2 and 3 out of the way so that I can move on to step 3. 
 
-## 13.10.25
-
-Our college student association planned a trip to Visapur, Lonavala for a hike to the Visapur Fort. I came back from the trip last night. It was a pretty cool 2-day excursion considering we have our endsems next month. Last I went hiking on a mountain was probably 7 years ago, so I was pretty certain I'd be half dead from exhaustion after the hike; but it wasn't so bad. 
-
-![](20251013001.jpg)
-
 ## 29.9.25
 
 On the first few lessons from the Udemy piano course. Before this I could play melodies with single hand without movement. Now the first full lesson incorporates some bass notes too. What helped me was to individually practice both hands until I'm fairly confident that I could play them without thinking too much. Then after however many tries, playing with both hands should be much easier.
