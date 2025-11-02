@@ -46,6 +46,7 @@
     --code-snippet-filename-primary-color: #777777;
     --code-snippet-filename-secondary-color: #666666;
     --aside-border-color: #444444;
+    --aside-bg-color: #1C1C1C;
 
     --code-string-color: #5fd7af;
     --code-aria-intrinsic-func-color: #add8e6;
@@ -135,10 +136,10 @@ figure {
 }
 
 img {
-  padding: 3px;
-  border: dashed 2px #555;
+  padding: 2px;
+  border: dashed 2px #444;
   display: block;
-  max-width: 70%;
+  max-width: 90%;
   width: auto;
   height: auto;
   max-height: 600px;
@@ -197,11 +198,11 @@ aside {
     font-size: 0.75em;
     margin: 1.4em auto;
     border: 1px solid var(--aside-border-color);
-    background-color: #1C1C1C;
+    background-color: var(--aside-bg-color);
 }
 
 aside p {
-    padding: 0 1.4em;
+    padding: 0 1.2em;
 }
 
 code {

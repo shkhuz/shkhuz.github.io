@@ -1,12 +1,38 @@
+## 02.11.25
+
+For my end semester DE/AC project, I chose to make a simple number guessing game using nothing but a few primitive ICs.
+
+![](20251102001.jpg)
+
+Hold the "roll" button to roll numbers 0-9 on the 7-segment display. When released, the counter starts slowing down until it lands on a number that the user needs to guess. Here it is in action:
+
+![](20251102002.gif)
+
+[[[
+The clock slowing down is not clearly visible in the GIF. But I had to compress it enough to make the images smaller for low-network connections.
+]]]
+
+Here are few of the components I used:
+
+- 555 Timer: used in astable mode -- sends clock pulses to the counter to count up at every tick.
+- CD4026 (5-stage Johnson Decade Counter & Output Decoder): this IC does two things at once -- it counts up at every clock tick, looping to 0 when it gets to 9 and decoding it into 7-bits for the 7-segment display to read.
+- NPN transistor: acts as a buffer to cleanly supply clock ticks to the counter.
+
+**How does the frequency decay with time?** When the button is pressed, the 100uF is shorted to Vcc and starts charging. Now when the button is released, it starts discharging through the 820K resistor; as the voltage on the capacitor decreases, the frequency of the clock pulses decrease until it reaches zero.
+
+For completeness, here is the circuit diagram I made to verify the circuit before putting it on the breadboard:
+
+![](20251102003.jpg)
+
 ## 20.10.25
 
 'How Do Aircraft Systems Communicate?'. It's been a while since I got a Ben Eater video recommended in my YT feed. Aha! I totally forgot about designing my own 8-bit "Computer" back when I blazed through his breadboard computer videos! 
 
-After seeing his SAP-1 Simple As Possible computer come to life, I too wanted to learn how to make one on my own. Cut to today, when I once again revisited his videos -- and most importantly -- found another great resource for learning this stuff: Sebastian Lague. I followed him from back when he participated in Ludum Dare jams and have ever since.
+After seeing his SAP-1 Simple As Possible computer come to life, I too wanted to learn how to make one on my own. Cut to today, when I once again revisited his videos -- and most importantly -- found another great resource for learning this stuff: Sebastian Lague. I followed him from his Ludum Dare days.
 
-Lague's videos on his Logic Simulator and his process of building different components of a computer were frankly one of the best on the internet. Even though I knew most of what he explained from Eater, his "why" approach where he first comes up with the easiest solutions and refines it so as to make us understand the reasons better, were so satisfying to watch -- he really has a knack for teaching stuff so effortlessly. 
+Lague's videos on his Logic Simulator were very well thought out and executed. Even though I knew most of what he explained from Eater, his "why" approach where he first comes up with the easiest solutions and refines it so as to make us understand the reasons better, were so satisfying to watch -- wish more teachers would teach students that way.
 
-Seeing his simulator work, I wondered how much work would it take to make something like that in C with just SDL/raylib. So I setup a hello-world raylib project with a 2D camera and some zooming/panning. Tomorrow I'll work on the graphics side for a bit before starting on the main simulator code. 
+I wondered how much work would it take to recreate his Logic Simulator in C with SDL/raylib. So I setup a hello-world raylib project with a 2D camera and some zooming/panning. Tomorrow I'll work on the graphics side for a bit before starting on the main simulator code. 
 
 ## 18.10.25
 
