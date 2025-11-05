@@ -80,7 +80,7 @@ body {
     margin: 1em auto;
     max-width: 40em;
     padding: 0 0.62em;
-    font: 1.1em sans-serif;
+    font: 1.2em sans-serif;
     line-height: 1.3;
     color: var(--primary-color);
     background-color: var(--bg-color);
@@ -334,7 +334,12 @@ hr {
         display: none;
     }
 }
+
 @media only screen and (min-width: 992px) {
+    body {
+        font-size: 1.1em;
+    }
+
     img {
         max-width: 70%;
     }
