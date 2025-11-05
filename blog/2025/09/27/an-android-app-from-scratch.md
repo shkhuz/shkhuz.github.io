@@ -1,4 +1,4 @@
-# An Android Hello World App from Scratch
+# An android app from scratch
 
 For quite some time now, I have wanted to create a Java Android app entirely from scratch--without using build systems like Gradle or an IDE. Why?
 

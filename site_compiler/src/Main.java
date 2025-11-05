@@ -2,6 +2,9 @@ import java.io.*;
 import java.nio.file.*;
 import java.util.*;
 import java.util.regex.Pattern;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.Locale;
 
 public class Main {
     private StringBuilder out = new StringBuilder();
@@ -129,8 +132,8 @@ public class Main {
 
         Collections.sort(posts, new Comparator<Path>() {
             public int compare(Path a, Path b) {
-                String da = extractDateString(blogDir, a);
-                String db = extractDateString(blogDir, b);
+                String da = extractDateString(blogDir, a, false);
+                String db = extractDateString(blogDir, b, false);
                 return db.compareTo(da); // reverse order
             }
         });
@@ -144,7 +147,7 @@ public class Main {
     }
 
     private String buildListItem(Path blogDir, Path file) throws IOException {
-        String date = extractDateString(blogDir, file);
+        String date = extractDateString(blogDir, file, true);
         String title = extractTitle(file);
         String link = file
             .toString()
@@ -154,13 +157,39 @@ public class Main {
         return String.format("- <span class='blog-entry-date'>%s</span> [%s](%s)%n", date, title, link);
     }
 
-    private String extractDateString(Path blogDir, Path file) {
+    private String extractDateString(Path blogDir, Path file, boolean longFormat) {
         Path relative = blogDir.relativize(file);
         String[] parts = relative.toString().split(Pattern.quote(File.separator));
-        if (parts.length >= 4) {
-            return String.format("%s.%s.%s", parts[0], parts[1], parts[2]);
+        String dateDotted = parts.length >= 4 
+            ? String.format("%s.%s.%s", parts[0], parts[1], parts[2])
+            : "0000.00.00";
+
+        if (longFormat) {
+            SimpleDateFormat inputFormat = new SimpleDateFormat("yyyy.MM.dd");
+            Date date;
+            try {
+                date = inputFormat.parse(dateDotted);
+            } catch (Exception e) {
+                System.err.println(e);
+                return "";
+            }
+            SimpleDateFormat dayFormat = new SimpleDateFormat("d");
+            int day = Integer.parseInt(dayFormat.format(date));
+            SimpleDateFormat monthYearFormat = new SimpleDateFormat("MMMM, yyyy", Locale.ENGLISH);
+            String monthYear = monthYearFormat.format(date);
+            return getDayWithSuffix(day) + " " + monthYear;
         }
-        return "0000.00.00";
+        else return dateDotted;
+    }
+
+    private static String getDayWithSuffix(int day) {
+        if (day >= 11 && day <= 13) return day + "th";
+        switch (day % 10) {
+            case 1:  return day + "st";
+            case 2:  return day + "nd";
+            case 3:  return day + "rd";
+            default: return day + "th";
+        }
     }
 
     private String extractTitle(Path file) throws IOException {

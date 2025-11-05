@@ -46,7 +46,7 @@
 <article>
   <nav id='main-nav'>
     <h1><a href='/'>~/</a> 
-      An Android Hello World App from Scratch
+      An android app from scratch
     </h1>
   </nav>
   <p>
@@ -70,13 +70,15 @@
 
 int main(void) {
     printf("Hello world!");
-}</code></pre>
+}
+</code></pre>
   <p>
     Now that is <em>simple</em>. It can be compiled into an executable using the system C compiler:
   </p>
   <pre class='lang-console'><code>$ cc main.c
 $ ./a.out
-Hello world!</code></pre>
+Hello world!
+</code></pre>
   <p>
     Below is a diagram illustrating the process pipeline:
   </p>
@@ -116,14 +118,16 @@ Hello world!</code></pre>
   </p>
   <pre class='lang-console'><code>$ mkdir ~/android_sdk
 $ SDK=~/android_sdk
-$ cd $SDK</code></pre>
+$ cd $SDK
+</code></pre>
   <p>
     And download the cmdline-tools into that directory. <code>sdkmanager</code> is used to download the required tools and components for the target platform version.
   </p>
   <pre class='lang-console'><code>$ curl -LO https://dl.google.com/android/repository/commandlinetools-linux-11076708_latest.zip
 $ unzip -q commandlinetools-linux-11076708_latest.zip -d "$SDK"
 $ "$SDK/cmdline-tools/bin/sdkmanager" --sdk_root="$SDK" --install \
-      "platforms;android-34" "build-tools;34.0.0" "platform-tools" "ndk;26.2.11394342"</code></pre>
+      "platforms;android-34" "build-tools;34.0.0" "platform-tools" "ndk;26.2.11394342"
+</code></pre>
   <p>
     If for some reason <code>sdkmanager</code> is not to be used, we can also download the components manually. We'll need <code>build-tools</code> for <code>aapt</code>, <code>d8</code>, etc, <code>platform-tools</code> for <code>adb</code> and an Android platform to target. We can skip downloading <code>cmdline-tools</code> if we are downloading everything manually.
   </p>
@@ -137,13 +141,15 @@ $ mkdir "$SDK/platforms"
 $ unzip -q platform-34-ext7_r02.zip -d "$SDK/platforms"
 
 $ curl -LO https://dl.google.com/android/repository/platform-tools_r34.0.5-linux.zip
-$ unzip -q platform-tools_r34.0.5-linux.zip -d "$SDK"</code></pre>
+$ unzip -q platform-tools_r34.0.5-linux.zip -d "$SDK"
+</code></pre>
   <p>
     After downloading and unpacking everything, we set some variables for the different directories inside the SDK:
   </p>
   <pre class='lang-console'><code>$ BUILD_TOOLS="$SDK/build-tools/34.0.0"
 $ PLATFORM="$SDK/platforms/android-34"
-$ PLATFORM_TOOLS="$SDK/platform-tools"</code></pre>
+$ PLATFORM_TOOLS="$SDK/platform-tools"
+</code></pre>
   <h2>
     Hello, world!
   </h2>
@@ -162,7 +168,8 @@ $ PLATFORM_TOOLS="$SDK/platform-tools"</code></pre>
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:id="@+id/my_text"/&gt;
-&lt;/LinearLayout&gt;</code></pre>
+&lt;/LinearLayout&gt;
+</code></pre>
   <div class='code-snippet-filename'>res/layout/activity_main.xml</div>
   <p>
     Next up is <code>java/com/shkhuz/hello/MainActivity.java</code>. It's the entry point of the app, and in this small example is responsible for the behaviour of the <code>TextView</code>. 
@@ -182,7 +189,8 @@ public class MainActivity extends Activity {
         TextView text = (TextView)findViewById(R.id.my_text);
         text.setText("Hello, world!");
     }
-}</code></pre>
+}
+</code></pre>
   <div class='code-snippet-filename'>java/com/shkhuz/hello/MainActivity.java</div>
   <p>
     Android requires an app manifest (<code>AndroidManifest.xml</code>) at the root of the APK. It specifies the name of the app, the target platform version, permissions for various Android components, etc. The entry point (<code>MainActivity</code>) is also specified here.
@@ -201,7 +209,8 @@ public class MainActivity extends Activity {
             &lt;/intent-filter&gt;
         &lt;/activity&gt;
     &lt;/application&gt;
-&lt;/manifest&gt;</code></pre>
+&lt;/manifest&gt;
+</code></pre>
   <div class='code-snippet-filename'>AndroidManifest.xml</div>
   <h2>
     Building
@@ -209,12 +218,14 @@ public class MainActivity extends Activity {
   <p>
     We create some directories to store build artifacts:
   </p>
-  <pre class='lang-console'><code>$ mkdir -p build/gen build/obj build/apk</code></pre>
+  <pre class='lang-console'><code>$ mkdir -p build/gen build/obj build/apk
+</code></pre>
   <p>
     First we need to generate <code>R.java</code>, which is used to refer to resources like <code>R.id.my_text</code> from Java. We use the Android Asset Packaging Tool (<code>aapt</code>) for this:
   </p>
   <pre class='lang-console'><code>$ "$BUILD_TOOLS/aapt" package -f -m -J build/gen/ -S res \
-      -M AndroidManifest.xml -I "$PLATFORM/android.jar"</code></pre>
+      -M AndroidManifest.xml -I "$PLATFORM/android.jar"
+</code></pre>
   <p>
     This creates <code>build/gen/com/shkhuz/hello/R.java</code>. The flags are:
   </p>
@@ -242,18 +253,21 @@ public class MainActivity extends Activity {
     Now we finally compile all our Java code, using <code>javac</code>:
   </p>
   <pre class='lang-console'><code>$ javac --release 11 -classpath "$PLATFORM/android.jar" -d build/obj \
-      build/gen/com/shkhuz/hello/R.java java/com/shkhuz/hello/MainActivity.java</code></pre>
+      build/gen/com/shkhuz/hello/R.java java/com/shkhuz/hello/MainActivity.java
+</code></pre>
   <p>
     This generates <code>.class</code> files with JVM bytecode. To run on Android devices, these need to be translated to <a href='https://en.wikipedia.org/wiki/Dalvik_%28software%29'>Dalvik</a> bytecode. Using <code>d8</code>:
   </p>
   <pre class='lang-console'><code>$ "$BUILD_TOOLS/d8" --release --lib "$PLATFORM/android.jar" \
-      --output build/apk/ build/obj/com/shkhuz/hello/*.class</code></pre>
+      --output build/apk/ build/obj/com/shkhuz/hello/*.class
+</code></pre>
   <p>
     We then package the contents of the <code>build/apk/</code> directory together with the manifest and resources into an Android Application Package (APK) file, again using the <code>aapt</code> tool:
   </p>
   <pre class='lang-console'><code>$ "$BUILD_TOOLS/aapt" package -f -M AndroidManifest.xml -S res/ \
       -I "$PLATFORM/android.jar" \
-      -F build/hello.unsigned.apk build/apk/</code></pre>
+      -F build/hello.unsigned.apk build/apk/
+</code></pre>
   <p>
     Again, the command-line options are:
   </p>
@@ -281,7 +295,8 @@ public class MainActivity extends Activity {
     <code>zipalign</code> basically tidies up the APK by lining up uncompressed files on 4-byte boundaries and putting native libraries on page boundaries. 
   </p>
   <pre class='lang-console'><code>$ "$BUILD_TOOLS/zipalign" -f -p 4 \
-      build/hello.unsigned.apk build/hello.aligned.apk</code></pre>
+      build/hello.unsigned.apk build/hello.aligned.apk
+</code></pre>
   <p>
     Signing requires a key store and key. We use <code>keytool</code> to create one:
   </p>
@@ -301,14 +316,16 @@ What is the name of your State or Province?
 What is the two-letter country code for this unit?
   [Unknown]:
 Is CN=Unknown, OU=Unknown, O=Unknown, L=Unknown, ST=Unknown, C=Unknown correct?
-  [no]:  yes</code></pre>
+  [no]:  yes
+</code></pre>
   <p>
     And use that key to sign our APK using <code>apksigner</code>:
   </p>
   <pre class='lang-console'><code>$ "$BUILD_TOOLS/apksigner" sign --ks keystore.jks \
       --ks-key-alias androidkey --ks-pass pass:android \
       --key-pass pass:android --out build/hello.apk \
-      build/hello.aligned.apk</code></pre>
+      build/hello.aligned.apk
+</code></pre>
   <p>
     Done! We successfully created an APK manually without that pesky <code>gradle</code>! The diagram below illustrates the whole process:
   </p>
