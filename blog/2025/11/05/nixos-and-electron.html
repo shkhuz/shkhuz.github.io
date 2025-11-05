@@ -165,6 +165,9 @@ npm error A complete log of this run can be found in: /home/huzaifa/.npm/_logs/2
 +    "better-sqlite3": "^9.6.0",
 </code></pre>
   <p>
+    To move to <code>better-sqlite3</code>, I also had to change all the source files to use its API rather than <code>sqlite3</code>'s.
+  </p>
+  <p>
     I also deleted <code>node_modules/</code>, <code>~/.electron-gyp</code> for a fresh start. Doing <code>npm install</code>:
   </p>
   <pre class='lang-console'><code>npm verbose pkgid better-sqlite3@9.6.0

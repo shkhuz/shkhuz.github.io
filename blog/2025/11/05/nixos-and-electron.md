@@ -118,6 +118,8 @@ Instead of fixing this and wasting time fixing something I won't use again, I se
 +    "better-sqlite3": "^9.6.0",
 ```
 
+To move to `better-sqlite3`, I also had to change all the source files to use its API rather than `sqlite3`'s.
+
 I also deleted `node_modules/`, `~/.electron-gyp` for a fresh start. Doing `npm install`:
 
 ```console

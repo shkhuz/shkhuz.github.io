@@ -15,7 +15,7 @@ The clock slowing down is not clearly visible in the GIF. But I had to compress 
 Here are few of the components I used:
 
 - 555 Timer: used in astable mode -- sends clock pulses to the counter to count up at every tick.
-- CD4026 (5-stage Johnson Decade Counter & Output Decoder): this IC does two things at once -- it counts up at every clock tick, looping to 0 when it gets to 9 and decoding it into 7-bits for the 7-segment display to read.
+- CD4026 (5-stage Johnson Decade Counter & Output Decoder): this IC does two things at once -- it counts up at every clock tick, looping to 0 when it gets to 9, and then decoding it into 7-bits for the 7-segment display to read.
 - NPN transistor: acts as a buffer to cleanly supply clock ticks to the counter.
 
 **How does the frequency decay with time?** When the button is pressed, the 100uF is shorted to Vcc and starts charging. Now when the button is released, it starts discharging through the 820K resistor; as the voltage on the capacitor decreases, the frequency of the clock pulses decrease until it reaches zero.
