@@ -97,6 +97,8 @@ public class Main {
             // String html = "";
             System.out.println(html);
 
+            System.out.println(Hlt.hlt("public int main() {}", "c"));
+
             try (FileWriter writer = new FileWriter(changeExt(filePath, ".html"))) {
                 writer.write(blob1);
                 if (title != null) 

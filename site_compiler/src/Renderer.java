@@ -125,7 +125,7 @@ public class Renderer {
             out.append("\n" + pad + "<pre");
             if (classes != "") out.append(" class='" + classes + "'");
             out.append("><code>");
-            out.append(Lexer.escapeHtml(t.code.trim()));
+            out.append(Lexer.escapeHtml(t.code));
             out.append("</code></pre>");
 
             if (t.filepath != null) {

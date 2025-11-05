@@ -1,6 +1,6 @@
 # NixOS and Electron
 
-Today I got a project from a friend that asked me to make some changes to their Task Management app. 
+Today I got a project from a friend that asked me to make some changes to their Task Management app. It was a simple Electron app, and as much as I hated working with `electron`, I decided to work on it as a favour. To give some context, I had recently installed NixOS on my main laptop, and until now didn't face any major issues installing packages or configuring it for my needs. So, I cloned the repo and ran `npm install` to build the project:
 
 ```console
 > taskmgr@1.0.0 postinstall
@@ -25,23 +25,13 @@ reason=prebuild-install failed with error (run with env DEBUG=electron-builder t
     prebuild-install http request GET https://github.com/TryGhost/node-sqlite3/releases/download/v5.1.7/sqlite3-v5.1.7-napi-v36-linux-x64.tar.gz
     prebuild-install http 404 https://github.com/TryGhost/node-sqlite3/releases/download/v5.1.7/sqlite3-v5.1.7-napi-v36-linux-x64.tar.gz
     prebuild-install warn install No prebuilt binaries found (target=36 runtime=napi arch=x64 libc= platform=linux)
-```
-
-Okay, there's no prebuilt version of sqlite3 available for my current environment. So it tries to build it from source. Firstly the build takes forever to complete. And if that's not enough, `npm run build` for some reason builds sqlite again. But it doesn't even build because it depends on `distutils` from python.
-
-To not rebuild again:
-
-```json
-{
-  "build": {
-    "npmRebuild": false,
-    "buildDependenciesFromSource": false,
     ...
-  }
-}
 ```
+
+With my lackluster abilities working with Node and NPM, I started to search for a solution for this seemingly innocuous error. After a little back and forth, I found that the `prebuild-install` library (likely a dependency of `electron`) was not able to find a suitable version of `sqlite` on my machine, and as I had `nodejs_24` in my `configuration.nix`, it for some reason wasn't able to find a prebuilt version of it on GitHub. 
 
 ```console
+  ...
   ⨯ cannot execute  cause=exit status 1
                     errorOut=npm error code 1
     npm error path /home/huzaifa/dev/taskmgr/node_modules/sqlite3
@@ -111,7 +101,15 @@ npm error command sh -c electron-builder install-app-deps
 npm error A complete log of this run can be found in: /home/huzaifa/.npm/_logs/2025-10-27T18_14_26_543Z-debug-0.log
 ```
 
-Instead of fixing this and wasting time fixing something I won't use again, I searched for a better solution. `better-sqlite3` has prebuilt binaries for many more ABIs than `sqlite3`. So I changed package.json:
+Unable to find it online too, it then tries to build `sqlite3` from source locally. I now faced another issue: even building it locally resulted in a failed compilation. Specifically:
+
+```console
+    npm error ModuleNotFoundError: No module named 'distutils'
+```
+
+I guess the python version I got from nixpkgs didn't come bundled with `distutils`. Searching online, I saw that `distutlils` was a depreciated module (I guess) and wasn't being shipped in newer python versions. As my experience with Nix was somewhat new, installing a specific python version with a specific python module was difficult, as I didn't fully "get" the Nix language just yet. 
+
+Instead of fixing this and wasting time fixing something I won't use again, I searched for a better solution. `better-sqlite3` has prebuilt binaries for many more ABIs than `sqlite3`. So after a quick look at their GitHub, I decided to go for it. I changed `package.json`:
 
 ```diff
   "dependencies": {
@@ -120,7 +118,7 @@ Instead of fixing this and wasting time fixing something I won't use again, I se
 +    "better-sqlite3": "^9.6.0",
 ```
 
-After deleting `node_modules/`, `~/.electron-gyp`, and doing `npm install`:
+I also deleted `node_modules/`, `~/.electron-gyp` for a fresh start. Doing `npm install`:
 
 ```console
 npm verbose pkgid better-sqlite3@9.6.0
@@ -136,7 +134,7 @@ npm error prebuild-install http 404 https://github.com/WiseLibs/better-sqlite3/r
 npm error prebuild-install warn install No prebuilt binaries found (target=22.17.1 runtime=node arch=x64 libc= platform=linux)
 ```
 
-Scrolling up:
+Ohh. Scrolling up:
 
 ```console
 npm info using npm@10.9.2
@@ -144,7 +142,7 @@ npm info using node@v22.17.1
 npm verbose title npm install
 ```
 
-Hmm. Looks like better-sqlite doesn't have prebuilt binaries for the latest version of nodejs. Let's downgrade and then run `npm install` again:
+After fiddling around for a bit, I found out that while `better-sqlite` has prebuilt binaries for more targets that `sqlite3`, it still doesn't suppport the latest `node` version. I figured the only way to solve this issue would be to downgrade `node` itself. So I did just that. `configuration.nix` got a `nodejs_20` and after `nrs` (`nixos-rebuild switch`), I ran `npm install` again:
 
 ```console
 npm info using npm@10.8.2
@@ -166,7 +164,7 @@ npm info run electron@28.3.3 postinstall { code: 0, signal: null }
 changed 120 packages, and audited 533 packages in 19s
 ```
 
-Now it finds the correct version of `better-sqlite3`. Thanks prebuild-install!
+Nice! Now it correctly finds a suitable prebuilt version of `better-sqlite3`. Thanks prebuild-install!
 
 Let's start the app by running `npm start`:
 
@@ -179,7 +177,7 @@ $ npm start
 /home/huzaifa/dev/taskmgr/node_modules/electron/dist/electron: error while loading shared libraries: libgobject-2.0.so.0: cannot open shared object file: No such file or directory
 ```
 
-Ohh. Now here is where Nix fights us. Let's check which shared libraries does electron rely on:
+Ohoh. Another Nix battle. Looks like `electron` relies on a number of shared libraries that are missing from my system. Let's check which libraries are needed:
 
 ```console
 $ ldd node_modules/electron/dist/electron
@@ -220,13 +218,13 @@ $ ldd node_modules/electron/dist/electron
         /lib64/ld-linux-x86-64.so.2 => /nix/store/g8zyryr9cr6540xsyg4avqkwgxpnwj2a-glibc-2.40-66/lib64/ld-linux-x86-64.so.2 (0x00007fab3e512000)
 ```
 
-Too many. In a typical distro, you'd have the FHS consisting of /usr with subdirectories bin, lib, include, share, etc. In Nix, there is no typical FHS. Instead packages are stored in /nix/store, so that there must not be unintended spilling of dependencies dangling around. The way you'd add dependencies is by either creating a derivation with a .nix file that specifies the inputs/outputs that the derivation requires/builds. Another way is to create a shell with the deps included explicitly. 
+Too many. Now, in a typical distro, you'd have the FHS consisting of `/usr` with subdirectories `bin`, `lib`, `include`, `share`, etc. In Nix, there is no typical FHS. Instead packages are stored in `/nix/store` so that there can't be any unintended dependency on a package that is not explicitly installed by the application. The way you'd add dependencies in Nix is by either creating a derivation with a `.nix` file that specifies the inputs/outputs that the derivation requires/builds. Another way is to create a shell with the dependencies included explicitly. 
 
-`nix-shell -p [packages]` will create a new shell with those packages included in the environment. But there's a problem. `electron`, which is downloaded through npm is not patched, and requires the deps libraries in FHS-compatible directories, not /nix/store, as we saw above. If we had installed electron through nixpkgs, then there would be no problem as all the deps would be preinstalled beforehand and electron would know to look for them in /nix/store. 
+`nix-shell -p [packages]` will create a new shell with those packages included in the environment. But there's a problem. `electron`, which is downloaded through `npm` is not patched, and requires the dependent libraries be in FHS-compatible directories, not `/nix/store`, as we saw above. If we had installed `electron` through nixpkgs, then there would be no problem as all the dependencies would be preinstalled beforehand by Nix and `electron` would correctly look for them in `/nix/store`. 
 
-We could for example add the path to the different libraries in /nix/store to `LD_LIBRARY_PATH`, but each library is in a separate directory inside /nix/store and the path changes version to version. We can't hardcode it. 
+A crude and hardcoded way to solve this problem would be to add the path to the different libraries in `/nix/store` to `LD_LIBRARY_PATH`. But each library is in a separate directory inside `/nix/store` and the path changes version to version. It will be just like fighting with Nix just to make it work.
 
-What we need to do is to create a sandbox FHS environment to run electron in, where it can find those libraries in /usr/lib, but in actuality they would be symlinked from /nix/store. We need to use pkgs.buildFHSEnv for this:
+After doing what I know best (googling) I found a good enough solution for our problem. What we need to do, is to create a sandbox FHS-compliant shell to run `electron` in, where it can find those libraries in `/usr/lib`, but in reality they would be symlinked to `/nix/store`. We need to use `pkgs.buildFHSEnv` for this:
 
 ```nix(shell.nix)
 { pkgs ? import <nixpkgs> {} }:
@@ -249,4 +247,4 @@ What we need to do is to create a sandbox FHS environment to run electron in, wh
 }).env
 ```
 
-Now running `nix-shell` in the directory of shell.nix will create a new shell with the FHS environment with the libraries specified residing in /usr/lib. Running `npm start` now works!
+Now running `nix-shell` in the directory of shell.nix will create a new shell with the FHS environment with the libraries specified residing in `/usr/lib`. Running `npm start` now works!
