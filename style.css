@@ -146,6 +146,17 @@ img {
   margin: 1em auto;
 }
 
+video {
+  padding: 2px;
+  border: dashed 2px #444;
+  display: block;
+  max-width: 90%;
+  width: auto;
+  height: auto;
+  max-height: 600px;
+  margin: 1em auto;
+}
+
 details > summary {
     padding: 0.5rem 1rem;
     background-color: var(--toc-bg-color);
@@ -341,6 +352,10 @@ hr {
     }
 
     img {
+        max-width: 70%;
+    }
+    
+    video {
         max-width: 70%;
     }
 } 
