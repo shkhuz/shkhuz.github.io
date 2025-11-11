@@ -139,10 +139,11 @@ public class Main {
         });
 
         StringBuilder md = new StringBuilder();
-        md.append("\n## Blog\n\n- [Diary](blog/diary/index.html)\n");
+        md.append("\n## Blog\n\n<ul class='blog-posts'>\n");
         for (Path p : posts) {
             md.append(buildListItem(blogDir, p));
         }
+        md.append("</ul>");
         return md.toString();
     }
 
@@ -154,7 +155,7 @@ public class Main {
             .replace(File.separatorChar, '/')
             .replace(".md", ".html");
         
-        return String.format("- <span class='blog-entry-date'>%s</span> [%s](%s)%n", date, title, link);
+        return String.format("  <li>\n    <span class='blog-entry-date'>%s</span> <a href='%s'>%s</a>\n  </li>%n", date, link, title);
     }
 
     private String extractDateString(Path blogDir, Path file, boolean longFormat) {

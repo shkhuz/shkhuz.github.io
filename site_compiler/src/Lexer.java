@@ -166,6 +166,39 @@ public class Lexer {
             }
             return;
         }
+        else if (is('<')) {
+            int idx = current;
+            idx++;
+            boolean close = false;
+            boolean closeAtEnd = false;
+            if (is(idx, '/')) {
+                close = true;
+                idx++;
+            }
+            if (Character.isLetter(at(idx))) {
+                int beg = idx;
+                while (Character.isLetter(at(idx))) idx++;
+                String tag = srcfile.substring(beg, idx);
+                while (!is(idx, '>') && !is(idx, '/')) {
+                    if (idx >= srcfile.length()) throw new Error("Out of bounds");
+                    idx++;
+                }
+
+                if (is(idx, '/')) {
+                    idx++;
+                    closeAtEnd = true;
+                }
+                if (is(idx, '>')) {
+                    idx++;
+                    fin();
+                    current = idx;
+                    if (close && closeAtEnd) throw new Error("Closed twice");
+                    appendTok(closeAtEnd ? TKind.opcltag : (close ? TKind.cltag : TKind.optag), 1);
+                    lastTok().extra = tag.toLowerCase();
+                    return;
+                }
+            }
+        }
 
         switch (state) {
             case text: {
@@ -280,7 +313,7 @@ public class Lexer {
                     System.out.println(
                             i 
                             + " "
-                            + (t.indent != 0 ? "|" + t.indent + " " : "")
+                            + (t.indent > 0 ? "|" + t.indent + " " : "")
                             + t.kind 
                             + "(" 
                             + t.count 
@@ -353,8 +386,8 @@ public class Lexer {
                     }
                     else appendIf3ElseCont('[', TKind.lbrack3); 
                 } break;
-                case ']':  appendIf3ElseCont(']', TKind.rbrack3); break;
-                case '=':  appendIf3ElseCont('=', TKind.equal3); break;
+                case ']': appendIf3ElseCont(']', TKind.rbrack3); break;
+                case '=': appendIf3ElseCont('=', TKind.equal3); break;
 
                 case '*': {
                     fin(); 
@@ -381,9 +414,9 @@ public class Lexer {
                 // We don't fin() here because we need to check if 
                 // the token is followed by a space. Only then we 
                 // add it as a token. Else it's text.
-                case '#':  consecTokSpace('#', TKind.pound); break;
-                case '-':  consecTokSpace('-', TKind.minus); break;
-                case '+':  consecTokSpace('+', TKind.plus); break;
+                case '#': consecTokSpace('#', TKind.pound); break;
+                case '-': consecTokSpace('-', TKind.minus); break;
+                case '+': consecTokSpace('+', TKind.plus); break;
 
                 case '\n': {
                     fin(); 

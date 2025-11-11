@@ -4,6 +4,7 @@ import java.util.List;
 import java.util.ArrayList;
 import java.util.Deque;
 import java.util.ArrayDeque;
+import java.util.Set;
 
 public class Parser {
     int current = 0;
@@ -297,6 +298,42 @@ public class Parser {
         return new AsideNode(children);
     }
 
+    private static final Set<String> HTML_BLOCK_TAGS = Set.of(
+        "div", "section", "article", "table", "pre", "script",
+        "style", "ul", "ol", "li", "video", "img"
+    );
+
+    private boolean isHtmlBlockStart() {
+        Token t = at();
+        if ((t.kind == TKind.optag || t.kind == TKind.opcltag) 
+                && HTML_BLOCK_TAGS.contains(t.extra)) 
+            return true;
+        return false;
+    }
+
+    private Node parseHtmlBlock() {
+        String tag = at().extra;
+        StringBuilder sb = new StringBuilder();
+        int depth = 0;
+
+        while (at() != null) {
+            Token t = advance();
+            if (t.indent > 0) sb.append(" ".repeat(t.indent));
+            sb.append(t.lexeme);
+            if (t.kind == TKind.optag && t.extra.equals(tag)) depth++;
+            else if (t.kind == TKind.opcltag && t.extra.equals(tag)) {
+                if (depth == 0) break;
+            }
+            else if (t.kind == TKind.cltag && t.extra.equals(tag)) {
+                depth--;
+                if (depth == 0) break;
+            }
+        }
+
+        while (match(TKind.newline)) {}
+        return new HtmlBlockNode(sb.toString());
+    }
+
     private Node parseBlock() {
         // Each block element's parseInline() function handles 
         // skipping newlines at the end. Only in parsePreblock() do we
@@ -309,6 +346,7 @@ public class Parser {
         else if (t.kind == TKind.mathblock) return parseMathblock();
         else if (t.kind == TKind.lbrack3) return parseAside();
         else if (t.indent >= 4) return parseIndentedPreblock();
+        else if (isHtmlBlockStart()) return parseHtmlBlock();
         else return parseParagraph();
     }
 
@@ -389,6 +427,13 @@ public class Parser {
             System.out.println(pad 
                     + "Mathblock: \"" 
                     + t.text
+                    + "\"");
+        }
+        else if (node instanceof HtmlBlockNode) {
+            HtmlBlockNode h = (HtmlBlockNode) node;
+            System.out.println(pad 
+                    + "HtmlBlockNode: \"" 
+                    + h.raw
                     + "\"");
         }
         else if (node instanceof EmNode) {

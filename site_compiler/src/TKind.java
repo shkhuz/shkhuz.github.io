@@ -7,6 +7,9 @@ public enum TKind {
     pound,
     minus,
     plus,
+    optag, 
+    cltag,
+    opcltag,
     orderedMarker,
     newline,
 
@@ -28,6 +31,9 @@ public enum TKind {
             case pound:
             case minus:
             case plus:
+            case optag:
+            case cltag:
+            case opcltag:
             case orderedMarker:
             case newline:
             case eof:

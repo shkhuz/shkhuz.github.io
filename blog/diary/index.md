@@ -13,8 +13,8 @@ Three hours in, I finally made it.
 Time to rotate the crankshaft and see the engine come to life!
 
 <video autoplay loop>
-<source src="20251110003.mp4" type="video/mp4" />
-   4 Cylinder Engine
+    <source src="20251110003.mp4" type="video/mp4" />
+    4 Cylinder Engine
 </video>
 
 Nice! It would be better if the schematic also included parts of the engine head (camshaft, valves, etc). Nonetheless, I had fun making it; maybe I'll measure out and model the head parts myself.

@@ -4,7 +4,7 @@ HTML_FILES := $(addsuffix .html, $(basename $(ALL_MD_FILES)))
 all: build_sitecompiler $(HTML_FILES)
 
 build_sitecompiler:
-	make -C site_compiler
+	# make -C site_compiler
 
 run: all
 	http-server -c-1 -p8080 .

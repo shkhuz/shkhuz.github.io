@@ -56,46 +56,53 @@
 
 fn main() {
     std.print("Hello world!\n");
-}</code></pre>
+}
+</code></pre>
   <h2>
     Variables
   </h2>
   <pre><code>imm a = 1;
 mut b = 2;
-imm c: u32 = 2;</code></pre>
+imm c: u32 = 2;
+</code></pre>
   <h2>
     Functions
   </h2>
   <pre><code>fn b() {}
 fn b(a: u32) {}
-fn c() u8 {}</code></pre>
+fn c() u8 {}
+</code></pre>
   <h2>
     Arrays
   </h2>
   <pre><code>imm a = .{1, 2, 3};
 mut c = b[0];
-mut sz = b.len;</code></pre>
+mut sz = b.len;
+</code></pre>
   <h2>
     Pointers
   </h2>
   <pre><code>mut a: usize = 1;
 mut p: *usize = &amp;a;
 mut immp: *imm usize = &amp;a;
-mut b = p.*;</code></pre>
+mut b = p.*;
+</code></pre>
   <h2>
     Slices
   </h2>
   <pre><code>imm a: [3]u8 = .{1, 2, 3};
 mut b: []u8 = &amp;a;
 mut c = b[0];
-mut sz = b.len;</code></pre>
+mut sz = b.len;
+</code></pre>
   <h2>
     Expression blocks
   </h2>
   <pre><code>imm a = {
     imm b = 1;
     yield b;
-};</code></pre>
+};
+</code></pre>
   <h2>
     Loops
   </h2>
@@ -105,21 +112,24 @@ for (b; *e) {}                          // iterating over slice with ptr
 for (b; *e, i) {}
 while (true) {}         
 while (a; n) {}                         // iterating while optional is 
-                                        // not null</code></pre>
+                                        // not null
+</code></pre>
   <h2>
     Continue & Break
   </h2>
   <pre><code>for (a; n, i) {
     if (i == 10) break;
     else if (i == 15) continue;
-}</code></pre>
+}
+</code></pre>
   <h2>
     If 
   </h2>
   <pre><code>if (a) 1 else 0;
 if (a) {} else {}
 if (a) {} else if (b) {} else {}
-if (a; n) {}                            // unwrapping optional inside if</code></pre>
+if (a; n) {}                            // unwrapping optional inside if
+</code></pre>
   <h2>
     Casts
   </h2>
@@ -127,14 +137,16 @@ if (a; n) {}                            // unwrapping optional inside if</code><
 mut b: u16 = 2;
 mut c: u16 = a + b;                     // implicit cast
 mut d: u8 = a + to(u8, b);              // explicit cast ??
-mut d: u8 = a + u8(b);                  // explicit cast ??</code></pre>
+mut d: u8 = a + u8(b);                  // explicit cast ??
+</code></pre>
   <h2>
     Optionals
   </h2>
   <pre><code>mut a: ?u8 = 1;
 mut b: ?u8 = null;
 mut c: u8 = a orelse 0;                 // default value
-mut d: u8 = a catch return 0;           // do something on null</code></pre>
+mut d: u8 = a catch return 0;           // do something on null
+</code></pre>
   <h2>
     Enums
   </h2>
@@ -143,7 +155,8 @@ mut d: u8 = a catch return 0;           // do something on null</code></pre>
 };
 
 mut a = A.a;
-mut b = .b;</code></pre>
+mut b = .b;
+</code></pre>
   <h2>
     Switch
   </h2>
@@ -155,7 +168,8 @@ mut b = .b;</code></pre>
 switch (a) {
     a, b, c (n) =&gt; {},
     else (n) =&gt; {},
-}</code></pre>
+}
+</code></pre>
   <h2>
     Structs
   </h2>
@@ -167,44 +181,51 @@ switch (a) {
 
     mut e: u8;
     fn f() {}
-};</code></pre>
+};
+</code></pre>
   <h2>
     Unions
   </h2>
   <pre><code>imm a = union {
     a: u8, 
     b: u16,
-};</code></pre>
+};
+</code></pre>
   <h2>
     Tagged Unions
   </h2>
   <pre><code>imm a = union(enum) {
     a: u8,
     b: u16,
-}</code></pre>
+}
+</code></pre>
   <h2>
     Imports
   </h2>
   <pre><code>import basil;                           // imports 'basil.ar' file in cwd
 import std;                             // if file not found in cwd, it checks
-                                        // inside the lib directory</code></pre>
+                                        // inside the lib directory
+</code></pre>
   <h2>
     Type
   </h2>
   <pre><code>imm A = u32;
 imm B = u64;
 
-fn get(a: A, b: type) {}</code></pre>
+fn get(a: A, b: type) {}
+</code></pre>
   <h2>
     Function Pointers
   </h2>
   <pre><code>fn a() {}
 imm p: *imm fn() = &amp;a;
-p();</code></pre>
+p();
+</code></pre>
   <h2>
     Built-in functions
   </h2>
-  <pre><code>imm img = %embedFile("img.bmp");</code></pre>
+  <pre><code>imm img = %embedFile("img.bmp");
+</code></pre>
   <h2>
     Compile-time code evaluation
   </h2>
@@ -215,7 +236,9 @@ p();</code></pre>
 mut a = 2u32;
 mut b = 3u32;
 // 'c' is known at compile-time
-mut c = ct add(a, b);</code></pre>
+mut c = ct add(a, b);
+
+</code></pre>
 </article>
 </body>
 </html>

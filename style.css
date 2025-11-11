@@ -194,7 +194,12 @@ mjx-container {
     font-size: 0.9em;
     color: #aaa;
     display: block;
-    margin-top: 1rem;
+}
+
+.blog-posts {
+    display: flex;
+    flex-direction: column;
+    gap: 1em; 
 }
 
 h2 {
@@ -334,6 +339,20 @@ th, td {
 
 hr {
     border-top: 1px solid var(--theme-color);
+}
+
+.mydesc {
+    display: grid;
+    place-items: center;
+}
+
+.mydesc pre {
+    border: none;
+    background-color: var(--bg-color);
+    margin: 0;
+    padding: 4px;
+    white-space: pre-line;
+    font-size: 1.0em;
 }
 
 @media print {

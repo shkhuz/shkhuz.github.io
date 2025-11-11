@@ -124,3 +124,10 @@ class ListItemNode implements Node {
     }
 }
 
+class HtmlBlockNode implements Node {
+    String raw;
+    
+    public HtmlBlockNode(String raw) {
+        this.raw = raw;
+    }
+}

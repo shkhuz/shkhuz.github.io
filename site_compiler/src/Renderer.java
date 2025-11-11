@@ -28,6 +28,7 @@ public class Renderer {
             || node instanceof HeadingNode
             || node instanceof PreblockNode
             || node instanceof MathblockNode
+            || node instanceof HtmlBlockNode
             || node instanceof ListNode
             || node instanceof ListItemNode) {
             return false;
@@ -135,6 +136,12 @@ public class Renderer {
         else if (node instanceof MathblockNode) {
             MathblockNode m = (MathblockNode) node;
             out.append("\n" + pad + m.text);
+        }
+        else if (node instanceof HtmlBlockNode) {
+            HtmlBlockNode h = (HtmlBlockNode) node;
+            String text = h.raw;
+            String textAlt = text.replace("\n", "\n" + pad);
+            out.append("\n" + pad + textAlt);
         }
         else if (node instanceof EmNode) {
             EmNode e = (EmNode) node;
