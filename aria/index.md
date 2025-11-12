@@ -7,11 +7,13 @@
 
 Aria is an experimental systems programming language built to improve on C.
 
-```aria(hello_world.ar)
+```aria*(hello_world.ar)
 import std;
 
 fn main() {
+// hlt-start
     std.print("Hello World!");
+// hlt-end
 }
 ```
 

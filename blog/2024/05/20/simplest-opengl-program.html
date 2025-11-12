@@ -4,7 +4,7 @@
 <meta charset='utf-8'>
 <meta name='viewport' content='width=device-width, initial-scale=1'>
 
-<title></title>
+<title>Simplest OpenGL program</title>
 <link rel='apple-touch-icon' sizes='180x180' href='/assets/apple-touch-icon.png'>
 <link rel='icon' type='image/png' sizes='32x32' href='/assets/favicon-32x32.png'>
 <link rel='icon' type='image/png' sizes='16x16' href='/assets/favicon-16x16.png'>
@@ -58,60 +58,60 @@
 #include &lt;string&gt;
 
 const std::string vs =
-    "#version 330\n"
-    "layout(location = 0) in vec4 position;\n"
-    "layout(location = 1) in vec4 color;\n"
-    "smooth out vec4 vertex_color;\n"
-    "void main() {\n"
-    "   gl_Position = position;\n"
-    "   vertex_color = color;\n"
-    "}\n"
-    ""
+    <span class='string'>"#version 330\n"</span>
+    <span class='string'>"layout(location = 0) in vec4 position;\n"</span>
+    <span class='string'>"layout(location = 1) in vec4 color;\n"</span>
+    <span class='string'>"smooth out vec4 vertex_color;\n"</span>
+    <span class='string'>"void main() {\n"</span>
+    <span class='string'>"   gl_Position = position;\n"</span>
+    <span class='string'>"   vertex_color = color;\n"</span>
+    <span class='string'>"}\n"</span>
+    <span class='string'>""</span>
     ;
 
 const std::string fs =
-    "#version 330\n"
-    "smooth in vec4 vertex_color;\n"
-    "out vec4 out_color;\n"
-    "void main() {\n"
-    "   out_color = vertex_color;\n"
-    "}\n"
-    ""
+    <span class='string'>"#version 330\n"</span>
+    <span class='string'>"smooth in vec4 vertex_color;\n"</span>
+    <span class='string'>"out vec4 out_color;\n"</span>
+    <span class='string'>"void main() {\n"</span>
+    <span class='string'>"   out_color = vertex_color;\n"</span>
+    <span class='string'>"}\n"</span>
+    <span class='string'>""</span>
     ;
 
-bool create_shader(GLenum shader_kind, const char* shader_src, GLuint* out_shader) {
+bool create_shader(GLenum shader_kind, const <span class='keyword'>char</span>* shader_src, GLuint* out_shader) {
     GLuint shader = glCreateShader(shader_kind);
-    glShaderSource(shader, 1, &amp;shader_src, NULL);
+    glShaderSource(shader, <span class='number'>1</span>, &amp;shader_src, NULL);
     glCompileShader(shader);
 
     GLint status;
     glGetShaderiv(shader, GL_COMPILE_STATUS, &amp;status);
-    if (status == GL_FALSE) {
+    <span class='keyword'>if</span> (status == GL_FALSE) {
         GLint log_len;
         glGetShaderiv(shader, GL_INFO_LOG_LENGTH, &amp;log_len);
 
-        GLchar log[4096];
+        GLchar log[<span class='number'>4096</span>];
         glGetShaderInfoLog(shader, log_len, NULL, log);
 
-        const char* kind;
+        const <span class='keyword'>char</span>* kind;
         switch (shader_kind) {
-            case GL_VERTEX_SHADER: kind = "vertex"; break;
-            case GL_FRAGMENT_SHADER: kind = "fragment"; break;
-            default: kind = "unknown"; break;
+            case GL_VERTEX_SHADER: kind = <span class='string'>"vertex"</span>; break;
+            case GL_FRAGMENT_SHADER: kind = <span class='string'>"fragment"</span>; break;
+            default: kind = <span class='string'>"unknown"</span>; break;
         }
-        fprintf(stderr, "Compile failure in %s shader: %s\n", kind, log);
-        return false;
+        fprintf(stderr, <span class='string'>"Compile failure in %s shader: %s\n"</span>, kind, log);
+        <span class='keyword'>return</span> false;
     }
     *out_shader = shader;
-    return true;
+    <span class='keyword'>return</span> true;
 }
 
-bool build_shader_program(const char* vs, const char* fs, GLuint* out_program) {
+bool build_shader_program(const <span class='keyword'>char</span>* vs, const <span class='keyword'>char</span>* fs, GLuint* out_program) {
     GLuint vshader;
     GLuint fshader;
 
-    if (!create_shader(GL_VERTEX_SHADER, vs, &amp;vshader)) return false;
-    if (!create_shader(GL_FRAGMENT_SHADER, fs, &amp;fshader)) return false;
+    <span class='keyword'>if</span> (!create_shader(GL_VERTEX_SHADER, vs, &amp;vshader)) <span class='keyword'>return</span> false;
+    <span class='keyword'>if</span> (!create_shader(GL_FRAGMENT_SHADER, fs, &amp;fshader)) <span class='keyword'>return</span> false;
 
     GLuint program = glCreateProgram();
 
@@ -122,81 +122,81 @@ bool build_shader_program(const char* vs, const char* fs, GLuint* out_program) {
 
     GLint status;
     glGetProgramiv(program, GL_LINK_STATUS, &amp;status);
-    if (status == GL_FALSE) {
+    <span class='keyword'>if</span> (status == GL_FALSE) {
         GLint log_len;
         glGetProgramiv(program, GL_INFO_LOG_LENGTH, &amp;log_len);
 
-        GLchar log[4096];
+        GLchar log[<span class='number'>4096</span>];
         glGetProgramInfoLog(program, log_len, NULL, log);
-        fprintf(stderr, "Shader linker failure: %s\n", log);
-        return false;
+        fprintf(stderr, <span class='string'>"Shader linker failure: %s\n"</span>, log);
+        <span class='keyword'>return</span> false;
     }
 
     glDetachShader(program, vshader);
     glDetachShader(program, fshader);
 
     *out_program = program;
-    return true;
+    <span class='keyword'>return</span> true;
 }
 
-int main() {
-    if (SDL_Init(SDL_INIT_VIDEO) &lt; 0) return 1;
-    SDL_Window *window = SDL_CreateWindow("SDL",
+<span class='keyword'>int</span> main() {
+    <span class='keyword'>if</span> (SDL_Init(SDL_INIT_VIDEO) &lt; <span class='number'>0</span>) <span class='keyword'>return</span> <span class='number'>1</span>;
+    SDL_Window *window = SDL_CreateWindow(<span class='string'>"SDL"</span>,
         SDL_WINDOWPOS_UNDEFINED,
         SDL_WINDOWPOS_UNDEFINED,
-        640, 480,
+        <span class='number'>640</span>, <span class='number'>480</span>,
         SDL_WINDOW_SHOWN | SDL_WINDOW_OPENGL
     );
 
     SDL_GLContext gl_context = SDL_GL_CreateContext(window);
-    if (gl_context == NULL) {
-        fprintf(stderr, "Error in creating the OpenGL context\n");
-        return 1;
+    <span class='keyword'>if</span> (gl_context == NULL) {
+        fprintf(stderr, <span class='string'>"Error in creating the OpenGL context\n"</span>);
+        <span class='keyword'>return</span> <span class='number'>1</span>;
     }
 
-    const unsigned char* version = glGetString(GL_VERSION);
-    if (version == NULL) {
-        fprintf(stderr, "Error in getting the OpenGL version\n");
-        return 1;
+    const unsigned <span class='keyword'>char</span>* version = glGetString(GL_VERSION);
+    <span class='keyword'>if</span> (version == NULL) {
+        fprintf(stderr, <span class='string'>"Error in getting the OpenGL version\n"</span>);
+        <span class='keyword'>return</span> <span class='number'>1</span>;
     }
 
     SDL_GL_MakeCurrent(window, gl_context);
 
-    SDL_GL_SetAttribute(SDL_GL_CONTEXT_MAJOR_VERSION, 3);
-    SDL_GL_SetAttribute(SDL_GL_CONTEXT_MINOR_VERSION, 3);
+    SDL_GL_SetAttribute(SDL_GL_CONTEXT_MAJOR_VERSION, <span class='number'>3</span>);
+    SDL_GL_SetAttribute(SDL_GL_CONTEXT_MINOR_VERSION, <span class='number'>3</span>);
 
-    // MUST make a context AND make it current BEFORE glewInit()!
+    <span class='comment'>// MUST make a context AND make it current BEFORE glewInit()!</span>
     glewExperimental = GL_TRUE;
     GLenum glew_status = glewInit();
-    if (glew_status != 0) {
-        fprintf(stderr, "GLEW init error: %s\n", glewGetErrorString(glew_status));
-        return 1;
+    <span class='keyword'>if</span> (glew_status != <span class='number'>0</span>) {
+        fprintf(stderr, <span class='string'>"GLEW init error: %s\n"</span>, glewGetErrorString(glew_status));
+        <span class='keyword'>return</span> <span class='number'>1</span>;
     }
 
-    const float triangle_vertices[] = {
-        // position
-         0.0f,  0.5f,   0.0f, 1.0f,
-         0.5f, -0.366f, 0.0f, 1.0f,
-        -0.5f, -0.366f, 0.0f, 1.0f,
+    const <span class='keyword'>float</span> triangle_vertices[] = {
+        <span class='comment'>// position</span>
+         <span class='number'>0.0</span>f,  <span class='number'>0.5</span>f,   <span class='number'>0.0</span>f, <span class='number'>1.0</span>f,
+         <span class='number'>0.5</span>f, <span class='number'>-0.366</span>f, <span class='number'>0.0</span>f, <span class='number'>1.0</span>f,
+        <span class='number'>-0.5</span>f, <span class='number'>-0.366</span>f, <span class='number'>0.0</span>f, <span class='number'>1.0</span>f,
 
-        // color
-        1.0f, 0.0f, 0.0f, 1.0f,
-        0.0f, 1.0f, 0.0f, 1.0f,
-        0.0f, 0.0f, 1.0f, 1.0f
+        <span class='comment'>// color</span>
+        <span class='number'>1.0</span>f, <span class='number'>0.0</span>f, <span class='number'>0.0</span>f, <span class='number'>1.0</span>f,
+        <span class='number'>0.0</span>f, <span class='number'>1.0</span>f, <span class='number'>0.0</span>f, <span class='number'>1.0</span>f,
+        <span class='number'>0.0</span>f, <span class='number'>0.0</span>f, <span class='number'>1.0</span>f, <span class='number'>1.0</span>f
     };
 
     GLuint shader_program;
-    if (!build_shader_program(vs.c_str(), fs.c_str(), &amp;shader_program)) {
+    <span class='keyword'>if</span> (!build_shader_program(vs.c_str(), fs.c_str(), &amp;shader_program)) {
         SDL_Quit();
-        return 0;
+        <span class='keyword'>return</span> <span class='number'>0</span>;
     }
 
     GLuint vao;
-    glGenVertexArrays(1, &amp;vao);
+    glGenVertexArrays(<span class='number'>1</span>, &amp;vao);
     glBindVertexArray(vao);
 
     GLuint triangle_vbo;
-    glGenBuffers(1, &amp;triangle_vbo);
+    glGenBuffers(<span class='number'>1</span>, &amp;triangle_vbo);
 
     glBindBuffer(GL_ARRAY_BUFFER, triangle_vbo);
     glBufferData(
@@ -205,44 +205,44 @@ int main() {
         triangle_vertices,
         GL_STATIC_DRAW
     );
-    glEnableVertexAttribArray(0);
-    glEnableVertexAttribArray(1);
-    glVertexAttribPointer(0, 4, GL_FLOAT, GL_FALSE, 0, 0);
-    glVertexAttribPointer(1, 4, GL_FLOAT, GL_FALSE, 0, (void*)48);
-    glBindVertexArray(0);
+    glEnableVertexAttribArray(<span class='number'>0</span>);
+    glEnableVertexAttribArray(<span class='number'>1</span>);
+    glVertexAttribPointer(<span class='number'>0</span>, <span class='number'>4</span>, GL_FLOAT, GL_FALSE, <span class='number'>0</span>, <span class='number'>0</span>);
+    glVertexAttribPointer(<span class='number'>1</span>, <span class='number'>4</span>, GL_FLOAT, GL_FALSE, <span class='number'>0</span>, (<span class='keyword'>void</span>*)<span class='number'>48</span>);
+    glBindVertexArray(<span class='number'>0</span>);
 
     bool running = true;
-    while (running) {
+    <span class='keyword'>while</span> (running) {
         SDL_Event e;
-        while (SDL_PollEvent(&amp;e)) {
-            if (e.type == SDL_QUIT ||
+        <span class='keyword'>while</span> (SDL_PollEvent(&amp;e)) {
+            <span class='keyword'>if</span> (e.type == SDL_QUIT ||
                 (e.type == SDL_KEYUP &amp;&amp; e.key.keysym.sym == SDLK_ESCAPE)) {
                 running = false;
             }
         }
 
-        glClearColor(0.0, 0.0, 0.0, 0.0);
+        glClearColor(<span class='number'>0.0</span>, <span class='number'>0.0</span>, <span class='number'>0.0</span>, <span class='number'>0.0</span>);
         glClear(GL_COLOR_BUFFER_BIT);
 
         glUseProgram(shader_program);
         glBindVertexArray(vao);
-        glDrawArrays(GL_TRIANGLES, 0, 3);
-        glUseProgram(0);
+        glDrawArrays(GL_TRIANGLES, <span class='number'>0</span>, <span class='number'>3</span>);
+        glUseProgram(<span class='number'>0</span>);
 
         SDL_GL_SwapWindow(window);
-        SDL_Delay(20);
+        SDL_Delay(<span class='number'>20</span>);
     }
 
     SDL_GL_DeleteContext(gl_context);
     SDL_Quit();
-    return 0;
+    <span class='keyword'>return</span> <span class='number'>0</span>;
 }
 </code></pre>
   <div class='code-snippet-filename'>sdl2-opengl.cpp</div>
   <p>
     Compile with:
   </p>
-  <pre class='lang-console'><code>$ g++ sdl2-opengl.cpp -Wall -lSDL2 -lGL -lGLEW
+  <pre class='lang-console'><code><span class='console-prompt'>$ </span><span class='console-input'>g++ sdl2-opengl.cpp -Wall -lSDL2 -lGL -lGLEW</span>
 </code></pre>
   <p>
     <img src='opengl3-boilerplate-result.png' alt=''>

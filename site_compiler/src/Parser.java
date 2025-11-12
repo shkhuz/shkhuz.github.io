@@ -232,6 +232,8 @@ public class Parser {
         String lang = null;
         String filepath = null;
         boolean wrap = false;
+        boolean callout = false;
+
         if (t.extra != null) {
             String extra = t.extra;
             int i = 0;
@@ -240,8 +242,9 @@ public class Parser {
                        && Character.isLetter(extra.charAt(i))) i++;
                 lang = extra.substring(0, i); 
             }
-            if (i < extra.length() && extra.charAt(i) == '!') {
-                wrap = true;
+            while (i < extra.length() && extra.charAt(i) != '(') {
+                if (extra.charAt(i) == '!') wrap = true;
+                else if (extra.charAt(i) == '*') callout = true;
                 i++;
             }
             if (i < extra.length() && extra.charAt(i) == '(') {
@@ -257,7 +260,7 @@ public class Parser {
             }
         }
         while (match(TKind.newline)) {}
-        return new PreblockNode(lang, wrap, t.lexeme, filepath);
+        return new PreblockNode(lang, wrap, callout, t.lexeme, filepath);
     }
 
     private Node parseIndentedPreblock() {
@@ -277,7 +280,7 @@ public class Parser {
             else break;
         }
         while (match(TKind.newline)) {}
-        return new PreblockNode(null, false, code.toString(), null);
+        return new PreblockNode(null, false, false, code.toString(), null);
     }
 
     private Node parseMathblock() {

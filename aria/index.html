@@ -4,7 +4,7 @@
 <meta charset='utf-8'>
 <meta name='viewport' content='width=device-width, initial-scale=1'>
 
-<title></title>
+<title>Aria programming language and toolchain</title>
 <link rel='apple-touch-icon' sizes='180x180' href='/assets/apple-touch-icon.png'>
 <link rel='icon' type='image/png' sizes='32x32' href='/assets/favicon-32x32.png'>
 <link rel='icon' type='image/png' sizes='16x16' href='/assets/favicon-16x16.png'>
@@ -60,14 +60,14 @@
   <p>
     Aria is an experimental systems programming language built to improve on C.
   </p>
-  <pre class='lang-aria'><code>import std;
-
-fn main() {
-    std.print("Hello World!");
-}
+  <pre class='lang-aria pre-callout'><code><span class='dim'>import std;</span>
+<span class='dim'></span>
+<span class='dim'><span class='keyword'>fn</span> main() {</span>
+<mark>    std.print(<span class='string'>"Hello World!"</span>);</mark>
+<span class='dim'>}</span>
 </code></pre>
   <div class='code-snippet-filename'>hello_world.ar</div>
-  <pre class='lang-console'><code>$ aria hello_world.ar
+  <pre class='lang-console'><code><span class='console-prompt'>$ </span><span class='console-input'>aria hello_world.ar</span>
 Hello World!
 </code></pre>
 </article>

@@ -1,26 +1,144 @@
 import java.util.regex.Pattern;
 import java.util.regex.Matcher;
 import java.lang.StringBuffer;
-
+import java.util.Map;
+import java.util.Set;
 
 public class Hlt {
+    static Pattern patternCType;
+    static Pattern patternPython;
+    static Pattern patternConsole;
 
-    public static String hlt(String code, String lang) {
-        StringBuffer s = new StringBuffer(code);
-        if (lang.equals("c") || lang.equals("cpp")) {
-            hltCpp(s);
-        }
-        else if (lang.equals("aria")) {
-            hltAria(s);
-        }
-        return s.toString();
+    static final Map<String, Set<String>> KEYWORDS = Map.of(
+        "c", Set.of("int","char","return","if","else","while","for","void","float","double","struct"),
+        "cpp", Set.of("int","char","return","if","else","while","for","void","float","double","struct","class","namespace","template","auto"),
+        "aria", Set.of("fn","imm","mut","return","if","else","while","for","void","f32","f64","struct","union"),
+        "java", Set.of("class","public","private","protected","static","void","int","new","return","if","else","for","while","import","package"),
+        "javascript", Set.of("let","var","const","function","return","if","else","for","while","class","new","import","export"),
+        "js", Set.of("let","var","const","function","return","if","else","for","while","class","new","import","export"),
+        "python", Set.of("def","class","return","if","else","elif","for","while","import","from","as","None","True","False"),
+        "bash", Set.of("if","then","fi","elif","else","for","while","do","done","function"),
+        "json", Set.of()
+    );
+
+    public static void init() {
+        patternCType = buildPattern("c");
+        patternPython = buildPattern("python");
+        patternConsole = Pattern.compile("(?m)^(\\$ )(.*)$");
     }
 
-    private static void hltCpp(StringBuffer s) {
-        Pattern p = Pattern.compile("int");
-        Matcher m = p.matcher(s);
-        while (m.find()) m.appendReplacement(s, "<span class='pretype-aria k'>int</span>");
+    private static Pattern buildPattern(String lang) {
+        String str = "(\"(?:\\\\.|[^\"\\\\])*\")";        // group 1
+        String num = "([+-]?[0-9]+(?:\\.[0-9]+)?)";       // group 2
+        String ident = "([A-Za-z_][A-Za-z0-9_]*)";        // group 3
+        String comment;
+        switch (lang) {
+            case "c": 
+            case "cpp":
+            case "java":
+            case "aria":
+                comment = "(//.*)";
+                break;
+            case "python":
+                comment = "(#.*)";
+                break;
+            default:
+                comment = "()";
+                break;
+        }
+        String other = "([\\s\\S])";
+        String master = String.join("|", str, num, ident, comment, other);
+        return Pattern.compile(master);
     }
 
-    private static void hltAria(StringBuffer s) {}
+    private static String calloutHighlight(String code) {
+        StringBuilder sb = new StringBuilder(code.length());
+        boolean inCallout = false;
+        int start = 0;
+        int len = code.length();
+
+        for (int i = 0; i < len;) {
+            int lineEnd = code.indexOf('\n', i);
+            if (lineEnd == -1) lineEnd = len;
+            String line = code.substring(i, lineEnd);
+
+            if (line.contains("hlt-start")) inCallout = true;
+            else if (line.contains("hlt-end")) inCallout = false;
+            else {
+                if (inCallout) sb.append("<mark>").append(line).append("</mark>");
+                else sb.append("<span class='dim'>").append(line).append("</span>");
+                sb.append('\n');
+            }
+
+            i = lineEnd + 1;
+        }
+
+        return sb.toString();
+    }
+
+    public static String hlt(String code, String lang, boolean callout) {
+        if (callout) code = calloutHighlight(code);
+        Matcher m;
+        StringBuilder out = new StringBuilder();
+        switch (lang) {
+            case "c":
+            case "cpp":
+            case "java":
+            case "aria":
+                m = patternCType.matcher(code);
+                break;
+            case "python":
+                m = patternPython.matcher(code);
+                break;
+
+            case "console": {
+                m = patternConsole.matcher(code);
+                int last = 0;
+                while (m.find()) {
+                    out.append(code, last, m.start());
+                    out.append("<span class='console-prompt'>");
+                    out.append(m.group(1)); // "$ "
+                    out.append("</span><span class='console-input'>");
+                    out.append(m.group(2));
+                    out.append("</span>");
+                    last = m.end();
+                }
+                out.append(code.substring(last));
+                return out.toString();
+            }
+
+            default: 
+                return code;
+        }
+
+        Set<String> kw = KEYWORDS.getOrDefault(lang, Set.of());
+        while (m.find()) {
+            String strV = m.group(1);
+            String numV = m.group(2);
+            String identV = m.group(3);
+            String comment = m.group(4);
+            String other = m.group(5);
+
+            if (strV != null) {
+                out.append("<span class='string'>").append(strV).append("</span>");
+            }
+            else if (numV != null) {
+                out.append("<span class='number'>").append(numV).append("</span>");
+            }
+            else if (identV != null) {
+                if (kw.contains(identV)) {
+                    out.append("<span class='keyword'>").append(identV).append("</span>");
+                }
+                else out.append(identV);
+            }
+            else if (comment != null && !comment.isEmpty()) {
+                out.append("<span class='comment'>").append(comment).append("</span>");
+            }
+            else {
+                out.append(other);
+            }
+        }
+
+        return out.toString();
+    }
 }

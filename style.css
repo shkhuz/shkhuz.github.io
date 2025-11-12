@@ -49,8 +49,8 @@ import url('https://fonts.googleapis.com/css2?family=Source+Code+Pro&display=swa
     --aside-bg-color: #1C1C1C;
 
     --code-string-color: #5fd7af;
-    --code-aria-intrinsic-func-color: #add8e6;
-    --code-aria-struct-acc-color: #aaa;
+    --code-intrinsic-color: #add8e6;
+    --code-comment-color: #888;
     /* ---------------------------------------------------------------------- */
 
     /* common */
@@ -59,10 +59,9 @@ import url('https://fonts.googleapis.com/css2?family=Source+Code+Pro&display=swa
     --a-hover-color: red;
 
     --secondary-color: #777;
+    --console-output-color: #aaa;
 
     --container-border-color: #828282;
-
-    --code-comment-color: #888;
 }
 
 @font-face {
@@ -379,51 +378,31 @@ hr {
     }
 } 
 
-.pretype-aria .k {
+.keyword {
     color: var(--theme-color);
     font-weight: bold;
 }
 
-.pretype-aria .t {
+.const {
     color: var(--theme-color);
+}
+
+.instrinsic {
+    color: var(--code-intrinsic-color);
     font-weight: bold;
 }
 
-.pretype-aria .c {
-    color: var(--theme-color);
-}
-
-.pretype-aria .n {
-    color: var(--theme-color);
-}
-
-.pretype-aria .i {
-    color: var(--code-aria-intrinsic-func-color);
-    font-weight: bold;
-}
-
-.pretype-aria .s {
+.string {
     color: var(--code-string-color);
 }
 
-.pretype-aria .ch {
-    color: var(--theme-color);
-}
-
-.pretype-aria .struct-acc {
-    color: var(--code-aria-struct-acc-color);
-}
-
-.pretype-aria .com {
+.comment {
     color: var(--code-comment-color);
 }
 
-.pretype-console {
-    color: var(--code-comment-color); 
-}
-
-.pretype-console .prompt {
+.console-prompt {
     color: var(--theme-color);
+    font-weight: bold;
 
     -webkit-user-select: none;
     -khtml-user-select: none;
@@ -433,6 +412,26 @@ hr {
     user-select: none;
 }
 
-.pretype-console .sh {
+.console-input {
     color: var(--primary-color);
+    /* font-weight: bold; */
+}
+
+.lang-console {
+    color: var(--console-output-color);
+}
+
+pre > code mark {
+    background-color: #232;
+    min-width: 100%;
+    color: var(--primary-color);
+    opacity: 1;  
+
+    display: inline-block;
+    min-width: 100%;
+    padding: 0.2em 0;
+}
+
+.dim {
+    opacity: 0.5;
 }

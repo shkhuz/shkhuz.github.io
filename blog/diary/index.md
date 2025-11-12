@@ -1,3 +1,5 @@
+# Diary
+
 ## 11.10.25
 
 While browsing YouTube today I came across some SolidWorks videos in my recommended partly because yesterday after a long time I revisited my CAD itch. While watching some of them (one of them was a CAD 1v1 contest!) a video on a 4-cylinder engine popped up. When I saw the pistons moving in the preview, I knew I'd spend the next three hours modeling it myself. This was the blueprint that was shown at the beginning of the video:

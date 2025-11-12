@@ -4,7 +4,7 @@
 <meta charset='utf-8'>
 <meta name='viewport' content='width=device-width, initial-scale=1'>
 
-<title></title>
+<title>An android app from scratch</title>
 <link rel='apple-touch-icon' sizes='180x180' href='/assets/apple-touch-icon.png'>
 <link rel='icon' type='image/png' sizes='32x32' href='/assets/favicon-32x32.png'>
 <link rel='icon' type='image/png' sizes='16x16' href='/assets/favicon-16x16.png'>
@@ -68,15 +68,15 @@
   </p>
   <pre class='lang-c'><code>#include &lt;stdio.h&gt;
 
-int main(void) {
-    printf("Hello world!");
+<span class='keyword'>int</span> main(<span class='keyword'>void</span>) {
+    printf(<span class='string'>"Hello world!"</span>);
 }
 </code></pre>
   <p>
     Now that is <em>simple</em>. It can be compiled into an executable using the system C compiler:
   </p>
-  <pre class='lang-console'><code>$ cc main.c
-$ ./a.out
+  <pre class='lang-console'><code><span class='console-prompt'>$ </span><span class='console-input'>cc main.c</span>
+<span class='console-prompt'>$ </span><span class='console-input'>./a.out</span>
 Hello world!
 </code></pre>
   <p>
@@ -116,39 +116,39 @@ Hello world!
   <p>
     We create a directory for the SDK:
   </p>
-  <pre class='lang-console'><code>$ mkdir ~/android_sdk
-$ SDK=~/android_sdk
-$ cd $SDK
+  <pre class='lang-console'><code><span class='console-prompt'>$ </span><span class='console-input'>mkdir ~/android_sdk</span>
+<span class='console-prompt'>$ </span><span class='console-input'>SDK=~/android_sdk</span>
+<span class='console-prompt'>$ </span><span class='console-input'>cd $SDK</span>
 </code></pre>
   <p>
     And download the cmdline-tools into that directory. <code>sdkmanager</code> is used to download the required tools and components for the target platform version.
   </p>
-  <pre class='lang-console'><code>$ curl -LO https://dl.google.com/android/repository/commandlinetools-linux-11076708_latest.zip
-$ unzip -q commandlinetools-linux-11076708_latest.zip -d "$SDK"
-$ "$SDK/cmdline-tools/bin/sdkmanager" --sdk_root="$SDK" --install \
+  <pre class='lang-console'><code><span class='console-prompt'>$ </span><span class='console-input'>curl -LO https://dl.google.com/android/repository/commandlinetools-linux-11076708_latest.zip</span>
+<span class='console-prompt'>$ </span><span class='console-input'>unzip -q commandlinetools-linux-11076708_latest.zip -d "$SDK"</span>
+<span class='console-prompt'>$ </span><span class='console-input'>"$SDK/cmdline-tools/bin/sdkmanager" --sdk_root="$SDK" --install \</span>
       "platforms;android-34" "build-tools;34.0.0" "platform-tools" "ndk;26.2.11394342"
 </code></pre>
   <p>
     If for some reason <code>sdkmanager</code> is not to be used, we can also download the components manually. We'll need <code>build-tools</code> for <code>aapt</code>, <code>d8</code>, etc, <code>platform-tools</code> for <code>adb</code> and an Android platform to target. We can skip downloading <code>cmdline-tools</code> if we are downloading everything manually.
   </p>
-  <pre class='lang-console'><code>$ curl -LO https://dl.google.com/android/repository/build-tools_r34-linux.zip
-$ mkdir "$SDK/build-tools"
-$ unzip -q build-tools_r34-linux.zip -d "$SDK/build-tools"
-$ mv "$SDK/build-tools/android-14" "$SDK/build-tools/34.0.0"
+  <pre class='lang-console'><code><span class='console-prompt'>$ </span><span class='console-input'>curl -LO https://dl.google.com/android/repository/build-tools_r34-linux.zip</span>
+<span class='console-prompt'>$ </span><span class='console-input'>mkdir "$SDK/build-tools"</span>
+<span class='console-prompt'>$ </span><span class='console-input'>unzip -q build-tools_r34-linux.zip -d "$SDK/build-tools"</span>
+<span class='console-prompt'>$ </span><span class='console-input'>mv "$SDK/build-tools/android-14" "$SDK/build-tools/34.0.0"</span>
 
-$ curl -LO https://dl.google.com/android/repository/platform-34-ext7_r02.zip
-$ mkdir "$SDK/platforms"
-$ unzip -q platform-34-ext7_r02.zip -d "$SDK/platforms"
+<span class='console-prompt'>$ </span><span class='console-input'>curl -LO https://dl.google.com/android/repository/platform-34-ext7_r02.zip</span>
+<span class='console-prompt'>$ </span><span class='console-input'>mkdir "$SDK/platforms"</span>
+<span class='console-prompt'>$ </span><span class='console-input'>unzip -q platform-34-ext7_r02.zip -d "$SDK/platforms"</span>
 
-$ curl -LO https://dl.google.com/android/repository/platform-tools_r34.0.5-linux.zip
-$ unzip -q platform-tools_r34.0.5-linux.zip -d "$SDK"
+<span class='console-prompt'>$ </span><span class='console-input'>curl -LO https://dl.google.com/android/repository/platform-tools_r34.0.5-linux.zip</span>
+<span class='console-prompt'>$ </span><span class='console-input'>unzip -q platform-tools_r34.0.5-linux.zip -d "$SDK"</span>
 </code></pre>
   <p>
     After downloading and unpacking everything, we set some variables for the different directories inside the SDK:
   </p>
-  <pre class='lang-console'><code>$ BUILD_TOOLS="$SDK/build-tools/34.0.0"
-$ PLATFORM="$SDK/platforms/android-34"
-$ PLATFORM_TOOLS="$SDK/platform-tools"
+  <pre class='lang-console'><code><span class='console-prompt'>$ </span><span class='console-input'>BUILD_TOOLS="$SDK/build-tools/34.0.0"</span>
+<span class='console-prompt'>$ </span><span class='console-input'>PLATFORM="$SDK/platforms/android-34"</span>
+<span class='console-prompt'>$ </span><span class='console-input'>PLATFORM_TOOLS="$SDK/platform-tools"</span>
 </code></pre>
   <h2>
     Hello, world!
@@ -174,20 +174,20 @@ $ PLATFORM_TOOLS="$SDK/platform-tools"
   <p>
     Next up is <code>java/com/shkhuz/hello/MainActivity.java</code>. It's the entry point of the app, and in this small example is responsible for the behaviour of the <code>TextView</code>. 
   </p>
-  <pre class='lang-java'><code>package com.shkhuz.hello;
+  <pre class='lang-java'><code><span class='keyword'>package</span> com.shkhuz.hello;
 
-import android.app.Activity;
-import android.os.Bundle;
-import android.widget.TextView;
+<span class='keyword'>import</span> android.app.Activity;
+<span class='keyword'>import</span> android.os.Bundle;
+<span class='keyword'>import</span> android.widget.TextView;
 
-public class MainActivity extends Activity {
+<span class='keyword'>public</span> <span class='keyword'>class</span> MainActivity extends Activity {
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
+    <span class='keyword'>protected</span> <span class='keyword'>void</span> onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
         TextView text = (TextView)findViewById(R.id.my_text);
-        text.setText("Hello, world!");
+        text.setText(<span class='string'>"Hello, world!"</span>);
     }
 }
 </code></pre>
@@ -218,12 +218,12 @@ public class MainActivity extends Activity {
   <p>
     We create some directories to store build artifacts:
   </p>
-  <pre class='lang-console'><code>$ mkdir -p build/gen build/obj build/apk
+  <pre class='lang-console'><code><span class='console-prompt'>$ </span><span class='console-input'>mkdir -p build/gen build/obj build/apk</span>
 </code></pre>
   <p>
     First we need to generate <code>R.java</code>, which is used to refer to resources like <code>R.id.my_text</code> from Java. We use the Android Asset Packaging Tool (<code>aapt</code>) for this:
   </p>
-  <pre class='lang-console'><code>$ "$BUILD_TOOLS/aapt" package -f -m -J build/gen/ -S res \
+  <pre class='lang-console'><code><span class='console-prompt'>$ </span><span class='console-input'>"$BUILD_TOOLS/aapt" package -f -m -J build/gen/ -S res \</span>
       -M AndroidManifest.xml -I "$PLATFORM/android.jar"
 </code></pre>
   <p>
@@ -252,19 +252,19 @@ public class MainActivity extends Activity {
   <p>
     Now we finally compile all our Java code, using <code>javac</code>:
   </p>
-  <pre class='lang-console'><code>$ javac --release 11 -classpath "$PLATFORM/android.jar" -d build/obj \
+  <pre class='lang-console'><code><span class='console-prompt'>$ </span><span class='console-input'>javac --release 11 -classpath "$PLATFORM/android.jar" -d build/obj \</span>
       build/gen/com/shkhuz/hello/R.java java/com/shkhuz/hello/MainActivity.java
 </code></pre>
   <p>
     This generates <code>.class</code> files with JVM bytecode. To run on Android devices, these need to be translated to <a href='https://en.wikipedia.org/wiki/Dalvik_%28software%29'>Dalvik</a> bytecode. Using <code>d8</code>:
   </p>
-  <pre class='lang-console'><code>$ "$BUILD_TOOLS/d8" --release --lib "$PLATFORM/android.jar" \
+  <pre class='lang-console'><code><span class='console-prompt'>$ </span><span class='console-input'>"$BUILD_TOOLS/d8" --release --lib "$PLATFORM/android.jar" \</span>
       --output build/apk/ build/obj/com/shkhuz/hello/*.class
 </code></pre>
   <p>
     We then package the contents of the <code>build/apk/</code> directory together with the manifest and resources into an Android Application Package (APK) file, again using the <code>aapt</code> tool:
   </p>
-  <pre class='lang-console'><code>$ "$BUILD_TOOLS/aapt" package -f -M AndroidManifest.xml -S res/ \
+  <pre class='lang-console'><code><span class='console-prompt'>$ </span><span class='console-input'>"$BUILD_TOOLS/aapt" package -f -M AndroidManifest.xml -S res/ \</span>
       -I "$PLATFORM/android.jar" \
       -F build/hello.unsigned.apk build/apk/
 </code></pre>
@@ -294,13 +294,13 @@ public class MainActivity extends Activity {
   <p>
     <code>zipalign</code> basically tidies up the APK by lining up uncompressed files on 4-byte boundaries and putting native libraries on page boundaries. 
   </p>
-  <pre class='lang-console'><code>$ "$BUILD_TOOLS/zipalign" -f -p 4 \
+  <pre class='lang-console'><code><span class='console-prompt'>$ </span><span class='console-input'>"$BUILD_TOOLS/zipalign" -f -p 4 \</span>
       build/hello.unsigned.apk build/hello.aligned.apk
 </code></pre>
   <p>
     Signing requires a key store and key. We use <code>keytool</code> to create one:
   </p>
-  <pre class='lang-console'><code>$ keytool -genkeypair -keystore keystore.jks -alias androidkey \
+  <pre class='lang-console'><code><span class='console-prompt'>$ </span><span class='console-input'>keytool -genkeypair -keystore keystore.jks -alias androidkey \</span>
       -validity 10000 -keyalg RSA -keysize 2048 \
       -storepass android -keypass android
 What is your first and last name?
@@ -321,7 +321,7 @@ Is CN=Unknown, OU=Unknown, O=Unknown, L=Unknown, ST=Unknown, C=Unknown correct?
   <p>
     And use that key to sign our APK using <code>apksigner</code>:
   </p>
-  <pre class='lang-console'><code>$ "$BUILD_TOOLS/apksigner" sign --ks keystore.jks \
+  <pre class='lang-console'><code><span class='console-prompt'>$ </span><span class='console-input'>"$BUILD_TOOLS/apksigner" sign --ks keystore.jks \</span>
       --ks-key-alias androidkey --ks-pass pass:android \
       --key-pass pass:android --out build/hello.apk \
       build/hello.aligned.apk

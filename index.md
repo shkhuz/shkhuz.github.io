@@ -11,7 +11,7 @@ Welcome to my home on the web. This is a dumping-ground for all my endeavours.
 &nbsp;&nbsp;<a href='aria/'>Aria</a>
 &nbsp;&nbsp;<a href='abascia/'>Abascia</a>
 &nbsp;&nbsp;<a href='hed/'>Hed</a>
-&nbsp;&nbsp;<a href='mental-math/'>Mental Math Trainer</a>
+&nbsp;&nbsp;<a href='mental_math/'>Mental Math Trainer</a>
 &nbsp;&nbsp;<a href='starfield/'>Starfield</a>
 &nbsp;&nbsp;<a href='literal-sandbox/'>Literal Sandbox</a>))
 &nbsp;(diary <a href='blog/diary/'>diary/</a>))

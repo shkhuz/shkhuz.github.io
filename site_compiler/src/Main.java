@@ -86,6 +86,7 @@ public class Main {
 
     public void convertAndOutput(String filePath) throws IOException {
         try {
+            Hlt.init();
             Path f = Paths.get(filePath).normalize();
             String markdown = readFile(filePath);
             if (f.compareTo(Paths.get("index.md")) == 0) {
@@ -97,15 +98,11 @@ public class Main {
             Node root = p.parse();
             Renderer r = new Renderer(f, root);
             String html = r.render();
-            // String html = "";
             System.out.println(html);
-
-            System.out.println(Hlt.hlt("public int main() {}", "c"));
 
             try (FileWriter writer = new FileWriter(changeExt(filePath, ".html"))) {
                 writer.write(blob1);
-                if (title != null) 
-                    writer.write(title);
+                writer.write(extractTitle(f));
                 writer.write(blob2);
                 writer.write(html);
                 writer.write(blob3);

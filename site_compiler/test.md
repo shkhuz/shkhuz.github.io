@@ -17,6 +17,23 @@
   </div>
 </div>
 
+```c!*
+// hlt-start
+int main() {
+    if (true) 1 else 0;
+    return 1;
+// hlt-end
+}
+```
+
+```console
+$ ls
+main.c
+$ gcc main.c
+$ ./a.out
+Hello world!
+```
+
     int main() {
         std::cout << 1;
     }

@@ -79,12 +79,20 @@ class AnchorNode implements Node {
 class PreblockNode implements Node {
     String lang;
     boolean wrap;
+    boolean callout;
     String code;
     String filepath;
 
-    public PreblockNode(String lang, boolean wrap, String code, String filepath) {
+    public PreblockNode(
+            String lang, 
+            boolean wrap, 
+            boolean callout, 
+            String code, 
+            String filepath
+    ) {
         this.lang = lang;
         this.wrap = wrap;
+        this.callout = callout;
         this.code = code;
         this.filepath = filepath;
     }

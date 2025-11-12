@@ -4,7 +4,7 @@
 <meta charset='utf-8'>
 <meta name='viewport' content='width=device-width, initial-scale=1'>
 
-<title></title>
+<title>Nix and Electron</title>
 <link rel='apple-touch-icon' sizes='180x180' href='/assets/apple-touch-icon.png'>
 <link rel='icon' type='image/png' sizes='32x32' href='/assets/favicon-32x32.png'>
 <link rel='icon' type='image/png' sizes='16x16' href='/assets/favicon-16x16.png'>
@@ -46,7 +46,7 @@
 <article>
   <nav id='main-nav'>
     <h1><a href='/'>~/</a> 
-      NixOS and Electron
+      Nix and Electron
     </h1>
   </nav>
   <p>
@@ -216,7 +216,7 @@ changed 120 packages, and audited 533 packages in 19s
   <p>
     Let's start the app by running <code>npm start</code>:
   </p>
-  <pre class='lang-console'><code>$ npm start
+  <pre class='lang-console'><code><span class='console-prompt'>$ </span><span class='console-input'>npm start</span>
 
 &gt; taskmgr@1.0.0 start
 &gt; electron .
@@ -226,7 +226,7 @@ changed 120 packages, and audited 533 packages in 19s
   <p>
     Ohoh. Another Nix battle. Looks like <code>electron</code> relies on a number of shared libraries that are missing from my system. Let's check which libraries are needed:
   </p>
-  <pre class='lang-console'><code>$ ldd node_modules/electron/dist/electron
+  <pre class='lang-console'><code><span class='console-prompt'>$ </span><span class='console-input'>ldd node_modules/electron/dist/electron</span>
         linux-vdso.so.1 (0x00007fab3e510000)
         libffmpeg.so =&gt; /home/huzaifa/dev/taskmgr/node_modules/electron/dist/libffmpeg.so (0x00007fab33400000)
         libdl.so.2 =&gt; /nix/store/g8zyryr9cr6540xsyg4avqkwgxpnwj2a-glibc-2.40-66/lib/libdl.so.2 (0x00007fab3e505000)

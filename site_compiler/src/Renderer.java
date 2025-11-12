@@ -122,11 +122,14 @@ public class Renderer {
             String classes = "";
             if (t.lang != null) classes += "lang-" + t.lang;
             if (t.wrap) classes += " pre-wrap";
+            if (t.callout) classes += " pre-callout";
             classes = classes.trim();
             out.append("\n" + pad + "<pre");
             if (classes != "") out.append(" class='" + classes + "'");
             out.append("><code>");
-            out.append(Lexer.escapeHtml(t.code));
+            String code = Lexer.escapeHtml(t.code);
+            if (t.lang != null) code = Hlt.hlt(code, t.lang, t.callout);
+            out.append(code);
             out.append("</code></pre>");
 
             if (t.filepath != null) {

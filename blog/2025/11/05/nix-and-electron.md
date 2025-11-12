@@ -1,4 +1,4 @@
-# NixOS and Electron
+# Nix and Electron
 
 Today I got a project from a friend that asked me to make some changes to their Task Management app. It was a simple Electron app, and as much as I hated working with `electron`, I decided to work on it as a favour. To give some context, I had recently installed NixOS on my main laptop, and until now didn't face any major issues installing packages or configuring it for my needs. So, I cloned the repo and ran `npm install` to build the project:
 
