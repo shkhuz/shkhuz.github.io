@@ -138,10 +138,13 @@ npm error prebuild-install warn install No prebuilt binaries found (target=22.17
 
 Ohh. Scrolling up:
 
-```console
+```console*
+// hlt-start
 npm info using npm@10.9.2
 npm info using node@v22.17.1
 npm verbose title npm install
+// hlt-end
+...
 ```
 
 After fiddling around for a bit, I found out that while `better-sqlite` has prebuilt binaries for more targets that `sqlite3`, it still doesn't suppport the latest `node` version. I figured the only way to solve this issue would be to downgrade `node` itself. So I did just that. `configuration.nix` got a `nodejs_20` and after `nrs` (`nixos-rebuild switch`), I ran `npm install` again:
