@@ -110,7 +110,7 @@ To create an app, we need GUI elements. We create a `TextView` for the text, and
 </LinearLayout>
 ```
 
-Next up is `java/com/shkhuz/hello/MainActivity.java`. It's the entry point of the app, and in this small example is responsible for the behaviour of the `TextView`. 
+Next up is `MainActivity.java`. It's the entry point of the app, and in this small example is responsible for the behaviour of the `TextView`. 
 
 ```java(java/com/shkhuz/hello/MainActivity.java)
 package com.shkhuz.hello;
