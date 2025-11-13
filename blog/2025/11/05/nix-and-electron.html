@@ -157,7 +157,7 @@ npm error A complete log of this run can be found in: /home/huzaifa/.npm/_logs/2
     I guess the python version I got from nixpkgs didn't come bundled with <code>distutils</code>. Searching online, I saw that <code>distutlils</code> was a depreciated module (I guess) and wasn't being shipped in newer python versions. As my experience with Nix was somewhat new, installing a specific python version with a specific python module was difficult, as I didn't fully "get" the Nix language just yet. 
   </p>
   <p>
-    Instead of fixing this and wasting time fixing something I won't use again, I searched for a better solution. <code>better-sqlite3</code> has prebuilt binaries for many more ABIs than <code>sqlite3</code>. So after a quick look at their <a href='GitHub'>https://github.com/WiseLibs/better-sqlite3</a>, I decided to go for it. I changed <code>package.json</code>:
+    Instead of fixing this and wasting time fixing something I won't use again, I searched for a better solution. <code>better-sqlite3</code> has prebuilt binaries for many more ABIs than <code>sqlite3</code>. So after a quick look at their <a href='https://github.com/WiseLibs/better-sqlite3'>GitHub</a>, I decided to go for it. I changed <code>package.json</code>:
   </p>
   <div class='code lang-diff'><pre class='diff-same'>  "dependencies": {
 </pre>
