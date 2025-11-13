@@ -52,7 +52,7 @@
   <p>
     This is a single-file OpenGL "hello world" boilerplate implementation. It assumes that SDL and GLEW are already installed.
   </p>
-  <pre class='lang-cpp'><code>#include &lt;GL/glew.h&gt;
+  <div class='code lang-cpp'><pre>#include &lt;GL/glew.h&gt;
 #include &lt;SDL2/SDL.h&gt;
 #include &lt;stdio.h&gt;
 #include &lt;string&gt;
@@ -237,13 +237,13 @@ bool build_shader_program(const <span class='keyword'>char</span>* vs, const <sp
     SDL_Quit();
     <span class='keyword'>return</span> <span class='number'>0</span>;
 }
-</code></pre>
+</pre></div>
   <div class='code-snippet-filename'>sdl2-opengl.cpp</div>
   <p>
     Compile with:
   </p>
-  <pre class='lang-console'><code><span class='console-prompt'>$ </span><span class='console-input'>g++ sdl2-opengl.cpp -Wall -lSDL2 -lGL -lGLEW</span>
-</code></pre>
+  <div class='code lang-console'><pre><span class='console-prompt'>$ </span><span class='console-input'>g++ sdl2-opengl.cpp -Wall -lSDL2 -lGL -lGLEW</span>
+</pre></div>
   <p>
     <img src='opengl3-boilerplate-result.png' alt=''>
   </p>

@@ -52,7 +52,7 @@
   <p>
     Today I got a project from a friend that asked me to make some changes to their Task Management app. It was a simple Electron app, and as much as I hated working with <code>electron</code>, I decided to work on it as a favour. To give some context, I had recently installed NixOS on my main laptop, and until now didn't face any major issues installing packages or configuring it for my needs. So, I cloned the repo and ran <code>npm install</code> to build the project:
   </p>
-  <pre class='lang-console'><code>&gt; taskmgr@1.0.0 postinstall
+  <div class='code lang-console'><pre>&gt; taskmgr@1.0.0 postinstall
 &gt; electron-builder install-app-deps
 
   • electron-builder  version=24.13.3
@@ -75,11 +75,11 @@ reason=prebuild-install failed with error (run with env DEBUG=electron-builder t
     prebuild-install http 404 https://github.com/TryGhost/node-sqlite3/releases/download/v5.1.7/sqlite3-v5.1.7-napi-v36-linux-x64.tar.gz
     prebuild-install warn install No prebuilt binaries found (target=36 runtime=napi arch=x64 libc= platform=linux)
     ...
-</code></pre>
+</pre></div>
   <p>
     With my lackluster abilities working with Node and NPM, I started to search for a solution for this seemingly innocuous error. After a little back and forth, I found that the <code>prebuild-install</code> library (likely a dependency of <code>electron</code>) was not able to find a suitable version of <code>sqlite</code> on my machine, and as I had <code>nodejs_24</code> in my <code>configuration.nix</code>, it for some reason wasn't able to find a prebuilt version of it on GitHub. 
   </p>
-  <pre class='lang-console'><code>  ...
+  <div class='code lang-console'><pre>  ...
   ⨯ cannot execute  cause=exit status 1
                     errorOut=npm error code 1
     npm error path /home/huzaifa/dev/taskmgr/node_modules/sqlite3
@@ -147,30 +147,30 @@ npm error path /home/huzaifa/dev/taskmgr
 npm error command failed
 npm error command sh -c electron-builder install-app-deps
 npm error A complete log of this run can be found in: /home/huzaifa/.npm/_logs/2025-10-27T18_14_26_543Z-debug-0.log
-</code></pre>
+</pre></div>
   <p>
     Unable to find it online too, it then tries to build <code>sqlite3</code> from source locally. I now faced another issue: even building it locally resulted in a failed compilation. Specifically:
   </p>
-  <pre class='lang-console'><code>    npm error ModuleNotFoundError: No module named 'distutils'
-</code></pre>
+  <div class='code lang-console'><pre>    npm error ModuleNotFoundError: No module named 'distutils'
+</pre></div>
   <p>
     I guess the python version I got from nixpkgs didn't come bundled with <code>distutils</code>. Searching online, I saw that <code>distutlils</code> was a depreciated module (I guess) and wasn't being shipped in newer python versions. As my experience with Nix was somewhat new, installing a specific python version with a specific python module was difficult, as I didn't fully "get" the Nix language just yet. 
   </p>
   <p>
     Instead of fixing this and wasting time fixing something I won't use again, I searched for a better solution. <code>better-sqlite3</code> has prebuilt binaries for many more ABIs than <code>sqlite3</code>. So after a quick look at their GitHub, I decided to go for it. I changed <code>package.json</code>:
   </p>
-  <pre class='lang-diff'><code>  "dependencies": {
+  <div class='code lang-diff'><pre>  "dependencies": {
 -    "sqlite": "^5.1.1",
 -    "sqlite3": "^5.1.7",
 +    "better-sqlite3": "^9.6.0",
-</code></pre>
+</pre></div>
   <p>
     To move to <code>better-sqlite3</code>, I also had to change all the source files to use its API rather than <code>sqlite3</code>'s.
   </p>
   <p>
     I also deleted <code>node_modules/</code>, <code>~/.electron-gyp</code> for a fresh start. Doing <code>npm install</code>:
   </p>
-  <pre class='lang-console'><code>npm verbose pkgid better-sqlite3@9.6.0
+  <div class='code lang-console'><pre>npm verbose pkgid better-sqlite3@9.6.0
 npm error code 1
 npm error path /home/huzaifa/dev/taskmgr/node_modules/better-sqlite3
 npm error command failed
@@ -181,18 +181,18 @@ npm error prebuild-install info looking for cached prebuild @ /home/huzaifa/.npm
 npm error prebuild-install http request GET https://github.com/WiseLibs/better-sqlite3/releases/download/v9.6.0/better-sqlite3-v9.6.0-node-v127-linux-x64.tar.gz
 npm error prebuild-install http 404 https://github.com/WiseLibs/better-sqlite3/releases/download/v9.6.0/better-sqlite3-v9.6.0-node-v127-linux-x64.tar.gz
 npm error prebuild-install warn install No prebuilt binaries found (target=22.17.1 runtime=node arch=x64 libc= platform=linux)
-</code></pre>
+</pre></div>
   <p>
     Ohh. Scrolling up:
   </p>
-  <pre class='lang-console'><code>npm info using npm@10.9.2
+  <div class='code lang-console'><pre>npm info using npm@10.9.2
 npm info using node@v22.17.1
 npm verbose title npm install
-</code></pre>
+</pre></div>
   <p>
     After fiddling around for a bit, I found out that while <code>better-sqlite</code> has prebuilt binaries for more targets that <code>sqlite3</code>, it still doesn't suppport the latest <code>node</code> version. I figured the only way to solve this issue would be to downgrade <code>node</code> itself. So I did just that. <code>configuration.nix</code> got a <code>nodejs_20</code> and after <code>nrs</code> (<code>nixos-rebuild switch</code>), I ran <code>npm install</code> again:
   </p>
-  <pre class='lang-console'><code>npm info using npm@10.8.2
+  <div class='code lang-console'><pre>npm info using npm@10.8.2
 npm info using node@v20.19.4
 npm verbose title npm install
 ...
@@ -209,24 +209,24 @@ npm info run electron@28.3.3 postinstall { code: 0, signal: null }
   • install prebuilt binary  name=better-sqlite3 version=9.6.0 platform=linux arch=x64 napi=
 
 changed 120 packages, and audited 533 packages in 19s
-</code></pre>
+</pre></div>
   <p>
     Nice! Now it correctly finds a suitable prebuilt version of <code>better-sqlite3</code>. Thanks prebuild-install!
   </p>
   <p>
     Let's start the app by running <code>npm start</code>:
   </p>
-  <pre class='lang-console'><code><span class='console-prompt'>$ </span><span class='console-input'>npm start</span>
+  <div class='code lang-console'><pre><span class='console-prompt'>$ </span><span class='console-input'>npm start</span>
 
 &gt; taskmgr@1.0.0 start
 &gt; electron .
 
 /home/huzaifa/dev/taskmgr/node_modules/electron/dist/electron: error while loading shared libraries: libgobject-2.0.so.0: cannot open shared object file: No such file or directory
-</code></pre>
+</pre></div>
   <p>
     Ohoh. Another Nix battle. Looks like <code>electron</code> relies on a number of shared libraries that are missing from my system. Let's check which libraries are needed:
   </p>
-  <pre class='lang-console'><code><span class='console-prompt'>$ </span><span class='console-input'>ldd node_modules/electron/dist/electron</span>
+  <div class='code lang-console'><pre><span class='console-prompt'>$ </span><span class='console-input'>ldd node_modules/electron/dist/electron</span>
         linux-vdso.so.1 (0x00007fab3e510000)
         libffmpeg.so =&gt; /home/huzaifa/dev/taskmgr/node_modules/electron/dist/libffmpeg.so (0x00007fab33400000)
         libdl.so.2 =&gt; /nix/store/g8zyryr9cr6540xsyg4avqkwgxpnwj2a-glibc-2.40-66/lib/libdl.so.2 (0x00007fab3e505000)
@@ -262,7 +262,7 @@ changed 120 packages, and audited 533 packages in 19s
         libgcc_s.so.1 =&gt; /nix/store/16hvpw4b3r05girazh4rnwbw0jgjkb4l-xgcc-14.3.0-libgcc/lib/libgcc_s.so.1 (0x00007fab3e4c6000)
         libc.so.6 =&gt; /nix/store/g8zyryr9cr6540xsyg4avqkwgxpnwj2a-glibc-2.40-66/lib/libc.so.6 (0x00007fab33000000)
         /lib64/ld-linux-x86-64.so.2 =&gt; /nix/store/g8zyryr9cr6540xsyg4avqkwgxpnwj2a-glibc-2.40-66/lib64/ld-linux-x86-64.so.2 (0x00007fab3e512000)
-</code></pre>
+</pre></div>
   <p>
     Too many. Now, in a typical distro, you'd have the FHS consisting of <code>/usr</code> with subdirectories <code>bin</code>, <code>lib</code>, <code>include</code>, <code>share</code>, etc. In Nix, there is no typical FHS. Instead packages are stored in <code>/nix/store</code> so that there can't be any unintended dependency on a package that is not explicitly installed by the application. The way you'd add dependencies in Nix is by either creating a derivation with a <code>.nix</code> file that specifies the inputs/outputs that the derivation requires/builds. Another way is to create a shell with the dependencies included explicitly. 
   </p>
@@ -275,7 +275,7 @@ changed 120 packages, and audited 533 packages in 19s
   <p>
     After doing what I know best (googling) I found a good enough solution for our problem. What we need to do, is to create a sandbox FHS-compliant shell to run <code>electron</code> in, where it can find those libraries in <code>/usr/lib</code>, but in reality they would be symlinked to <code>/nix/store</code>. We need to use <code>pkgs.buildFHSEnv</code> for this:
   </p>
-  <pre class='lang-nix'><code>{ pkgs ? import &lt;nixpkgs&gt; {} }:
+  <div class='code lang-nix'><pre>{ pkgs ? import &lt;nixpkgs&gt; {} }:
 
 (pkgs.buildFHSEnv {
   name = "electron-env";
@@ -293,7 +293,7 @@ changed 120 packages, and audited 533 packages in 19s
     ]
   );
 }).env
-</code></pre>
+</pre></div>
   <div class='code-snippet-filename'>shell.nix</div>
   <p>
     Now running <code>nix-shell</code> in the directory of shell.nix will create a new shell with the FHS environment with the libraries specified residing in <code>/usr/lib</code>. Running <code>npm start</code> now works!

@@ -3,7 +3,7 @@
 Welcome to my home on the web. This is a dumping-ground for all my endeavours.
 
 <div class='mydesc'>
-  <pre><code>(def me
+  <pre>(def me
 &nbsp;(author "Huzaifa Shaikh")
 &nbsp;(email <a href='mailto:shk.huz@gmail.com'>shk.huz@gmail.com</a>)
 &nbsp;(github <a href='https://github.com/shkhuz'>@shkhuz</a>)
@@ -15,6 +15,6 @@ Welcome to my home on the web. This is a dumping-ground for all my endeavours.
 &nbsp;&nbsp;<a href='starfield/'>Starfield</a>
 &nbsp;&nbsp;<a href='literal-sandbox/'>Literal Sandbox</a>))
 &nbsp;(diary <a href='blog/diary/'>diary/</a>))
-</code></pre>
+</pre>
 </div>
 

@@ -60,16 +60,20 @@
   <p>
     Aria is an experimental systems programming language built to improve on C.
   </p>
-  <pre class='lang-aria pre-callout'><code><span class='dim'>import std;</span>
-<span class='dim'></span>
-<span class='dim'><span class='keyword'>fn</span> main() {</span>
-<mark>    std.print(<span class='string'>"Hello World!"</span>);</mark>
-<span class='dim'>}</span>
-</code></pre>
+  <div class='code lang-aria'><pre class='before'>import std;
+
+<span class='keyword'>imm</span> newMod = false;
+
+</pre>
+<pre class='callout'><span class='keyword'>fn</span> main() {
+    std.print(<span class='string'>"Hello World!"</span>);
+</pre>
+<pre class='after'>}
+</pre></div>
   <div class='code-snippet-filename'>hello_world.ar</div>
-  <pre class='lang-console'><code><span class='console-prompt'>$ </span><span class='console-input'>aria hello_world.ar</span>
+  <div class='code lang-console'><pre><span class='console-prompt'>$ </span><span class='console-input'>aria hello_world.ar</span>
 Hello World!
-</code></pre>
+</pre></div>
 </article>
 </body>
 </html>

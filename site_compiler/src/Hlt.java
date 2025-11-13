@@ -57,61 +57,31 @@ public class Hlt {
         int start = 0;
         int len = code.length();
 
+        sb.append("<pre class='before'>");
         for (int i = 0; i < len;) {
             int lineEnd = code.indexOf('\n', i);
             if (lineEnd == -1) lineEnd = len;
             String line = code.substring(i, lineEnd);
 
-            if (line.contains("hlt-start")) inCallout = true;
-            else if (line.contains("hlt-end")) inCallout = false;
+            if (line.contains("hlt-start")) 
+                sb.append("</pre>\n<pre class='callout'>");
+            else if (line.contains("hlt-end")) 
+                sb.append("</pre>\n<pre class='after'>");
             else {
-                if (inCallout) sb.append("<mark>").append(line).append("</mark>");
-                else sb.append("<span class='dim'>").append(line).append("</span>");
+                sb.append(line);
                 sb.append('\n');
             }
 
             i = lineEnd + 1;
         }
+        sb.append("</pre>");
 
         return sb.toString();
     }
 
-    public static String hlt(String code, String lang, boolean callout) {
-        if (callout) code = calloutHighlight(code);
-        Matcher m;
-        StringBuilder out = new StringBuilder();
-        switch (lang) {
-            case "c":
-            case "cpp":
-            case "java":
-            case "aria":
-                m = patternCType.matcher(code);
-                break;
-            case "python":
-                m = patternPython.matcher(code);
-                break;
-
-            case "console": {
-                m = patternConsole.matcher(code);
-                int last = 0;
-                while (m.find()) {
-                    out.append(code, last, m.start());
-                    out.append("<span class='console-prompt'>");
-                    out.append(m.group(1)); // "$ "
-                    out.append("</span><span class='console-input'>");
-                    out.append(m.group(2));
-                    out.append("</span>");
-                    last = m.end();
-                }
-                out.append(code.substring(last));
-                return out.toString();
-            }
-
-            default: 
-                return code;
-        }
-
+    private static String hltCode(String lang, Matcher m) {
         Set<String> kw = KEYWORDS.getOrDefault(lang, Set.of());
+        StringBuilder out = new StringBuilder();
         while (m.find()) {
             String strV = m.group(1);
             String numV = m.group(2);
@@ -138,7 +108,42 @@ public class Hlt {
                 out.append(other);
             }
         }
-
         return out.toString();
+    }
+
+    public static String hlt(String code, String lang, boolean callout) {
+        switch (lang) {
+            case "c":
+            case "cpp":
+            case "java":
+            case "aria":
+                code = hltCode(lang, patternCType.matcher(code));
+                break;
+            case "python":
+                code = hltCode(lang, patternPython.matcher(code));
+                break;
+
+            case "console": {
+                StringBuilder out = new StringBuilder();
+                Matcher m = patternConsole.matcher(code);
+                int last = 0;
+                while (m.find()) {
+                    out.append(code, last, m.start());
+                    out.append("<span class='console-prompt'>");
+                    out.append(m.group(1)); // "$ "
+                    out.append("</span><span class='console-input'>");
+                    out.append(m.group(2));
+                    out.append("</span>");
+                    last = m.end();
+                }
+                out.append(code.substring(last));
+                code = out.toString();
+            }
+        }
+
+        if (callout) code = calloutHighlight(code);
+        else code = "<pre>" + code + "</pre>";
+
+        return code;
     }
 }

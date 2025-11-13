@@ -419,6 +419,8 @@ public class Parser {
                     + (t.lang != null ? t.lang : "[none]") 
                     + ", wrap=" 
                     + (t.wrap ? "true" : "false") 
+                    + ", callout=" 
+                    + (t.callout ? "true" : "false") 
                     + ", filepath="
                     + (t.filepath != null ? t.filepath : "[none]")
                     + ": \"" 

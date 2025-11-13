@@ -58,8 +58,8 @@
   <p>
     After downloading the JARs, I updated the Makefile so that <code>d8</code> includes them in the compilation step. When I ran the app, it gave me an error:
   </p>
-  <pre class='lang-console'><code>Error: Translation bundle could not be found for [org.eclipse.jgit.internal.JGitText, en_US]
-</code></pre>
+  <div class='code lang-console'><pre>Error: Translation bundle could not be found for [org.eclipse.jgit.internal.JGitText, en_US]
+</pre></div>
   <p>
     I ChatGPTed the error and found it was due to a missing <code>JGitText.properties</code> file. I didn't have a whole lot of experience working with JARs, so I extracted the <code>.jar</code> archive and searched for the file. 
   </p>

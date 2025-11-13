@@ -119,18 +119,16 @@ public class Renderer {
         }
         else if (node instanceof PreblockNode) {
             PreblockNode t = (PreblockNode) node;
-            String classes = "";
-            if (t.lang != null) classes += "lang-" + t.lang;
-            if (t.wrap) classes += " pre-wrap";
-            if (t.callout) classes += " pre-callout";
+            String classes = "code";
+            if (t.lang != null) classes += " lang-" + t.lang;
+            if (t.wrap) classes += " wrap";
             classes = classes.trim();
-            out.append("\n" + pad + "<pre");
-            if (classes != "") out.append(" class='" + classes + "'");
-            out.append("><code>");
+            out.append("\n" + pad + "<div");
+            out.append(" class='" + classes + "'>");
             String code = Lexer.escapeHtml(t.code);
             if (t.lang != null) code = Hlt.hlt(code, t.lang, t.callout);
             out.append(code);
-            out.append("</code></pre>");
+            out.append("</div>");
 
             if (t.filepath != null) {
                 out.append("\n" + pad + "<div class='code-snippet-filename'>" + t.filepath + "</div>");
