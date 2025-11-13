@@ -412,7 +412,7 @@ hr {
     color: var(--theme-color);
 }
 
-.instrinsic {
+.intrinsic {
     color: var(--code-intrinsic-color);
     font-weight: bold;
 }

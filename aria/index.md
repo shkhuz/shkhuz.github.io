@@ -15,6 +15,8 @@ imm newMod = false;
 // hlt-start
 fn main() {
     std.print("Hello World!");
+    std.print('c');  // character!
+    std.print(192);  // character!
 // hlt-end
 }
 ```

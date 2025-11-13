@@ -10,15 +10,48 @@ public class Hlt {
     static Pattern patternConsole;
 
     static final Map<String, Set<String>> KEYWORDS = Map.of(
-        "c", Set.of("int","char","return","if","else","while","for","void","float","double","struct"),
-        "cpp", Set.of("int","char","return","if","else","while","for","void","float","double","struct","class","namespace","template","auto"),
-        "aria", Set.of("fn","imm","mut","return","if","else","while","for","void","f32","f64","struct","union"),
-        "java", Set.of("class","public","private","protected","static","void","int","new","return","if","else","for","while","import","package"),
-        "javascript", Set.of("let","var","const","function","return","if","else","for","while","class","new","import","export"),
-        "js", Set.of("let","var","const","function","return","if","else","for","while","class","new","import","export"),
-        "python", Set.of("def","class","return","if","else","elif","for","while","import","from","as","None","True","False"),
-        "bash", Set.of("if","then","fi","elif","else","for","while","do","done","function"),
-        "json", Set.of()
+        "c", Set.of(
+            "int","char","return","if","else","while","for","void",
+            "float","double","struct"
+        ),
+        "cpp", Set.of(
+            "int","char","return","if","else","while","for","void","float",
+            "double","struct","class","namespace","template","auto"
+        ),
+        "aria", Set.of(
+            "fn","imm","mut","return","if","else","while","for","void","f32",
+            "f64","struct","union","import"
+        ),
+        "java", Set.of(
+            "class","public","private","protected","static","void","int",
+            "new","return","if","else","for","while","import","package"
+        ),
+        "javascript", Set.of(
+            "let","var","const","function","return","if","else","for","while",
+            "class","new","import","export"
+        ),
+        "python", Set.of(
+            "def","class","return","if","else","elif","for","while",
+            "import","from","as"
+        ),
+        "sh", Set.of(
+            "if","then","fi","elif","else","for","while","do","done","function"
+        )
+    );
+
+    static final Map<String, Set<String>> CONSTS = Map.of(
+        "c", Set.of("true","false","NULL"),
+        "cpp", Set.of("true","false","nullptr"),
+        "aria", Set.of("true","false","null","undefined"),
+        "java", Set.of("true","false","null"),
+        "javascript", Set.of("true","false","null"),
+        "python", Set.of("True","False","None")
+    );
+
+    static final Map<String, Set<String>> INTRINSICS = Map.of(
+        "c", Set.of("#include","#define"),
+        "cpp", Set.of("#include","#define","#pragma"),
+        "aria", Set.of("@import","@to")
     );
 
     public static void init() {
@@ -28,9 +61,12 @@ public class Hlt {
     }
 
     private static Pattern buildPattern(String lang) {
-        String str = "(\"(?:\\\\.|[^\"\\\\])*\")";        // group 1
+        // String str = "(['\"])(?:\\\\.|(?!\\1).)*\\1";     // group 1
+        // String str = "(?:(['\"])(?:\\\\.|(?!\\1).)*\\1)"; // group 1
+        String str = "((?:\"(?:\\\\.|[^\"\\\\])*\"|'(?:\\\\.|[^'\\\\])*'))";
         String num = "([+-]?[0-9]+(?:\\.[0-9]+)?)";       // group 2
-        String ident = "([A-Za-z_][A-Za-z0-9_]*)";        // group 3
+        // String ident = "([A-Za-z_][A-Za-z0-9_]*)";        // group 3
+        String ident = "([#@]?[A-Za-z_][A-Za-z0-9_]*)";  // group 3
         String comment;
         switch (lang) {
             case "c": 
@@ -111,7 +147,10 @@ public class Hlt {
     }
 
     private static String hltCode(String lang, Matcher m) {
-        Set<String> kw = KEYWORDS.getOrDefault(lang, Set.of());
+        Set<String> keywords = KEYWORDS.getOrDefault(lang, Set.of());
+        Set<String> consts = CONSTS.getOrDefault(lang, Set.of());
+        Set<String> intrinsics = INTRINSICS.getOrDefault(lang, Set.of());
+
         StringBuilder out = new StringBuilder();
         while (m.find()) {
             String strV = m.group(1);
@@ -124,11 +163,17 @@ public class Hlt {
                 out.append("<span class='string'>").append(strV).append("</span>");
             }
             else if (numV != null) {
-                out.append("<span class='number'>").append(numV).append("</span>");
+                out.append("<span class='const'>").append(numV).append("</span>");
             }
             else if (identV != null) {
-                if (kw.contains(identV)) {
+                if (keywords.contains(identV)) {
                     out.append("<span class='keyword'>").append(identV).append("</span>");
+                } 
+                else if (consts.contains(identV)) {
+                    out.append("<span class='const'>").append(identV).append("</span>");
+                } 
+                else if (intrinsics.contains(identV)) {
+                    out.append("<span class='intrinsic'>").append(identV).append("</span>");
                 }
                 else out.append(identV);
             }

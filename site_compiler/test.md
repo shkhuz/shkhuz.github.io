@@ -20,7 +20,7 @@
 ```c!*
 // hlt-start
 int main() {
-    if (true) 1 else 0;
+    if (true) 'c' else "wow!\"nice";
     return 1;
 // hlt-end
 }
