@@ -79,6 +79,37 @@ public class Hlt {
         return sb.toString();
     }
 
+    private static String diffHighlight(String code) {
+        StringBuilder sb = new StringBuilder(code.length());
+
+        String currentType = null;
+        int len = code.length();
+
+        for (int i = 0; i < len;) {
+            int lineEnd = code.indexOf('\n', i);
+            if (lineEnd == -1) lineEnd = len;
+            String line = code.substring(i, lineEnd);
+
+            String newType;
+            if (line.startsWith("+")) newType = "add";
+            else if (line.startsWith("-")) newType = "remove";
+            else newType = "same";
+
+            if (newType != currentType) {
+                if (currentType != null) sb.append("</pre>\n");
+                sb.append("<pre class='diff-").append(newType).append("'>");
+                currentType = newType;
+            }
+
+            sb.append(line).append('\n');
+            i = lineEnd + 1;
+        }
+
+        if (currentType != null) sb.append("</pre>");
+
+        return sb.toString();
+    }
+
     private static String hltCode(String lang, Matcher m) {
         Set<String> kw = KEYWORDS.getOrDefault(lang, Set.of());
         StringBuilder out = new StringBuilder();
@@ -123,6 +154,51 @@ public class Hlt {
                 code = hltCode(lang, patternPython.matcher(code));
                 break;
 
+            // case "console": {
+            //     StringBuilder out = new StringBuilder();
+            //     String[] lines = code.split("\n", -1); // keep trailing blank lines
+            //     boolean inInput = false;
+
+            //     for (int i = 0; i < lines.length; i++) {
+            //         String line = lines[i];
+            //         boolean isPrompt = line.startsWith("$ ");
+            //         boolean isContinuation = inInput && (
+            //             line.startsWith("> ") ||
+            //             (i > 0 && lines[i - 1].endsWith("\\"))
+            //         );
+
+            //         if (isPrompt) {
+            //             // Close previous input
+            //             if (inInput) {
+            //                 out.append("</span>");
+            //                 inInput = false;
+            //             }
+            //             out.append("<span class='console-prompt'>$ </span>");
+            //             out.append("<span class='console-input'>");
+            //             out.append(line.substring(2));
+            //             inInput = true;
+            //         }
+            //         else if (isContinuation) {
+            //             out.append(line);
+            //         }
+            //         else {
+            //             if (inInput) {
+            //                 out.append("</span>\n");
+            //                 inInput = false;
+            //             }
+            //             out.append(line);
+            //         }
+
+            //         // Only append newline *if we’re not already inside continuation*
+            //         if (i < lines.length - 1 && !isContinuation)
+            //             out.append('\n');
+            //     }
+
+            //     if (inInput) out.append("</span>");
+            //     code = out.toString();
+            //     break;
+            // }
+
             case "console": {
                 StringBuilder out = new StringBuilder();
                 Matcher m = patternConsole.matcher(code);
@@ -138,11 +214,16 @@ public class Hlt {
                 }
                 out.append(code.substring(last));
                 code = out.toString();
-            }
+            } break;
+
+            case "diff":
+                code = diffHighlight(code);
+                break;
         }
 
         if (callout) code = calloutHighlight(code);
-        else code = "<pre>" + code + "</pre>";
+        else if (!lang.equals("diff"))
+            code = "<pre>" + code + "</pre>";
 
         return code;
     }

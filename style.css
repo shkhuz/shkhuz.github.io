@@ -450,3 +450,12 @@ hr {
     color: var(--console-output-color);
 }
 
+.diff-add {
+    background-color: #232;
+    color: #9e9;
+}
+
+.diff-remove {
+    background-color: #322;
+    color: #e99;
+}

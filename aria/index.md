@@ -19,7 +19,14 @@ fn main() {
 }
 ```
 
+```diff
++added this
+-removed this
+nothing
+```
+
 ```console
-$ aria hello_world.ar
+$ aria hello_world.ar \
+  nice
 Hello World!
 ```

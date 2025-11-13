@@ -159,10 +159,12 @@ npm error A complete log of this run can be found in: /home/huzaifa/.npm/_logs/2
   <p>
     Instead of fixing this and wasting time fixing something I won't use again, I searched for a better solution. <code>better-sqlite3</code> has prebuilt binaries for many more ABIs than <code>sqlite3</code>. So after a quick look at their GitHub, I decided to go for it. I changed <code>package.json</code>:
   </p>
-  <div class='code lang-diff'><pre>  "dependencies": {
--    "sqlite": "^5.1.1",
+  <div class='code lang-diff'><pre class='diff-same'>  "dependencies": {
+</pre>
+<pre class='diff-remove'>-    "sqlite": "^5.1.1",
 -    "sqlite3": "^5.1.7",
-+    "better-sqlite3": "^9.6.0",
+</pre>
+<pre class='diff-add'>+    "better-sqlite3": "^9.6.0",
 </pre></div>
   <p>
     To move to <code>better-sqlite3</code>, I also had to change all the source files to use its API rather than <code>sqlite3</code>'s.

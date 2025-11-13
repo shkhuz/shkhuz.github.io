@@ -260,6 +260,9 @@ public class Parser {
             }
         }
         while (match(TKind.newline)) {}
+
+        if (callout && lang.equals("diff")) 
+            throw new Error("Cannot use callout with diff");
         return new PreblockNode(lang, wrap, callout, t.lexeme, filepath);
     }
 

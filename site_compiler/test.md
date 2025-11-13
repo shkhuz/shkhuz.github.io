@@ -26,17 +26,11 @@ int main() {
 }
 ```
 
-```console
-$ ls
-main.c
-$ gcc main.c
-$ ./a.out
-Hello world!
+```diff
++added this
+-removed this
+nothing
 ```
-
-    int main() {
-        std::cout << 1;
-    }
 
 <sup>1</sup> is a natural occuring substance.
 
