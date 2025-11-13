@@ -17,8 +17,16 @@ Lorem ipsum dolor sit       <-- aside text
 consectetur adipiscing 
 ]]]
 
-```python!(name_of_file.ar) <-- pre 
-                                ! -> optionally wrap text
+```python!*(name_of_file.ar) <-- pre 
+                                options:
+                                  ! -> wrap text
+                                  * -> generate callout highlight
+                                       any line containing "hlt-start" will be 
+                                       discarded and highlight will begin until 
+                                       "hlt-end" is found. "hlt-end" will also be 
+                                       discarded, so source files can with a comment
+                                       mark starting and ending lines without worrying 
+                                       about syntax/keyword conflicts.
                                 (...) -> optional filename specifier to show
                                          name of file below code block (for illustration, 
                                          doesn't actually read the file from disk)

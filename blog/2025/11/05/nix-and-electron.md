@@ -109,7 +109,7 @@ Unable to find it online too, it then tries to build `sqlite3` from source local
 
 I guess the python version I got from nixpkgs didn't come bundled with `distutils`. Searching online, I saw that `distutlils` was a depreciated module (I guess) and wasn't being shipped in newer python versions. As my experience with Nix was somewhat new, installing a specific python version with a specific python module was difficult, as I didn't fully "get" the Nix language just yet. 
 
-Instead of fixing this and wasting time fixing something I won't use again, I searched for a better solution. `better-sqlite3` has prebuilt binaries for many more ABIs than `sqlite3`. So after a quick look at their GitHub, I decided to go for it. I changed `package.json`:
+Instead of fixing this and wasting time fixing something I won't use again, I searched for a better solution. `better-sqlite3` has prebuilt binaries for many more ABIs than `sqlite3`. So after a quick look at their [https://github.com/WiseLibs/better-sqlite3](GitHub), I decided to go for it. I changed `package.json`:
 
 ```diff
   "dependencies": {
@@ -139,6 +139,7 @@ npm error prebuild-install warn install No prebuilt binaries found (target=22.17
 Ohh. Scrolling up:
 
 ```console*
+...
 // hlt-start
 npm info using npm@10.9.2
 npm info using node@v22.17.1
