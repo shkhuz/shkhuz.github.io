@@ -229,7 +229,7 @@ public class Parser {
     private Node parsePreblock() {
         Token t = at();
         advance();
-        String lang = null;
+        String lang = "";
         String filepath = null;
         boolean wrap = false;
         boolean callout = false;
@@ -283,7 +283,7 @@ public class Parser {
             else break;
         }
         while (match(TKind.newline)) {}
-        return new PreblockNode(null, false, false, code.toString(), null);
+        return new PreblockNode("", false, false, code.toString(), null);
     }
 
     private Node parseMathblock() {

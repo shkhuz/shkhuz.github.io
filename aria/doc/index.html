@@ -52,115 +52,115 @@
   <h2>
     Hello world
   </h2>
-  <div class='code'>import std;
+  <div class='code'><pre>import std;
 
 fn main() {
     std.print("Hello world!\n");
 }
-</div>
+</pre></div>
   <h2>
     Variables
   </h2>
-  <div class='code'>imm a = 1;
+  <div class='code'><pre>imm a = 1;
 mut b = 2;
 imm c: u32 = 2;
-</div>
+</pre></div>
   <h2>
     Functions
   </h2>
-  <div class='code'>fn b() {}
+  <div class='code'><pre>fn b() {}
 fn b(a: u32) {}
 fn c() u8 {}
-</div>
+</pre></div>
   <h2>
     Arrays
   </h2>
-  <div class='code'>imm a = .{1, 2, 3};
+  <div class='code'><pre>imm a = .{1, 2, 3};
 mut c = b[0];
 mut sz = b.len;
-</div>
+</pre></div>
   <h2>
     Pointers
   </h2>
-  <div class='code'>mut a: usize = 1;
+  <div class='code'><pre>mut a: usize = 1;
 mut p: *usize = &amp;a;
 mut immp: *imm usize = &amp;a;
 mut b = p.*;
-</div>
+</pre></div>
   <h2>
     Slices
   </h2>
-  <div class='code'>imm a: [3]u8 = .{1, 2, 3};
+  <div class='code'><pre>imm a: [3]u8 = .{1, 2, 3};
 mut b: []u8 = &amp;a;
 mut c = b[0];
 mut sz = b.len;
-</div>
+</pre></div>
   <h2>
     Expression blocks
   </h2>
-  <div class='code'>imm a = {
+  <div class='code'><pre>imm a = {
     imm b = 1;
     yield b;
 };
-</div>
+</pre></div>
   <h2>
     Loops
   </h2>
-  <div class='code'>for (mut i = 0u8; i &lt; 10; i += 1) {}    // normal loop
+  <div class='code'><pre>for (mut i = 0u8; i &lt; 10; i += 1) {}    // normal loop
 for (b; e) {}                           // iterating over slice
 for (b; *e) {}                          // iterating over slice with ptr
 for (b; *e, i) {}
 while (true) {}         
 while (a; n) {}                         // iterating while optional is 
                                         // not null
-</div>
+</pre></div>
   <h2>
     Continue & Break
   </h2>
-  <div class='code'>for (a; n, i) {
+  <div class='code'><pre>for (a; n, i) {
     if (i == 10) break;
     else if (i == 15) continue;
 }
-</div>
+</pre></div>
   <h2>
     If 
   </h2>
-  <div class='code'>if (a) 1 else 0;
+  <div class='code'><pre>if (a) 1 else 0;
 if (a) {} else {}
 if (a) {} else if (b) {} else {}
 if (a; n) {}                            // unwrapping optional inside if
-</div>
+</pre></div>
   <h2>
     Casts
   </h2>
-  <div class='code'>mut a: u8 = 1;
+  <div class='code'><pre>mut a: u8 = 1;
 mut b: u16 = 2;
 mut c: u16 = a + b;                     // implicit cast
 mut d: u8 = a + to(u8, b);              // explicit cast ??
 mut d: u8 = a + u8(b);                  // explicit cast ??
-</div>
+</pre></div>
   <h2>
     Optionals
   </h2>
-  <div class='code'>mut a: ?u8 = 1;
+  <div class='code'><pre>mut a: ?u8 = 1;
 mut b: ?u8 = null;
 mut c: u8 = a orelse 0;                 // default value
 mut d: u8 = a catch return 0;           // do something on null
-</div>
+</pre></div>
   <h2>
     Enums
   </h2>
-  <div class='code'>imm A = enum {
+  <div class='code'><pre>imm A = enum {
     a, b, c,
 };
 
 mut a = A.a;
 mut b = .b;
-</div>
+</pre></div>
   <h2>
     Switch
   </h2>
-  <div class='code'>switch (a) {
+  <div class='code'><pre>switch (a) {
     a, b, c =&gt; {},
     else =&gt; {},
 }
@@ -169,11 +169,11 @@ switch (a) {
     a, b, c (n) =&gt; {},
     else (n) =&gt; {},
 }
-</div>
+</pre></div>
   <h2>
     Structs
   </h2>
-  <div class='code'>imm a = struct {
+  <div class='code'><pre>imm a = struct {
     a: u8,
     b: u16,
     c: u32,
@@ -182,54 +182,54 @@ switch (a) {
     mut e: u8;
     fn f() {}
 };
-</div>
+</pre></div>
   <h2>
     Unions
   </h2>
-  <div class='code'>imm a = union {
+  <div class='code'><pre>imm a = union {
     a: u8, 
     b: u16,
 };
-</div>
+</pre></div>
   <h2>
     Tagged Unions
   </h2>
-  <div class='code'>imm a = union(enum) {
+  <div class='code'><pre>imm a = union(enum) {
     a: u8,
     b: u16,
 }
-</div>
+</pre></div>
   <h2>
     Imports
   </h2>
-  <div class='code'>import basil;                           // imports 'basil.ar' file in cwd
+  <div class='code'><pre>import basil;                           // imports 'basil.ar' file in cwd
 import std;                             // if file not found in cwd, it checks
                                         // inside the lib directory
-</div>
+</pre></div>
   <h2>
     Type
   </h2>
-  <div class='code'>imm A = u32;
+  <div class='code'><pre>imm A = u32;
 imm B = u64;
 
 fn get(a: A, b: type) {}
-</div>
+</pre></div>
   <h2>
     Function Pointers
   </h2>
-  <div class='code'>fn a() {}
+  <div class='code'><pre>fn a() {}
 imm p: *imm fn() = &amp;a;
 p();
-</div>
+</pre></div>
   <h2>
     Built-in functions
   </h2>
-  <div class='code'>imm img = %embedFile("img.bmp");
-</div>
+  <div class='code'><pre>imm img = %embedFile("img.bmp");
+</pre></div>
   <h2>
     Compile-time code evaluation
   </h2>
-  <div class='code'>fn add(a: u32, b: u32) u32 {
+  <div class='code'><pre>fn add(a: u32, b: u32) u32 {
     return a + b;
 }
 
@@ -238,7 +238,7 @@ mut b = 3u32;
 // 'c' is known at compile-time
 mut c = ct add(a, b);
 
-</div>
+</pre></div>
 </article>
 </body>
 </html>

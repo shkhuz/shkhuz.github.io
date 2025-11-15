@@ -26,7 +26,7 @@ int main() {
 }
 ```
 
-```diff
+```
 +added this
 -removed this
 nothing
