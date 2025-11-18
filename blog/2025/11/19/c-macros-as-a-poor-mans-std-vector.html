@@ -1,0 +1,383 @@
+<!DOCTYPE html>
+<html lang='en'>
+<head>
+<meta charset='utf-8'>
+<meta name='viewport' content='width=device-width, initial-scale=1'>
+
+<title>C Macros as a Poor Man’s std::vector</title>
+<link rel='apple-touch-icon' sizes='180x180' href='/assets/apple-touch-icon.png'>
+<link rel='icon' type='image/png' sizes='32x32' href='/assets/favicon-32x32.png'>
+<link rel='icon' type='image/png' sizes='16x16' href='/assets/favicon-16x16.png'>
+<link rel='manifest' href='/assets/site.webmanifest'>
+<link rel='stylesheet' href='/style.css'>
+
+<!-- Google tag (gtag.js) -->
+<script async src='https://www.googletagmanager.com/gtag/js?id=G-QQS3D5BETB'></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'G-QQS3D5BETB');
+</script>
+
+<script data-host='https://microanalytics.io' data-dnt='false' src='https://microanalytics.io/js/script.js' id='ZwSg9rf6GA' async defer></script>
+
+<script id='MathJax-script' async src='https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js'></script>
+
+<script>
+(function() {
+  var h, a, f;
+  a = document.getElementsByTagName('link');
+  for (h = 0; h < a.length; h++) {
+    f = a[h];
+    if (f.rel.toLowerCase().match(/stylesheet/) && f.href) {
+      var g = f.href.replace(/(&|\?)rnd=\d+/, '');
+      f.href = g + (g.match(/\?/) ? '&' : '?');
+      f.href += 'rnd=' + (new Date().valueOf());
+    }
+  } // for
+})()
+</script>
+
+</head>
+
+<body>
+<article>
+  <nav id='main-nav'>
+    <h1><a href='/'>~/</a> 
+      C Macros as a Poor Man’s std::vector
+    </h1>
+  </nav>
+  <p>
+    If you’ve spent time in Java or C++, you get used to the convenience of standard dynamic containers. <code>ArrayList</code> and <code>std::vector</code> are taken for granted and are treated as being always there for you when you need it. When you move to C, that comfort disappears. The language gives you raw pointers, <code>malloc</code>, <code>realloc</code>, and little else. There’s no standard dynamic array type, no generic container, and no unified pattern for managing capacity. You quickly realize that something as basic as “append an element” requires a bit of manual work. That absence becomes noticeable, even annoying.
+  </p>
+  <p>
+    Earlier C developers handled this by hardcoding the buffer length: want to enter your name? Oops, can't go above 64 characters. Receiving a data packet? Sorry, no more than 128Kb chunks at a time please. But there was still the need to store growable data. What if you didn't want to limit the amount of nodes your compiler can process, or amount of particles that can be shown on the screen?
+  </p>
+  <p>
+    Some people solved this by using ad-hoc structs with data/size/capacity fields, some wrap <code>realloc</code> behind helper functions, and some avoid the problem entirely by over-allocating.
+  </p>
+  <p>
+    I think C is a beautiful language to write code in, and more people would probably use it today if it had a cleaner way to express generic code. But all is not lost. 
+  </p>
+  <aside>
+    <p>
+      The stretchy buffer implementation I'm going to show you is primarily based on Sean Barrett's excellent header-only <a href='https://github.com/nothings/stb'>stb</a> library. In the real world you'd use that directly, but for the sake of learning we'll implement it ourselves.
+    </p>
+  </aside>
+  <h2>
+    Using the buffer
+  </h2>
+  <p>
+    Firstly, let's define how do we want the user to use our buffer implementation. This makes defining the API easy. We would want something like this:
+  </p>
+  <div class='code lang-c'><pre><span class='keyword'>int</span>* list = <span class='const'>NULL</span>;
+</pre></div>
+  <p>
+    <code>list</code> must have a non-opaque type so that the compiler can typecheck our code at compile-time. Otherwise I've seen many implementations that use <code>void*</code> and leave it to the user to perform operations correctly. In our case, by giving it a type <code>int*</code> we are telling it to make a list of <code>int</code>s. Do note that all buffers must be initialized to <code>NULL</code>. I'll go into this later. 
+  </p>
+  <div class='code lang-c'><pre class='before'><span class='keyword'>int</span>* list = <span class='const'>NULL</span>;
+</pre>
+<pre class='callout'>bufpush(list, <span class='const'>1</span>);
+bufpush(list, <span class='const'>3</span>);
+bufpush(list, <span class='const'>9</span>);
+</pre>
+<pre class='after'>
+</pre></div>
+  <p>
+    This will push <code>1</code>, <code>3</code> and <code>9</code> into the buffer. The point to note is that even though we did not initialize the <code>list</code> pointer to any memory region or <code>malloc</code>ed any storage, we still are able to push elements to our buffer. 
+  </p>
+  <div class='code lang-c'><pre class='before'><span class='keyword'>int</span>* list = <span class='const'>NULL</span>;
+bufpush(list, <span class='const'>1</span>);
+bufpush(list, <span class='const'>3</span>);
+bufpush(list, <span class='const'>9</span>);
+</pre>
+<pre class='callout'>bufinsert(list, <span class='const'>1</span>, <span class='const'>2</span>);
+</pre>
+<pre class='after'>
+</pre></div>
+  <p>
+    This inserts <code>2</code> at index <code>1</code>. We can loop through the buffer by using <code>bufloop</code>:
+  </p>
+  <div class='code lang-c'><pre class='before'><span class='keyword'>int</span>* list = <span class='const'>NULL</span>;
+bufpush(list, <span class='const'>1</span>);
+bufpush(list, <span class='const'>3</span>);
+bufpush(list, <span class='const'>9</span>);
+bufinsert(list, <span class='const'>1</span>, <span class='const'>2</span>);
+
+</pre>
+<pre class='callout'>bufloop(list, i) {
+    printf(<span class='string'>"%d\n"</span>, list[i]);
+}
+</pre>
+<pre class='after'>
+</pre></div>
+  <p>
+    Running this we get:
+  </p>
+  <div class='code lang-console'><pre>1
+2
+3
+9
+</pre></div>
+  <aside>
+    <p>
+      One caution: because these are macros, arguments may be evaluated multiple times, so avoid passing expressions with side effects into <code>bufpush</code>, <code>bufinsert</code>, etc.
+    </p>
+  </aside>
+  <p>
+    Another advantage is that array operators also work for our buffer:
+  </p>
+  <div class='code lang-c'><pre class='before'><span class='keyword'>int</span>* list = <span class='const'>NULL</span>;
+bufpush(list, <span class='const'>1</span>);
+bufpush(list, <span class='const'>3</span>);
+bufpush(list, <span class='const'>9</span>);
+bufinsert(list, <span class='const'>1</span>, <span class='const'>2</span>);
+
+</pre>
+<pre class='callout'><span class='comment'>// Prints `9`</span>
+printf(<span class='string'>"%d\n"</span>, list[<span class='const'>3</span>]);
+</pre>
+<pre class='after'>
+</pre></div>
+  <p>
+    Other operations include <code>buflen</code>, <code>bufcap</code>, <code>bufpop</code>, <code>bufclear</code>, etc. Now that I've specified the usage code, let's see how this all is implemented.
+  </p>
+  <h2>
+    Implementing the buffer
+  </h2>
+  <p>
+    Most buffer implementations will generally store a header before the data that has the buffer length, capacity, etc. 
+  </p>
+  <p>
+    <img src='header-layout.svg' alt=''>
+  </p>
+  <p>
+    The pointer the user is given does not point to the header, rather it points to data. That's why it can be used with the array operator to get any item at index.
+  </p>
+  <p>
+    We first define the layout of the buffer:
+  </p>
+  <div class='code lang-c'><pre><span class='keyword'>typedef</span> <span class='keyword'>struct</span> {
+    <span class='keyword'>usize</span> cap;
+    <span class='keyword'>usize</span> len;
+    <span class='keyword'>char</span> data[];
+} bufhdr;
+</pre></div>
+  <p>
+    The data is stored as a <code>char</code> array in <code>bufhdr</code>. We define a handy macro to get the <code>bufhdr</code> struct from a <code>data</code> pointer:
+  </p>
+  <div class='code lang-c'><pre class='before'>    <span class='keyword'>char</span> data[];
+} bufhdr;
+
+</pre>
+<pre class='callout'><span class='intrinsic'>#define</span> _bufhdr(b) ((bufhdr*)((<span class='keyword'>char</span>*)(b) - <span class='intrinsic'>offsetof</span>(bufhdr, data)))
+</pre>
+<pre class='after'>
+</pre></div>
+  <p>
+    <code>offsetof(bufhdr, data)</code> will give the byte offset of the <code>data</code> field inside <code>bufhdr</code>. We subtract this from <code>data</code> pointer to get the first element of the header (which is the header itself). We also define some user-facing functions to get the length and capacity:
+  </p>
+  <div class='code lang-c'><pre class='before'><span class='intrinsic'>#define</span> _bufhdr(b) ((bufhdr*)((<span class='keyword'>char</span>*)(b) - <span class='intrinsic'>offsetof</span>(bufhdr, data)))
+
+</pre>
+<pre class='callout'><span class='keyword'>usize</span> buflen(const <span class='keyword'>void</span>* buf) {
+    <span class='keyword'>return</span> buf ? _bufhdr(buf)-&gt;len : <span class='const'>0</span>;
+}
+
+<span class='keyword'>usize</span> bufcap(const <span class='keyword'>void</span>* buf) {
+    <span class='keyword'>return</span> buf ? _bufhdr(buf)-&gt;cap : <span class='const'>0</span>;
+}
+</pre>
+<pre class='after'>
+</pre></div>
+  <p>
+    Let's define the <code>bufpush</code> we saw earlier. 
+  </p>
+  <div class='code lang-c'><pre class='before'><span class='intrinsic'>#define</span> _bufhdr(b) ((bufhdr*)((<span class='keyword'>char</span>*)(b) - <span class='intrinsic'>offsetof</span>(bufhdr, data)))
+
+</pre>
+<pre class='callout'><span class='intrinsic'>#define</span> bufpush(b, ...) (buffit((b), <span class='const'>1</span> + buflen((b))), \
+    ((b)[_bufhdr((b))-&gt;len++] = __VA_ARGS__))
+</pre>
+<pre class='after'>
+
+<span class='keyword'>usize</span> buflen(const <span class='keyword'>void</span>* buf) {
+</pre></div>
+  <p>
+    It first checks if the buffer is initialized/of sufficient length (<code>buffit</code>) and then adds the element to the end of the length. <code>buffit</code> is defined as:
+  </p>
+  <div class='code lang-c'><pre class='before'><span class='intrinsic'>#define</span> _bufhdr(b) ((bufhdr*)((<span class='keyword'>char</span>*)(b) - <span class='intrinsic'>offsetof</span>(bufhdr, data)))
+
+</pre>
+<pre class='callout'><span class='intrinsic'>#define</span> buffit(b, n) (bufcap(b) &gt;= n ? <span class='const'>0</span> : \
+    ((b) = _bufgrow((b), (n), sizeof(*(b)))))
+</pre>
+<pre class='after'>
+
+<span class='intrinsic'>#define</span> bufpush(b, ...) (buffit((b), <span class='const'>1</span> + buflen((b))), \
+</pre></div>
+  <p>
+    This checks if the capacity is greater than the amount requested. If it isn't, then it grows the buffer using <code>_bufgrow</code>. Now comes the most important part:
+  </p>
+  <div class='code lang-c'><pre class='before'><span class='keyword'>usize</span> bufcap(const <span class='keyword'>void</span>* buf) {
+    <span class='keyword'>return</span> buf ? _bufhdr(buf)-&gt;cap : <span class='const'>0</span>;
+}
+
+</pre>
+<pre class='callout'><span class='keyword'>void</span>* _bufgrow(const <span class='keyword'>void</span>* buf, <span class='keyword'>usize</span> new_len, <span class='keyword'>usize</span> elem_size) {
+    <span class='keyword'>usize</span> new_cap = CLAMP_MIN(<span class='const'>2</span> * bufcap(buf), MAX(new_len, <span class='const'>16</span>));
+    assert(new_len &lt;= new_cap);
+
+    <span class='keyword'>usize</span> mem_to_alloc = new_cap * elem_size + <span class='intrinsic'>offsetof</span>(bufhdr, data);
+    bufhdr* new_hdr;
+</pre>
+<pre class='after'>
+</pre></div>
+  <p>
+    It first computes the new capacity needed using the arguments passed. Remember when I said we needed to initialize the buffers to <code>NULL</code>? That is used here, to check if the buffer is previously initialized or not:
+  </p>
+  <div class='code lang-c'><pre class='before'>    bufhdr* new_hdr;
+</pre>
+<pre class='callout'>    <span class='keyword'>if</span> (buf) {
+        new_hdr = (bufhdr*)realloc(_bufhdr(buf), mem_to_alloc);
+    }
+    <span class='keyword'>else</span> {
+        new_hdr = (bufhdr*)malloc(mem_to_alloc);
+        new_hdr-&gt;len = <span class='const'>0</span>;
+    }
+</pre>
+<pre class='after'>
+
+    new_hdr-&gt;cap = new_cap;
+    <span class='keyword'>return</span> new_hdr-&gt;data;
+}
+</pre></div>
+  <p>
+    If the buffer is not initialized (<code>NULL</code>), it allocates a new memory region. Otherwise it <code>realloc</code>s to expand to new size. Note that this function returns the pointer to the <strong><code>data</code></strong>, not header. This is how the <code>data</code> pointer passes on to the user. 
+  </p>
+  <p>
+    Before returning, we copy the new capacity into our new header. Why did we create a new header? Because when we first <code>malloc</code>, we start <code>malloc</code> from the header. So even to reallocate, we must reallocate the header part too, not just the data. Next up is <code>bufinsert</code>:
+  </p>
+  <div class='code lang-c'><pre class='before'><span class='intrinsic'>#define</span> bufpush(b, ...) (buffit((b), <span class='const'>1</span> + buflen((b))), \
+    ((b)[_bufhdr((b))-&gt;len++] = __VA_ARGS__))
+
+</pre>
+<pre class='callout'><span class='intrinsic'>#define</span> bufinsert(b, i, ...) (buffit((b), <span class='const'>1</span> + buflen((b))), \
+    memmove((b+i<span class='const'>+1</span>), (b+i), (_bufhdr((b))-&gt;len-i) * sizeof(*b)), \
+</pre>
+<pre class='after'>
+</pre></div>
+  <p>
+    We check if we can accommodate one more element using our handy <code>buffit</code>, then we <code>memmove</code> elements having index <code>>= i</code> forward one element. Then at the now-empty space, we copy our element to insert:
+  </p>
+  <div class='code lang-c'><pre class='before'>    memmove((b+i<span class='const'>+1</span>), (b+i), (_bufhdr((b))-&gt;len-i) * sizeof(*b)), \
+</pre>
+<pre class='callout'>    ((b)[i] = __VA_ARGS__), \
+    _bufhdr((b))-&gt;len++)
+</pre>
+<pre class='after'>
+
+<span class='keyword'>usize</span> buflen(const <span class='keyword'>void</span>* buf) {
+</pre></div>
+  <p>
+    For <code>bufloop</code>, it is just a <code>for</code> loop:
+  </p>
+  <div class='code lang-c'><pre class='before'>    ((b)[_bufhdr((b))-&gt;len++] = __VA_ARGS__))
+
+</pre>
+<pre class='callout'><span class='intrinsic'>#define</span> bufloop(b, c) <span class='keyword'>for</span> (<span class='keyword'>usize</span> c = <span class='const'>0</span>; c &lt; buflen(b); c++)
+<span class='intrinsic'>#define</span> bufrevloop(b, c) <span class='keyword'>for</span> (<span class='keyword'>usize</span> c = buflen(b); c-- &gt; <span class='const'>0</span> ;)
+</pre>
+<pre class='after'>
+
+<span class='intrinsic'>#define</span> bufinsert(b, i, ...) (buffit((b), <span class='const'>1</span> + buflen((b))), \
+</pre></div>
+  <p>
+    We also define a reverse <code>for</code> loop in the same way. We used the unofficial <code>--></code> operator for reversing the loop! If you didn't already know, reversing a loop with an <code>unsigned</code> variable does not work with the usual syntax. 
+  </p>
+  <p>
+    Finally, we implement macros for clearing and freeing the buffer.
+  </p>
+  <div class='code lang-c'><pre class='before'>    ((b)[_bufhdr((b))-&gt;len++] = __VA_ARGS__))
+
+</pre>
+<pre class='callout'><span class='intrinsic'>#define</span> buffree(b) ((b) ? (free(_bufhdr(b)), b=<span class='const'>NULL</span>) : <span class='const'>0</span>)
+<span class='intrinsic'>#define</span> bufclear(b) ((b) ? _bufhdr((b))-&gt;len = <span class='const'>0</span> : <span class='const'>0</span>)
+</pre>
+<pre class='after'>
+
+<span class='intrinsic'>#define</span> bufloop(b, c) <span class='keyword'>for</span> (<span class='keyword'>usize</span> c = <span class='const'>0</span>; c &lt; buflen(b); c++)
+</pre></div>
+  <p>
+    Freeing just calls <code>free</code> on the header, and to clear the buffer we simply set the length to 0.
+  </p>
+  <p>
+    And with that, the buffer implementation is ready to be used! As an exercise, I suggest you to implement <code>bufremove</code> which removes an item at a specific index. Here is the whole implementation as a single file:
+  </p>
+  <div class='code lang-c'><pre><span class='intrinsic'>#include</span> &lt;stdint.h&gt;
+<span class='intrinsic'>#include</span> &lt;stdlib.h&gt;
+
+<span class='intrinsic'>#define</span> MIN(a, b) (a &lt; b ? a : b)
+<span class='intrinsic'>#define</span> MAX(a, b) (a &gt; b ? a : b)
+<span class='intrinsic'>#define</span> CLAMP_MIN(x, min) (MAX(x, min))
+<span class='intrinsic'>#define</span> CLAMP_MAX(x, max) (MIN(x, max))
+
+<span class='keyword'>typedef</span> size_t <span class='keyword'>usize</span>;
+<span class='keyword'>typedef</span> ssize_t isize;
+
+<span class='keyword'>typedef</span> <span class='keyword'>struct</span> {
+    <span class='keyword'>usize</span> cap;
+    <span class='keyword'>usize</span> len;
+    <span class='keyword'>char</span> data[];
+} bufhdr;
+
+<span class='intrinsic'>#define</span> _bufhdr(b) ((bufhdr*)((<span class='keyword'>char</span>*)(b) - <span class='intrinsic'>offsetof</span>(bufhdr, data)))
+
+<span class='intrinsic'>#define</span> buffit(b, n) (bufcap(b) &gt;= n ? <span class='const'>0</span> : \
+    ((b) = _bufgrow((b), (n), sizeof(*(b)))))
+
+<span class='intrinsic'>#define</span> bufpush(b, ...) (buffit((b), <span class='const'>1</span> + buflen((b))), \
+    ((b)[_bufhdr((b))-&gt;len++] = __VA_ARGS__))
+
+<span class='intrinsic'>#define</span> buffree(b) ((b) ? (free(_bufhdr(b)), b=<span class='const'>NULL</span>) : <span class='const'>0</span>)
+<span class='intrinsic'>#define</span> bufclear(b) ((b) ? _bufhdr((b))-&gt;len = <span class='const'>0</span> : <span class='const'>0</span>)
+
+<span class='intrinsic'>#define</span> bufloop(b, c) <span class='keyword'>for</span> (<span class='keyword'>usize</span> c = <span class='const'>0</span>; c &lt; buflen(b); c++)
+<span class='intrinsic'>#define</span> bufrevloop(b, c) <span class='keyword'>for</span> (<span class='keyword'>usize</span> c = buflen(b); c-- &gt; <span class='const'>0</span> ;)
+
+<span class='intrinsic'>#define</span> bufinsert(b, i, ...) (buffit((b), <span class='const'>1</span> + buflen((b))), \
+    memmove((b+i<span class='const'>+1</span>), (b+i), (_bufhdr((b))-&gt;len-i) * sizeof(*b)), \
+    ((b)[i] = __VA_ARGS__), \
+    _bufhdr((b))-&gt;len++)
+
+<span class='keyword'>usize</span> buflen(const <span class='keyword'>void</span>* buf) {
+    <span class='keyword'>return</span> buf ? _bufhdr(buf)-&gt;len : <span class='const'>0</span>;
+}
+
+<span class='keyword'>usize</span> bufcap(const <span class='keyword'>void</span>* buf) {
+    <span class='keyword'>return</span> buf ? _bufhdr(buf)-&gt;cap : <span class='const'>0</span>;
+}
+
+<span class='keyword'>void</span>* _bufgrow(const <span class='keyword'>void</span>* buf, <span class='keyword'>usize</span> new_len, <span class='keyword'>usize</span> elem_size) {
+    <span class='keyword'>usize</span> new_cap = CLAMP_MIN(<span class='const'>2</span> * bufcap(buf), MAX(new_len, <span class='const'>16</span>));
+    assert(new_len &lt;= new_cap);
+
+    <span class='keyword'>usize</span> mem_to_alloc = new_cap * elem_size + <span class='intrinsic'>offsetof</span>(bufhdr, data);
+    bufhdr* new_hdr;
+    <span class='keyword'>if</span> (buf) {
+        new_hdr = (bufhdr*)realloc(_bufhdr(buf), mem_to_alloc);
+    }
+    <span class='keyword'>else</span> {
+        new_hdr = (bufhdr*)malloc(mem_to_alloc);
+        new_hdr-&gt;len = <span class='const'>0</span>;
+    }
+
+    new_hdr-&gt;cap = new_cap;
+    <span class='keyword'>return</span> new_hdr-&gt;data;
+}
+</pre></div>
+</article>
+</body>
+</html>

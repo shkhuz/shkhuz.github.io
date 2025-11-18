@@ -22,7 +22,7 @@ This calculator combines the efficiency and intuitiveness of RPN, and the displa
 an algebraic calculator.
 
 [[[
-<sup>1</sup> [Acron RPN](http://acrongames.com/rpncalculator.html) is one of the other calculators I've seen this feature in.
+<sup>1</sup>[Acron RPN](http://acrongames.com/rpncalculator.html) is one of the other calculators I've seen this feature in.
 ]]]
 
 ## Downloads

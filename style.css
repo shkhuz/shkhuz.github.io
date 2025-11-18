@@ -213,14 +213,16 @@ h3 {
 }
 
 aside {
-    font-size: 0.7em;
+    font-size: 0.8em;
     margin: 1.4em auto;
     border: 1px solid var(--aside-border-color);
+    border-radius: 5px;
     background-color: var(--aside-bg-color);
 }
 
 aside p {
     padding: 0 1.2em;
+    margin: .7em 0;
 }
 
 pre, .code-snippet-filename {
@@ -229,17 +231,18 @@ pre, .code-snippet-filename {
 
 code {
     overflow-wrap: break-word; 
-    font: 0.85em/1.1em "Source Code Pro", monospace;
+    font: 0.9em/1.1em "Source Code Pro", monospace;
 }
 
 div.code {
     border: 1px solid var(--container-border-color);
-    border-radius: 3px;
+    border-radius: 5px;
     background-color: var(--container-bg-color);
     padding: 8px 0;
     margin: 1em 0 0 0;
     overflow-x: auto;
     overflow-wrap: normal;
+    display: grid;
 }
 
 div.code > pre {
@@ -312,7 +315,7 @@ a.button {
     /* -webkit-box-shadow:inset 0 1px 1px rgba(255, 255, 255, 0.4); */
     /* -moz-box-shadow:inset 0 1px 1px rgba(255, 255, 255, 0.4); */
     text-decoration: none;
-    border-radius: 3px;
+    border-radius: 5px;
     font-size: 0.9em;
     text-align: center;
 

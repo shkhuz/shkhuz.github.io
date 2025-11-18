@@ -12,11 +12,12 @@ public class Hlt {
     static final Map<String, Set<String>> KEYWORDS = Map.of(
         "c", Set.of(
             "int","char","return","if","else","while","for","void",
-            "float","double","struct"
+            "float","double","struct","typedef","usize"
         ),
         "cpp", Set.of(
-            "int","char","return","if","else","while","for","void","float",
-            "double","struct","class","namespace","template","auto"
+            "int","char","return","if","else","while","for","void",
+            "float","double","struct","typedef","usize",
+            "class","namespace","template","auto"
         ),
         "aria", Set.of(
             "fn","imm","mut","return","if","else","while","for","void","f32",
@@ -49,8 +50,8 @@ public class Hlt {
     );
 
     static final Map<String, Set<String>> INTRINSICS = Map.of(
-        "c", Set.of("#include","#define"),
-        "cpp", Set.of("#include","#define","#pragma"),
+        "c", Set.of("#include","#define","offsetof"),
+        "cpp", Set.of("#include","#define","offsetof","#pragma"),
         "aria", Set.of("@import","@to")
     );
 
@@ -102,7 +103,7 @@ public class Hlt {
             if (line.contains("hlt-start")) 
                 sb.append("</pre>\n<pre class='callout'>");
             else if (line.contains("hlt-end")) 
-                sb.append("</pre>\n<pre class='after'>");
+                sb.append("</pre>\n<pre class='after'>\n");
             else {
                 sb.append(line);
                 sb.append('\n');
