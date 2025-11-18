@@ -53,10 +53,10 @@
     If you’ve spent time in Java or C++, you get used to the convenience of standard dynamic containers. <code>ArrayList</code> and <code>std::vector</code> are taken for granted and are treated as being always there for you when you need it. When you move to C, that comfort disappears. The language gives you raw pointers, <code>malloc</code>, <code>realloc</code>, and little else. There’s no standard dynamic array type, no generic container, and no unified pattern for managing capacity. You quickly realize that something as basic as “append an element” requires a bit of manual work. That absence becomes noticeable, even annoying.
   </p>
   <p>
-    Earlier C developers handled this by hardcoding the buffer length: want to enter your name? Oops, can't go above 64 characters. Receiving a data packet? Sorry, no more than 128Kb chunks at a time please. But there was still the need to store growable data. What if you didn't want to limit the amount of nodes your compiler can process, or amount of particles that can be shown on the screen?
+    Earlier C developers handled this by hardcoding the buffer length: want to enter your name? Oops, can't go above 64 characters. Receiving a data packet? Sorry, no more than 128Kb chunks at a time please. But there was still the need to store growable data. What if you didn't want to limit the amount of nodes your compiler can process, or the amount of particles that can be shown on the screen at a given time?
   </p>
   <p>
-    Some people solved this by using ad-hoc structs with data/size/capacity fields, some wrap <code>realloc</code> behind helper functions, and some avoid the problem entirely by over-allocating.
+    Some people solve this by using ad-hoc structs with data/size/capacity fields, some wrap <code>realloc</code> behind helper functions, and some avoid the problem entirely by over-allocating.
   </p>
   <p>
     I think C is a beautiful language to write code in, and more people would probably use it today if it had a cleaner way to express generic code. But all is not lost. 
@@ -70,7 +70,7 @@
     Using the buffer
   </h2>
   <p>
-    Firstly, let's define how do we want the user to use our buffer implementation. This makes defining the API easy. We would want something like this:
+    Firstly, let's define how we want the user to use our buffer implementation. I always start with this part because this gives it a structure and makes the implementation easier. We want something like this:
   </p>
   <div class='code lang-c'><pre><span class='keyword'>int</span>* list = <span class='const'>NULL</span>;
 </pre></div>
@@ -86,7 +86,7 @@ bufpush(list, <span class='const'>9</span>);
 <pre class='after'>
 </pre></div>
   <p>
-    This will push <code>1</code>, <code>3</code> and <code>9</code> into the buffer. The point to note is that even though we did not initialize the <code>list</code> pointer to any memory region or <code>malloc</code>ed any storage, we still are able to push elements to our buffer. 
+    We push <code>1</code>, <code>3</code> and <code>9</code> into the buffer. A point to note is that even though we did not initialize the <code>list</code> pointer to any memory region or <code>malloc</code>ed any storage, we still are able to push elements to our buffer. 
   </p>
   <div class='code lang-c'><pre class='before'><span class='keyword'>int</span>* list = <span class='const'>NULL</span>;
 bufpush(list, <span class='const'>1</span>);
@@ -142,7 +142,7 @@ printf(<span class='string'>"%d\n"</span>, list[<span class='const'>3</span>]);
 <pre class='after'>
 </pre></div>
   <p>
-    Other operations include <code>buflen</code>, <code>bufcap</code>, <code>bufpop</code>, <code>bufclear</code>, etc. Now that I've specified the usage code, let's see how this all is implemented.
+    Other operations include <code>buflen</code>, <code>bufcap</code>, <code>bufpop</code>, <code>bufclear</code>, etc. Now that we know how the usage of our implementation will look like, let's see how this all is implemented.
   </p>
   <h2>
     Implementing the buffer
@@ -177,7 +177,7 @@ printf(<span class='string'>"%d\n"</span>, list[<span class='const'>3</span>]);
 <pre class='after'>
 </pre></div>
   <p>
-    <code>offsetof(bufhdr, data)</code> will give the byte offset of the <code>data</code> field inside <code>bufhdr</code>. We subtract this from <code>data</code> pointer to get the first element of the header (which is the header itself). We also define some user-facing functions to get the length and capacity:
+    <code>offsetof(bufhdr, data)</code> will give the byte offset of the <code>data</code> field inside <code>bufhdr</code>. We subtract this from <code>data</code> pointer (which is <code>b</code> here) to get the first element of the header (which is the header itself). We also define some user-facing functions to get the length and capacity:
   </p>
   <div class='code lang-c'><pre class='before'><span class='intrinsic'>#define</span> _bufhdr(b) ((bufhdr*)((<span class='keyword'>char</span>*)(b) - <span class='intrinsic'>offsetof</span>(bufhdr, data)))
 
@@ -236,7 +236,7 @@ printf(<span class='string'>"%d\n"</span>, list[<span class='const'>3</span>]);
 <pre class='after'>
 </pre></div>
   <p>
-    It first computes the new capacity needed using the arguments passed. Remember when I said we needed to initialize the buffers to <code>NULL</code>? That is used here, to check if the buffer is previously initialized or not:
+    <code>_bufgrow</code> first computes the new capacity needed using the arguments passed. Remember when I said we needed to initialize the buffer to <code>NULL</code>? That is used here, to check if the buffer is previously initialized or not:
   </p>
   <div class='code lang-c'><pre class='before'>    bufhdr* new_hdr;
 </pre>
@@ -282,7 +282,7 @@ printf(<span class='string'>"%d\n"</span>, list[<span class='const'>3</span>]);
 <span class='keyword'>usize</span> buflen(const <span class='keyword'>void</span>* buf) {
 </pre></div>
   <p>
-    For <code>bufloop</code>, it is just a <code>for</code> loop:
+    Implementation of <code>bufloop</code> is just a <code>for</code> loop:
   </p>
   <div class='code lang-c'><pre class='before'>    ((b)[_bufhdr((b))-&gt;len++] = __VA_ARGS__))
 
@@ -311,7 +311,7 @@ printf(<span class='string'>"%d\n"</span>, list[<span class='const'>3</span>]);
 <span class='intrinsic'>#define</span> bufloop(b, c) <span class='keyword'>for</span> (<span class='keyword'>usize</span> c = <span class='const'>0</span>; c &lt; buflen(b); c++)
 </pre></div>
   <p>
-    Freeing just calls <code>free</code> on the header, and to clear the buffer we simply set the length to 0.
+    Freeing just calls <code>free</code> on the header, and clearing simply sets the length to 0.
   </p>
   <p>
     And with that, the buffer implementation is ready to be used! As an exercise, I suggest you to implement <code>bufremove</code> which removes an item at a specific index. Here is the whole implementation as a single file:
