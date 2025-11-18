@@ -247,12 +247,12 @@ printf(<span class='string'>"%d\n"</span>, list[<span class='const'>3</span>]);
         new_hdr = (bufhdr*)malloc(mem_to_alloc);
         new_hdr-&gt;len = <span class='const'>0</span>;
     }
-</pre>
-<pre class='after'>
 
     new_hdr-&gt;cap = new_cap;
     <span class='keyword'>return</span> new_hdr-&gt;data;
 }
+</pre>
+<pre class='after'>
 </pre></div>
   <p>
     If the buffer is not initialized (<code>NULL</code>), it allocates a new memory region. Otherwise it <code>realloc</code>s to expand to new size. Note that this function returns the pointer to the <strong><code>data</code></strong>, not header. This is how the <code>data</code> pointer passes on to the user. 

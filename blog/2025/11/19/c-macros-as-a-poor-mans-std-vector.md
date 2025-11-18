@@ -181,7 +181,7 @@ void* _bufgrow(const void* buf, usize new_len, usize elem_size) {
 
 ```c*
     bufhdr* new_hdr;
-    // hlt-start
+// hlt-start
     if (buf) {
         new_hdr = (bufhdr*)realloc(_bufhdr(buf), mem_to_alloc);
     }
@@ -189,11 +189,11 @@ void* _bufgrow(const void* buf, usize new_len, usize elem_size) {
         new_hdr = (bufhdr*)malloc(mem_to_alloc);
         new_hdr->len = 0;
     }
-    // hlt-end
 
     new_hdr->cap = new_cap;
     return new_hdr->data;
 }
+// hlt-end
 ```
 
 If the buffer is not initialized (`NULL`), it allocates a new memory region. Otherwise it `realloc`s to expand to new size. Note that this function returns the pointer to the **`data`**, not header. This is how the `data` pointer passes on to the user. 
