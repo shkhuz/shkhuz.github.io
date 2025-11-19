@@ -57,13 +57,13 @@ then this editor is not for you.
     <td>cut marked region</td>
   </tr>
   <tr>
-    <td>`U`</td>
+    <td>`&lt;C-k&gt;`</td>
     <td>scroll page up</td>
     <td>`c`</td>
     <td>paste from clipboard</td>
   </tr>
   <tr>
-    <td>`M`</td>
+    <td>`&lt;C-j&gt;`</td>
     <td>scroll page down</td>
     <td>`b`</td>
     <td>repeat search forward</td>
@@ -115,6 +115,12 @@ then this editor is not for you.
     <td>backward word</td>
     <td>`E`</td>
     <td>redo</td>
+  </tr>
+  <tr>
+    <td>`J`</td>
+    <td>next paragraph</td>
+    <td>`K`</td>
+    <td>prev paragraph</td>
   </tr>
 </tbody></table>
 
