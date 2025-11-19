@@ -2,9 +2,9 @@
 
 If you’ve spent time in Java or C++, you get used to the convenience of standard dynamic containers. `ArrayList` and `std::vector` are taken for granted and are treated as being always there for you when you need it. When you move to C, that comfort disappears. The language gives you raw pointers, `malloc`, `realloc`, and little else. There’s no standard dynamic array type, no generic container, and no unified pattern for managing capacity. You quickly realize that something as basic as “append an element” requires a bit of manual work. That absence becomes noticeable, even annoying.
 
-Earlier C developers handled this by hardcoding the buffer length: want to enter your name? Oops, can't go above 64 characters. Receiving a data packet? Sorry, no more than 128Kb chunks at a time please. But there was still the need to store growable data. What if you didn't want to limit the amount of nodes your compiler can process, or amount of particles that can be shown on the screen?
+Earlier C developers handled this by hardcoding the buffer length: want to enter your name? Oops, can't go above 64 characters. Receiving a data packet? Sorry, no more than 128Kb chunks at a time please. But there was still the need to store growable data. What if you didn't want to limit the amount of nodes your compiler can process, or the amount of particles that can be shown on the screen at a given time?
 
-Some people solved this by using ad-hoc structs with data/size/capacity fields, some wrap `realloc` behind helper functions, and some avoid the problem entirely by over-allocating.
+Some people solve this by using ad-hoc structs with data/size/capacity fields, some wrap `realloc` behind helper functions, and some avoid the problem entirely by over-allocating.
 
 I think C is a beautiful language to write code in, and more people would probably use it today if it had a cleaner way to express generic code. But all is not lost. 
 
@@ -14,7 +14,7 @@ The stretchy buffer implementation I'm going to show you is primarily based on S
 
 ## Using the buffer
 
-Firstly, let's define how do we want the user to use our buffer implementation. This makes defining the API easy. We would want something like this:
+Firstly, let's define how we want the user to use our buffer implementation. I always start with this part because this gives it a structure and makes the implementation easier. We want something like this:
 
 ```c
 int* list = NULL;
@@ -31,7 +31,7 @@ bufpush(list, 9);
 // hlt-end
 ```
 
-This will push `1`, `3` and `9` into the buffer. The point to note is that even though we did not initialize the `list` pointer to any memory region or `malloc`ed any storage, we still are able to push elements to our buffer. 
+We push `1`, `3` and `9` into the buffer. A point to note is that even though we did not initialize the `list` pointer to any memory region or `malloc`ed any storage, we still are able to push elements to our buffer. 
 
 ```c*
 int* list = NULL;
@@ -87,7 +87,7 @@ printf("%d\n", list[3]);
 // hlt-end
 ```
 
-Other operations include `buflen`, `bufcap`, `bufpop`, `bufclear`, etc. Now that I've specified the usage code, let's see how this all is implemented.
+Other operations include `buflen`, `bufcap`, `bufpop`, `bufclear`, etc. Now that we know how the usage of our implementation will look like, let's see how this all is implemented.
 
 ## Implementing the buffer
 
@@ -118,7 +118,7 @@ The data is stored as a `char` array in `bufhdr`. We define a handy macro to get
 // hlt-end
 ```
 
-`offsetof(bufhdr, data)` will give the byte offset of the `data` field inside `bufhdr`. We subtract this from `data` pointer to get the first element of the header (which is the header itself). We also define some user-facing functions to get the length and capacity:
+`offsetof(bufhdr, data)` will give the byte offset of the `data` field inside `bufhdr`. We subtract this from `data` pointer (which is `b` here) to get the first element of the header (which is the header itself). We also define some user-facing functions to get the length and capacity:
 
 ```c*
 #define _bufhdr(b) ((bufhdr*)((char*)(b) - offsetof(bufhdr, data)))
@@ -177,11 +177,11 @@ void* _bufgrow(const void* buf, usize new_len, usize elem_size) {
 // hlt-end
 ```
 
-It first computes the new capacity needed using the arguments passed. Remember when I said we needed to initialize the buffers to `NULL`? That is used here, to check if the buffer is previously initialized or not:
+`_bufgrow` first computes the new capacity needed using the arguments passed. Remember when I said we needed to initialize the buffer to `NULL`? That is used here, to check if the buffer is previously initialized or not:
 
 ```c*
     bufhdr* new_hdr;
-    // hlt-start
+// hlt-start
     if (buf) {
         new_hdr = (bufhdr*)realloc(_bufhdr(buf), mem_to_alloc);
     }
@@ -189,11 +189,11 @@ It first computes the new capacity needed using the arguments passed. Remember w
         new_hdr = (bufhdr*)malloc(mem_to_alloc);
         new_hdr->len = 0;
     }
-    // hlt-end
 
     new_hdr->cap = new_cap;
     return new_hdr->data;
 }
+// hlt-end
 ```
 
 If the buffer is not initialized (`NULL`), it allocates a new memory region. Otherwise it `realloc`s to expand to new size. Note that this function returns the pointer to the **`data`**, not header. This is how the `data` pointer passes on to the user. 
@@ -222,7 +222,7 @@ We check if we can accommodate one more element using our handy `buffit`, then w
 usize buflen(const void* buf) {
 ```
 
-For `bufloop`, it is just a `for` loop:
+Implementation of `bufloop` is just a `for` loop:
 
 ```c*
     ((b)[_bufhdr((b))->len++] = __VA_ARGS__))
@@ -250,7 +250,7 @@ Finally, we implement macros for clearing and freeing the buffer.
 #define bufloop(b, c) for (usize c = 0; c < buflen(b); c++)
 ```
 
-Freeing just calls `free` on the header, and to clear the buffer we simply set the length to 0.
+Freeing just calls `free` on the header, and clearing simply sets the length to 0.
 
 And with that, the buffer implementation is ready to be used! As an exercise, I suggest you to implement `bufremove` which removes an item at a specific index. Here is the whole implementation as a single file:
 
