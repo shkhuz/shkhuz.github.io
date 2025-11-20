@@ -1,6 +1,20 @@
 # Diary
 
-## 11.10.25
+## 20.11.25
+
+Today I wanted to make some changes to my markdown format which I use for my blog. Specifically, I wanted a cleaner way to specify metadata for a page. Right now to specify the title, I just use a heading H1 tag (`#`). It cannot show tags, date or anything else. 
+
+I wanted something like `front-matter` which uses triple hyphen (`---`) blocks at the start of the page to specify things pertaining to the page in a YAML format. So I had to write a YAML parser, which I did. 
+
+I only implemented a subset of YAML, enough for lists, objects, strings, numbers and nothing more. Then browsing the web I came across an article aptly titled [The yaml document from hell](https://ruudvanasseldonk.com/2023/01/11/the-yaml-document-from-hell)<sup>1</sup>. To summarise, the author explains why YAML is a poor choice for a markup language, due to its complex syntax and ever-changing/inconsistent versions. 
+
+I knew about some of the drawbacks of YAML beforehand. But after reading the article and the YAML spec sheet, I had second thoughts about using YAML in my blog. Fortunately, `front-matter` only uses a tiny subset of the markup, so that's a little reassuring. It's still not set in stone -- I will have to think about whether to keep using YAML or maybe change to something else. 
+
+[[[
+<sup>1</sup>Fun fact: The author of the article inspite of bashing YAML to the point of creating [his own markup language](https://github.com/ruuda/rcl), still uses YAML, in hypenated blocks at the top of his posts. 
+]]]
+
+## 11.11.25
 
 While browsing YouTube today I came across some SolidWorks videos in my recommended partly because yesterday after a long time I revisited my CAD itch. While watching some of them (one of them was a CAD 1v1 contest!) a video on a 4-cylinder engine popped up. When I saw the pistons moving in the preview, I knew I'd spend the next three hours modeling it myself. This was the blueprint that was shown at the beginning of the video:
 
