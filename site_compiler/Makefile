@@ -7,12 +7,13 @@ $(STAMP): $(JAVA_FILES)
 	touch $(STAMP)
 
 run: $(STAMP) test.md
-	java -classpath classes Use test.md
+	java -classpath classes Use .
 
 debug: $(STAMP) test.md
 	jdb -classpath classes -sourcepath src Use test.md
 
 clean: 
 	rm -rf classes
+	rm -f $(shell find . -name "*.html")
 
 .PHONY: run debug clean

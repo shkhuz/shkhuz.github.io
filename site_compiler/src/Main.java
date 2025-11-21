@@ -5,10 +5,12 @@ import java.util.regex.Pattern;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Locale;
+import java.util.stream.Collectors;
 
 public class Main {
     private StringBuilder out = new StringBuilder();
     public String title;
+    private Path blogDir = Paths.get("./blog");
 
     private String blob1 =
 "<!DOCTYPE html>\n" + 
@@ -84,13 +86,26 @@ public class Main {
         return sb.toString();
     }
 
-    public void convertAndOutput(String filePath) throws IOException {
+    public void convertAndOutput(Path f, Map<Path, Object> fms) throws IOException {
         try {
             Hlt.init();
-            Path f = Paths.get(filePath).normalize();
+            String filePath = f.toString();
             String markdown = readFile(filePath);
-            if (f.compareTo(Paths.get("index.md")) == 0) {
-                markdown += buildBlogIndex();
+
+            if (Files.isSameFile(Paths.get("./index.md"), f)) {
+                Map<Path, Object> filtered = fms.entrySet()
+                    .stream()
+                    .filter(e -> e.getKey().startsWith(blogDir))
+                    .collect(Collectors.toMap(
+                        Map.Entry::getKey,
+                        Map.Entry::getValue,
+                        (a,b) -> a,
+                        LinkedHashMap::new
+                    ));
+
+                for (Path p: filtered.keySet()) {
+                    System.out.println("PATH:" + p.toString());
+                }
             }
             Lexer l = new Lexer(markdown);
             List<Token> tokens = l.lex();
@@ -98,11 +113,10 @@ public class Main {
             Node root = p.parse();
             Renderer r = new Renderer(f, root);
             String html = r.render();
-            System.out.println(html);
 
             try (FileWriter writer = new FileWriter(changeExt(filePath, ".html"))) {
                 writer.write(blob1);
-                writer.write(extractTitle(f));
+                // writer.write(extractTitle(f));
                 writer.write(blob2);
                 writer.write(html);
                 writer.write(blob3);
@@ -113,95 +127,6 @@ public class Main {
             System.err.println("Error reading file: " + e.getMessage());
             return;
         }
-    }
-
-    private String buildBlogIndex() throws IOException {
-        Path blogDir = Paths.get("blog");
-        List<Path> posts = new ArrayList<>();
-
-        Files.walk(blogDir)
-            .filter(p -> {
-                Path abs = p.toAbsolutePath().normalize();
-                return !abs.startsWith(blogDir.resolve("diary").toAbsolutePath().normalize());
-            })
-            .filter(p -> p.toString().endsWith(".md"))
-            .forEach(posts::add);
-
-        Collections.sort(posts, new Comparator<Path>() {
-            public int compare(Path a, Path b) {
-                String da = extractDateString(blogDir, a, false);
-                String db = extractDateString(blogDir, b, false);
-                return db.compareTo(da); // reverse order
-            }
-        });
-
-        StringBuilder md = new StringBuilder();
-        md.append("\n## Blog\n\n<ul class='blog-posts'>\n");
-        for (Path p : posts) {
-            md.append(buildListItem(blogDir, p));
-        }
-        md.append("</ul>");
-        return md.toString();
-    }
-
-    private String buildListItem(Path blogDir, Path file) throws IOException {
-        String date = extractDateString(blogDir, file, true);
-        String title = extractTitle(file);
-        String link = file
-            .toString()
-            .replace(File.separatorChar, '/')
-            .replace(".md", ".html");
-        
-        return String.format("  <li>\n    <span class='blog-entry-date'>%s</span> <a href='%s'>%s</a>\n  </li>%n", date, link, title);
-    }
-
-    private String extractDateString(Path blogDir, Path file, boolean longFormat) {
-        Path relative = blogDir.relativize(file);
-        String[] parts = relative.toString().split(Pattern.quote(File.separator));
-        String dateDotted = parts.length >= 4 
-            ? String.format("%s.%s.%s", parts[0], parts[1], parts[2])
-            : "0000.00.00";
-
-        if (longFormat) {
-            SimpleDateFormat inputFormat = new SimpleDateFormat("yyyy.MM.dd");
-            Date date;
-            try {
-                date = inputFormat.parse(dateDotted);
-            } catch (Exception e) {
-                System.err.println(e);
-                return "";
-            }
-            SimpleDateFormat dayFormat = new SimpleDateFormat("d");
-            int day = Integer.parseInt(dayFormat.format(date));
-            SimpleDateFormat monthYearFormat = new SimpleDateFormat("MMMM, yyyy", Locale.ENGLISH);
-            String monthYear = monthYearFormat.format(date);
-            return getDayWithSuffix(day) + " " + monthYear;
-        }
-        else return dateDotted;
-    }
-
-    private static String getDayWithSuffix(int day) {
-        if (day >= 11 && day <= 13) return day + "th";
-        switch (day % 10) {
-            case 1:  return day + "st";
-            case 2:  return day + "nd";
-            case 3:  return day + "rd";
-            default: return day + "th";
-        }
-    }
-
-    private String extractTitle(Path file) throws IOException {
-        BufferedReader reader = Files.newBufferedReader(file);
-        try {
-            String firstLine = reader.readLine();
-            if (firstLine != null && firstLine.startsWith("#")) {
-                return firstLine.replaceFirst("^#+\\s*", "").trim();
-            }
-        } finally {
-            reader.close();
-        }
-        String name = file.getFileName().toString();
-        return name.replaceFirst("\\.md$", "");
     }
 
     private void appendln(String text) {

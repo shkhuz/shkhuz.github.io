@@ -3,6 +3,16 @@
 - ![fd](#)
 ===
 
+---
+summary: fdf
+nice: oho
+nav: 
+  - lbl: 1
+    ds: 3
+  - lbl: 2
+    sd: 4
+---
+
 - `but` dfd
   - A
   [fd](df)

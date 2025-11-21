@@ -1,7 +1,7 @@
 public enum TKind {
+    minus3,
     preblock,
     mathblock,
-    equal3,
     lbrack3,
     rbrack3,
     pound,
@@ -25,7 +25,7 @@ public enum TKind {
         switch (this) {
             case preblock:
             case mathblock:
-            case equal3:
+            case minus3:
             case lbrack3:
             case rbrack3:
             case pound:

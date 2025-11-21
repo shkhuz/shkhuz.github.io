@@ -243,6 +243,8 @@ div.code {
     overflow-x: auto;
     overflow-wrap: normal;
     display: grid;
+    /* Add this to make code wide */
+    /*margin-inline: calc(-1 * var(--body-padding));*/
 }
 
 div.code > pre {

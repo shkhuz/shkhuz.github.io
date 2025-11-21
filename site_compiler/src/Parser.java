@@ -158,14 +158,14 @@ public class Parser {
         Node heading = new HeadingNode(level, inline);
         if (level == 1) {
             Node navlist = null;
-            if (match(TKind.equal3)) {
-                while (match(TKind.newline)) {}
-                navlist = parseList();
-                if (!match(TKind.equal3)) {
-                    System.err.println("Expected '='"); 
-                }
-                while (match(TKind.newline)) {}
-            }
+            // if (match(TKind.equal3)) {
+            //     while (match(TKind.newline)) {}
+            //     navlist = parseList();
+            //     if (!match(TKind.equal3)) {
+            //         System.err.println("Expected '='"); 
+            //     }
+            //     while (match(TKind.newline)) {}
+            // }
             return new NavbarNode(heading, navlist);
         } else {
             return heading;

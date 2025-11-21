@@ -2,11 +2,13 @@ import java.io.*;
 import java.nio.file.*;
 import java.util.List;
 import java.util.ArrayList;
+import java.util.Map;
 
 public class Lexer {
     enum State {
         text, 
         preblock,
+        metablock,
         mathblock,
         prespan,
         other,
@@ -27,6 +29,7 @@ public class Lexer {
 
     String srcfile;
     List<Token> tokens = new ArrayList<Token>();
+    Map<String, Object> meta = null;
 
     public Lexer(String srcfile) {
         this.srcfile = srcfile;
@@ -304,6 +307,7 @@ public class Lexer {
         start = current;
     }
 
+    @SuppressWarnings("unchecked")
     public List<Token> lex() {
         for (;;) {
             if (current == srcfile.length()) {
@@ -329,6 +333,9 @@ public class Lexer {
                 current++;
                 continue;
             } else if (state == State.preblock && !(is('`') && is(current+1, '`') && is(current+2, '`'))) {
+                current++;
+                continue;
+            } else if (state == State.metablock && !(is('-') && is(current+1, '-') && is(current+2, '-'))) {
                 current++;
                 continue;
             } else if (state == State.mathblock && !(is('$') && is(current+1, '$'))) {
@@ -387,7 +394,7 @@ public class Lexer {
                     else appendIf3ElseCont('[', TKind.lbrack3); 
                 } break;
                 case ']': appendIf3ElseCont(']', TKind.rbrack3); break;
-                case '=': appendIf3ElseCont('=', TKind.equal3); break;
+                // case '=': appendIf3ElseCont('=', TKind.equal3); break;
 
                 case '*': {
                     fin(); 
@@ -415,7 +422,34 @@ public class Lexer {
                 // the token is followed by a space. Only then we 
                 // add it as a token. Else it's text.
                 case '#': consecTokSpace('#', TKind.pound); break;
-                case '-': consecTokSpace('-', TKind.minus); break;
+                case '-': {
+                    int idx = current;
+                    while (is(idx, '-')) idx++;
+                    if (idx-current == 3) {
+                        if (state == State.metablock) {
+                            state = State.other;
+
+                            // meta = (Map<String, Object>) YamlParser.parse(srcfile.substring(start, current));
+                            // System.out.println(meta);
+                            current = idx; 
+                        }
+                        else {
+                            current = idx; 
+                            state = State.metablock;
+                            start = current;
+                        }
+                    }
+                    else if (is(idx, ' ')) {
+                        fin();
+                        int count = idx - current;
+                        idx++; // space
+                        current = idx;
+                        appendTok(TKind.minus, count);
+                    } 
+                    else {
+                        defaultCharacter();
+                    }
+                } break;
                 case '+': consecTokSpace('+', TKind.plus); break;
 
                 case '\n': {
