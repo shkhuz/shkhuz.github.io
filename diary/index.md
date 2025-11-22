@@ -35,7 +35,7 @@ Time to rotate the crankshaft and see the engine come to life!
     4 Cylinder Engine
 </video>
 
-Nice! It would be better if the schematic also included parts of the engine head (camshaft, valves, etc). Nonetheless, I had fun making it; maybe I'll measure out and model the head parts myself.
+Nice! It would be better if the schematic also included parts of the engine head (camshaft, valves, etc). Nonetheless, I had fun making it; maybe I'll measure out and model the head parts myself. [Here](4CylinderEngine.zip) are my CAD files for reference.
 
 ## 02.11.25
 
