@@ -6,6 +6,12 @@
 ---
 summary: fdf
 nice: oho
+folded: >
+  fdfd
+
+  dfdfd
+
+  dfdf
 nav: 
   - lbl: 1
     ds: 3

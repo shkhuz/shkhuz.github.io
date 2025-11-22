@@ -311,21 +311,22 @@ public class Lexer {
     public List<Token> lex() {
         for (;;) {
             if (current == srcfile.length()) {
-                // appendTok(TKind.eof, 1); 
-                for (int i = 0; i < tokens.size(); i++) {
-                    Token t = tokens.get(i);
-                    System.out.println(
-                            i 
-                            + " "
-                            + (t.indent > 0 ? "|" + t.indent + " " : "")
-                            + t.kind 
-                            + "(" 
-                            + t.count 
-                            + (t.extra != null ? ", " + t.extra : "") 
-                            + ") " 
-                            + escape(t.lexeme)
-                    );
-                }
+                fin();
+                appendTok(TKind.eof, 1); 
+                // for (int i = 0; i < tokens.size(); i++) {
+                //     Token t = tokens.get(i);
+                //     System.out.println(
+                //             i 
+                //             + " "
+                //             + (t.indent > 0 ? "|" + t.indent + " " : "")
+                //             + t.kind 
+                //             + "(" 
+                //             + t.count 
+                //             + (t.extra != null ? ", " + t.extra : "") 
+                //             + ") " 
+                //             + escape(t.lexeme)
+                //     );
+                // }
                 return tokens;
             }
 
@@ -428,9 +429,6 @@ public class Lexer {
                     if (idx-current == 3) {
                         if (state == State.metablock) {
                             state = State.other;
-
-                            // meta = (Map<String, Object>) YamlParser.parse(srcfile.substring(start, current));
-                            // System.out.println(meta);
                             current = idx; 
                         }
                         else {

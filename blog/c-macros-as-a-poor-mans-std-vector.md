@@ -1,4 +1,14 @@
-# C Macros as a Poor Man’s std::vector
+---
+title: C Macros as a Poor Man’s std::vector
+date: 2025-11-19
+synopsis: >
+  C is pretty cool. What's not cool about it is the lack of a good standard
+  library. And what's the most important data structure a library can offer? 
+  Of course, the vector/buffer/arraylist! C's apparent lack of type-safe 
+  generics is another thing to be bummed out about, but that doesn't stop us
+  from writing a buffer implementation that doesn't perform
+  half as bad as some other C implementations.
+---
 
 If you’ve spent time in Java or C++, you get used to the convenience of standard dynamic containers. `ArrayList` and `std::vector` are taken for granted and are treated as being always there for you when you need it. When you move to C, that comfort disappears. The language gives you raw pointers, `malloc`, `realloc`, and little else. There’s no standard dynamic array type, no generic container, and no unified pattern for managing capacity. You quickly realize that something as basic as “append an element” requires a bit of manual work. That absence becomes noticeable, even annoying.
 
@@ -18,7 +28,7 @@ Firstly, let's define how we want the user to use our buffer implementation. I a
 
 ```c
 int* list = NULL;
-```
+``` 
 
 `list` must have a non-opaque type so that the compiler can typecheck our code at compile-time. Otherwise I've seen many implementations that use `void*` and leave it to the user to perform operations correctly. In our case, by giving it a type `int*` we are telling it to make a list of `int`s. Do note that all buffers must be initialized to `NULL`. I'll go into this later. 
 
@@ -93,7 +103,7 @@ Other operations include `buflen`, `bufcap`, `bufpop`, `bufclear`, etc. Now that
 
 Most buffer implementations will generally store a header before the data that has the buffer length, capacity, etc. 
 
-![](header-layout.svg)
+![](assets/bufhdr-header-layout.svg)
 
 The pointer the user is given does not point to the header, rather it points to data. That's why it can be used with the array operator to get any item at index.
 

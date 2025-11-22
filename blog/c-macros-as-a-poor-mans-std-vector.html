@@ -4,7 +4,7 @@
 <meta charset='utf-8'>
 <meta name='viewport' content='width=device-width, initial-scale=1'>
 
-<title>C Macros as a Poor Man’s std::vector</title>
+<title></title>
 <link rel='apple-touch-icon' sizes='180x180' href='/assets/apple-touch-icon.png'>
 <link rel='icon' type='image/png' sizes='32x32' href='/assets/favicon-32x32.png'>
 <link rel='icon' type='image/png' sizes='16x16' href='/assets/favicon-16x16.png'>
@@ -45,10 +45,10 @@
 <body>
 <article>
   <nav id='main-nav'>
-    <h1><a href='/'>~/</a> 
-      C Macros as a Poor Man’s std::vector
-    </h1>
+    <h1><a href='/'>~/</a> C Macros as a Poor Man’s std::vector</h1>
   </nav>
+  <p>
+  </p>
   <p>
     If you’ve spent time in Java or C++, you get used to the convenience of standard dynamic containers. <code>ArrayList</code> and <code>std::vector</code> are taken for granted and are treated as being always there for you when you need it. When you move to C, that comfort disappears. The language gives you raw pointers, <code>malloc</code>, <code>realloc</code>, and little else. There’s no standard dynamic array type, no generic container, and no unified pattern for managing capacity. You quickly realize that something as basic as “append an element” requires a bit of manual work. That absence becomes noticeable, even annoying.
   </p>
@@ -74,6 +74,9 @@
   </p>
   <div class='code lang-c'><pre><span class='keyword'>int</span>* list = <span class='const'>NULL</span>;
 </pre></div>
+  <p>
+     
+  </p>
   <p>
     <code>list</code> must have a non-opaque type so that the compiler can typecheck our code at compile-time. Otherwise I've seen many implementations that use <code>void*</code> and leave it to the user to perform operations correctly. In our case, by giving it a type <code>int*</code> we are telling it to make a list of <code>int</code>s. Do note that all buffers must be initialized to <code>NULL</code>. I'll go into this later. 
   </p>
@@ -151,7 +154,7 @@ printf(<span class='string'>"%d\n"</span>, list[<span class='const'>3</span>]);
     Most buffer implementations will generally store a header before the data that has the buffer length, capacity, etc. 
   </p>
   <p>
-    <img src='header-layout.svg' alt=''>
+    <img src='assets/bufhdr-header-layout.svg' alt=''>
   </p>
   <p>
     The pointer the user is given does not point to the header, rather it points to data. That's why it can be used with the array operator to get any item at index.

@@ -1,4 +1,12 @@
-# Simplest OpenGL program
+---
+title: Simplest OpenGL program
+date: 2024-05-20
+synopsis: >
+  Whenever I revisit OpenGL after a few years to write something arcane, because
+  of the shitty API I always forget that one function whose name I can't remember,
+  or that parameter whose value must always be NULL. This file serves as a 
+  "reference" or a starting-point where the boilerplate stuff is taken care of.
+---
 
 This is a single-file OpenGL "hello world" boilerplate implementation. It
 assumes that SDL and GLEW are already installed.
@@ -197,5 +205,5 @@ Compile with:
 $ g++ sdl2-opengl.cpp -Wall -lSDL2 -lGL -lGLEW
 ```
 
-![](opengl3-boilerplate-result.png)
+![](assets/opengl-hello-world-triangle.png)
 

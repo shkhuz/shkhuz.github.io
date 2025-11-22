@@ -1,9 +1,11 @@
-# Aria programming language and toolchain
-
-===
-- [Source Code](https://github.com/shkhuz/aria)
-- [Documentation](doc/)
-===
+---
+title: Aria programming language and toolchain
+nav: 
+  - label: Source Code
+    url: https://github.com/shkhuz/aria
+  - label: Documentation
+    url: doc/
+---
 
 Aria is an experimental systems programming language built to improve on C.
 

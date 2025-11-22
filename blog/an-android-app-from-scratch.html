@@ -4,7 +4,7 @@
 <meta charset='utf-8'>
 <meta name='viewport' content='width=device-width, initial-scale=1'>
 
-<title>An android app from scratch</title>
+<title></title>
 <link rel='apple-touch-icon' sizes='180x180' href='/assets/apple-touch-icon.png'>
 <link rel='icon' type='image/png' sizes='32x32' href='/assets/favicon-32x32.png'>
 <link rel='icon' type='image/png' sizes='16x16' href='/assets/favicon-16x16.png'>
@@ -45,10 +45,10 @@
 <body>
 <article>
   <nav id='main-nav'>
-    <h1><a href='/'>~/</a> 
-      An android app from scratch
-    </h1>
+    <h1><a href='/'>~/</a> An android app from scratch</h1>
   </nav>
+  <p>
+  </p>
   <p>
     For quite some time now, I have wanted to create a Java Android app entirely from scratch--without using build systems like Gradle or an IDE. Why?
   </p>
@@ -83,13 +83,13 @@ Hello world!
     Below is a diagram illustrating the process pipeline:
   </p>
   <p>
-    <img src='c_build_process.svg' alt=''>
+    <img src='assets/c_build_process.svg' alt=''>
   </p>
   <p>
     In this case, the frontend C compiler abstracts the linking step of the executable. In reality, the frontend creates an object file and then uses a linker to combine it into an executable. The actual process looks something like this:
   </p>
   <p>
-    <img src='c_build_process_long.svg' alt=''>
+    <img src='assets/c_build_process_long.svg' alt=''>
   </p>
   <aside>
     <p>
@@ -330,7 +330,7 @@ Is CN=Unknown, OU=Unknown, O=Unknown, L=Unknown, ST=Unknown, C=Unknown correct?
     Done! We successfully created an APK manually without that pesky <code>gradle</code>! The diagram below illustrates the whole process:
   </p>
   <p>
-    <img src='apk_build_process.svg' alt=''>
+    <img src='assets/apk_build_process.svg' alt=''>
   </p>
 </article>
 </body>

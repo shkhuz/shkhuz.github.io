@@ -135,9 +135,15 @@ public class YamlParser {
         while (i < lines.size()) {
             String line = lines.get(i);
             int indent = countIndent(line);
+            String trimmed = trim(line);
+            if (trimmed.isEmpty()) {
+                i++;
+                sb.append("\n");
+                continue;
+            }
             if (indent < baseIndent) break;
 
-            sb.append(trim(line)).append(" ");
+            sb.append(trimmed).append(" ");
             i++;
         }
 

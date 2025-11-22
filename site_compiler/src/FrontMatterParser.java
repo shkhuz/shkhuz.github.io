@@ -3,7 +3,8 @@ import java.nio.file.*;
 import java.util.*;
 
 public class FrontMatterParser {
-    public static Object parse(Path path) throws IOException {
+    @SuppressWarnings("unchecked")
+    public static Map<String, Object> parse(Path path) throws IOException {
         List<String> lines = Files.readAllLines(path);
         boolean inFrontMatter = false;
         int start = 0;
@@ -17,7 +18,13 @@ public class FrontMatterParser {
                 else {
                     String yaml = String.join("\n", lines.subList(start, i));
                     YamlParser y = new YamlParser(yaml);
-                    return y.parse();
+                    Object o = y.parse();
+                    if (o instanceof Map) {
+                        return (Map<String, Object>) o;
+                    }
+                    else {
+                        throw new Error("front-matter expects top level to be map, not list");
+                    }
                 }
             }
         }

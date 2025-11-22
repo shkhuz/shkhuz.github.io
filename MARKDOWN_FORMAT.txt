@@ -1,12 +1,19 @@
 The markdown format used in this repository is a little different than the
 standard markdown grammar.
 
-# Title                     <-- title
+---
+title: A title              <-- title
+date: 2024-09-23            <-- date
+synopsis: >                 <-- synopsis to show on posts list
+  Lorem epsum 
+  Something something.
+nav:                        <-- nav list: shows a list of buttons 
+  - label: Articles             to navigate to another page
+    url: /articles
+  - label: GitHub
+    url: example.url
+---
 
-===                         <-- mandatory if nav list is needed
-- [Home](/)                 <-- navigation list
-- [About](/about)
-===                         <-- end nav list
 
 ~~~                         <-- emits a table of contents.
 

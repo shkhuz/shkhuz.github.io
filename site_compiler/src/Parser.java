@@ -156,20 +156,7 @@ public class Parser {
         parseInline(inline, t);
 
         Node heading = new HeadingNode(level, inline);
-        if (level == 1) {
-            Node navlist = null;
-            // if (match(TKind.equal3)) {
-            //     while (match(TKind.newline)) {}
-            //     navlist = parseList();
-            //     if (!match(TKind.equal3)) {
-            //         System.err.println("Expected '='"); 
-            //     }
-            //     while (match(TKind.newline)) {}
-            // }
-            return new NavbarNode(heading, navlist);
-        } else {
-            return heading;
-        }
+        return heading;
     }
 
     private Node parseParagraph() {
@@ -373,12 +360,6 @@ public class Parser {
                 printNode(child, indent + 1);
             }
         }
-        else if (node instanceof NavbarNode) {
-            NavbarNode n = (NavbarNode) node;
-            System.out.println(pad + "Navbar");
-            printNode(n.title, indent + 1);
-            if (n.navlist != null) printNode(n.navlist, indent + 1);
-        }
         else if (node instanceof AsideNode) {
             AsideNode a = (AsideNode) node;
             System.out.println(pad + "Aside");
@@ -467,7 +448,7 @@ public class Parser {
 
     public Node parse() {
         List<Node> blocks = new ArrayList<>();
-        while (at() != null) {
+        while (!is(TKind.eof) && at() != null) {
             blocks.add(parseBlock());
         }
         RootNode root = new RootNode(blocks);

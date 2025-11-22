@@ -1,17 +1,19 @@
 import java.io.*;
 import java.nio.file.*;
-import java.util.List;
-import java.util.ArrayList;
+import java.util.*;
 
 public class Renderer {
     StringBuilder out = new StringBuilder();
     Node root;
+    Map<String, Object> meta;
+    boolean isIndex = false;
     Path filePath;
-    Path indexPath = Paths.get("index.md");
 
-    public Renderer(Path filePath, Node root) {
+    public Renderer(Path filePath, Node root, Map<String, Object> meta, boolean isIndex) {
         this.filePath = filePath;
         this.root = root;
+        this.meta = meta;
+        this.isIndex = isIndex;
     }
 
     public boolean isInlineNode(Node node) {
@@ -24,7 +26,6 @@ public class Renderer {
         else if (node instanceof RootNode
             || node instanceof ParagraphNode
             || node instanceof AsideNode
-            || node instanceof NavbarNode
             || node instanceof HeadingNode
             || node instanceof PreblockNode
             || node instanceof MathblockNode
@@ -46,12 +47,39 @@ public class Renderer {
         }
     }
 
+    @SuppressWarnings("unchecked")
     private void renderNode(Node node, Node prev, int indent) {
         String pad = "  ".repeat(indent);
 
         if (node instanceof RootNode) {
             RootNode r = (RootNode) node;
             out.append("<article>");
+            out.append("\n  <nav id='main-nav'>");
+
+            if (meta.containsKey("title")) {
+                System.out.println("INDEX ? " + isIndex);
+                String tilde = !isIndex ? "<a href='/'>~/</a> " : "";
+                out.append("\n    <h1>" + tilde + Utils.getValueStr(meta, "title") + "</h1>");
+            }
+
+            if (meta.containsKey("nav")) {
+                List<Object> navList = (List<Object>) meta.get("nav");
+                out.append("\n    <ul>");
+                for (Object o: navList) {
+                    Map<String, Object> anchor = (Map<String, Object>) o; 
+                    out.append("\n      <li>");
+                    out.append("\n        <a href='" + 
+                               Utils.getValueStr(anchor, "url") + 
+                               "'>" + 
+                               Utils.getValueStr(anchor, "label") + 
+                               "</a>"
+                    );
+                    out.append("\n      </li>");
+                }
+                out.append("\n    </ul>");
+            }
+
+            out.append("\n  </nav>");
             for (int i = 0; i < r.children.size(); i++) {
                 renderNode(r.children.get(i), i == 0 ? node : r.children.get(i-1), indent + 1);
             }
@@ -73,19 +101,9 @@ public class Renderer {
             }
             out.append("\n" + pad + "</aside>");
         }
-        else if (node instanceof NavbarNode) {
-            NavbarNode n = (NavbarNode) node;
-            out.append("\n" + pad + "<nav id='main-nav'>");
-            renderNode(n.title, n, indent + 1);
-            if (n.navlist != null) renderNode(n.navlist, n.title, indent + 1);
-            out.append("\n" + pad + "</nav>");
-        }
         else if (node instanceof HeadingNode) {
             HeadingNode h = (HeadingNode) node;
             out.append("\n" + pad + "<h" + h.level + ">");
-            if (h.level == 1 && filePath.compareTo(indexPath) != 0) {
-                out.append("<a href='/'>~/</a> ");
-            }
             for (int i = 0; i < h.children.size(); i++) {
                 renderNode(h.children.get(i), i == 0 ? node : h.children.get(i-1), indent + 1);
             }

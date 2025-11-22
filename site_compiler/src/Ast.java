@@ -26,16 +26,6 @@ class AsideNode implements Node {
     }
 }
 
-class NavbarNode implements Node {
-    Node title;
-    Node navlist; 
-
-    public NavbarNode(Node title, Node navlist) {
-        this.title = title;
-        this.navlist = navlist;
-    }
-}
-
 class HeadingNode implements Node {
     int level;
     List<Node> children;

@@ -1,10 +1,13 @@
-# Abascia
-
-===
-- [Source Code](https://github.com/shkhuz/abascia)
-- [Downloads](#downloads)
-- [Screenshots](#screenshots)
-===
+---
+title: Abascia
+nav:
+  - label: Source Code
+    url: https://github.com/shkhuz/abascia
+  - label: Downloads
+    url: #downloads
+  - label: Screenshots
+    url: #screenshots
+---
 
 Abascia is an RPN-based android calculator for everyday tasks. 
 

@@ -1,9 +1,11 @@
-# Hed -- a highly efficient text editor
-
-===
-- [Source Code](https://github.com/shkhuz/hed)
-- [Download](https://github.com/shkhuz/hed)
-===
+---
+title: Hed -- a highly efficient text editor
+nav:
+  - label: Source Code
+    url: https://github.com/shkhuz/hed
+  - label: Download
+    url: https://github.com/shkhuz/hed
+---
 
 Hed is a highly efficient modal text editor which uses keyboard-only
 actions to edit text.

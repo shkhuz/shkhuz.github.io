@@ -10,7 +10,7 @@ run: $(STAMP) test.md
 	java -classpath classes Use .
 
 debug: $(STAMP) test.md
-	jdb -classpath classes -sourcepath src Use test.md
+	jdb -classpath classes -sourcepath src Use .
 
 clean: 
 	rm -rf classes

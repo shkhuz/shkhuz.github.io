@@ -1,4 +1,11 @@
-# The Java .properties file fiasco
+---
+title: The Java .properties file fiasco
+date: 2025-09-06
+synopsis: >
+  I needed to integrate a Git library into my blog app. But upon building,
+  it just didn't work. Lack of experience on working with Java/Android was 
+  pretty apparent, but at the end I got it to work.
+---
 
 My task for today was to integrate a Git library into my blog app. I had a skeleton hand-rolled Java Android app with no build system -- only a Makefile. 
 

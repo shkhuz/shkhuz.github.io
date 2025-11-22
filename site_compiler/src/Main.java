@@ -10,6 +10,7 @@ import java.util.stream.Collectors;
 public class Main {
     private StringBuilder out = new StringBuilder();
     public String title;
+    public boolean isIndex = false;
     private Path blogDir = Paths.get("./blog");
 
     private String blob1 =
@@ -66,34 +67,18 @@ public class Main {
 "\n</body>\n" +
 "</html>\n";
 
-    private String changeExt(String path, String newExt) {
-        int dotIndex = path.lastIndexOf('.');
-        if (dotIndex != -1) {
-            path = path.substring(0, dotIndex);
-        }
-        path += newExt;
-        return path;
-    }
-
-    private String readFile(String filePath) throws IOException {
-        StringBuilder sb = new StringBuilder();
-        try (BufferedReader reader = new BufferedReader(new FileReader(filePath))) {
-            String line;
-            while ((line = reader.readLine()) != null) {
-                sb.append(line).append("\n");
-            }
-        }
-        return sb.toString();
-    }
-
-    public void convertAndOutput(Path f, Map<Path, Object> fms) throws IOException {
+    public void convertAndOutput(Path f, Map<Path, Map<String, Object>> fms) throws IOException {
         try {
             Hlt.init();
             String filePath = f.toString();
-            String markdown = readFile(filePath);
+            String markdown = Utils.readFile(filePath);
 
             if (Files.isSameFile(Paths.get("./index.md"), f)) {
-                Map<Path, Object> filtered = fms.entrySet()
+                isIndex = true;
+            }
+
+            if (isIndex) {
+                Map<Path, Map<String, Object>> filtered = fms.entrySet()
                     .stream()
                     .filter(e -> e.getKey().startsWith(blogDir))
                     .collect(Collectors.toMap(
@@ -102,19 +87,30 @@ public class Main {
                         (a,b) -> a,
                         LinkedHashMap::new
                     ));
+                System.out.println(filtered);
 
+                markdown += "<h2>Blog</h2>\n";
+                markdown += "<div class='blog-posts'>\n";
                 for (Path p: filtered.keySet()) {
-                    System.out.println("PATH:" + p.toString());
+                    Map<String, Object> meta = filtered.get(p);
+                    markdown += "<div class='blog-post'>\n";
+                    markdown += "  <a href='" + Utils.changeExt(p.toString(), ".html") + "'>" + Utils.getValueStr(meta, "title") + "</a>\n";
+                    markdown += "  <small><span class='date'>" + Utils.getValueStr(meta, "date") + "</span> " + Utils.getValueStr(meta, "synopsis") + "</small>\n";
+                    markdown += "</div>\n";
                 }
+                markdown += "</div>\n";
+                System.out.println("Converted: " + markdown);
             }
+
+            Map<String, Object> meta = fms.get(f);
             Lexer l = new Lexer(markdown);
             List<Token> tokens = l.lex();
             Parser p = new Parser(markdown, tokens, l.indentsList, l.newlineList);
             Node root = p.parse();
-            Renderer r = new Renderer(f, root);
+            Renderer r = new Renderer(f, root, meta, isIndex);
             String html = r.render();
 
-            try (FileWriter writer = new FileWriter(changeExt(filePath, ".html"))) {
+            try (FileWriter writer = new FileWriter(Utils.changeExt(filePath, ".html"))) {
                 writer.write(blob1);
                 // writer.write(extractTitle(f));
                 writer.write(blob2);
