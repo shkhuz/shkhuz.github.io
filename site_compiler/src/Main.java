@@ -2,8 +2,6 @@ import java.io.*;
 import java.nio.file.*;
 import java.util.*;
 import java.util.regex.Pattern;
-import java.text.SimpleDateFormat;
-import java.util.Date;
 import java.util.Locale;
 import java.util.stream.Collectors;
 
@@ -67,7 +65,9 @@ public class Main {
 "\n</body>\n" +
 "</html>\n";
 
-    public void convertAndOutput(Path f, Map<Path, Map<String, Object>> fms) throws IOException {
+    public void convertAndOutput(Path f, Map<Path, Map<String, Object>> fms) 
+        throws IOException 
+    {
         try {
             Hlt.init();
             String filePath = f.toString();
@@ -81,25 +81,38 @@ public class Main {
                 Map<Path, Map<String, Object>> filtered = fms.entrySet()
                     .stream()
                     .filter(e -> e.getKey().startsWith(blogDir))
+                    .sorted(Comparator.comparing(
+                        (Map.Entry<Path, Map<String,Object>> e) ->
+                            Utils.getValueStr(e.getValue(), "date")
+                    ).reversed())
                     .collect(Collectors.toMap(
                         Map.Entry::getKey,
                         Map.Entry::getValue,
                         (a,b) -> a,
                         LinkedHashMap::new
                     ));
-                System.out.println(filtered);
 
                 markdown += "<h2>Blog</h2>\n";
                 markdown += "<div class='blog-posts'>\n";
                 for (Path p: filtered.keySet()) {
                     Map<String, Object> meta = filtered.get(p);
+                    String htmlPath = Utils.changeExt(p.toString(), ".html");
                     markdown += "<div class='blog-post'>\n";
-                    markdown += "  <a href='" + Utils.changeExt(p.toString(), ".html") + "'>" + Utils.getValueStr(meta, "title") + "</a>\n";
-                    markdown += "  <small><span class='date'>" + Utils.getValueStr(meta, "date") + "</span> " + Utils.getValueStr(meta, "synopsis") + "</small>\n";
+                    markdown += "  <a href='" + 
+                                htmlPath + 
+                                "'>" + 
+                                Utils.getValueStr(meta, "title") + 
+                                "</a>\n";
+                    markdown += "  <small><span class='date'>" + 
+                                Utils.formatIsoDate(Utils.getValueStr(meta, "date")) + 
+                                "</span>&nbsp;&nbsp;" + 
+                                Utils.getValueStr(meta, "synopsis") + 
+                                " <a class='read-more' href='" + 
+                                htmlPath + 
+                                "'>Read more</a></small>\n";
                     markdown += "</div>\n";
                 }
                 markdown += "</div>\n";
-                System.out.println("Converted: " + markdown);
             }
 
             Map<String, Object> meta = fms.get(f);
@@ -112,7 +125,7 @@ public class Main {
 
             try (FileWriter writer = new FileWriter(Utils.changeExt(filePath, ".html"))) {
                 writer.write(blob1);
-                // writer.write(extractTitle(f));
+                writer.write(Utils.getValueStr(meta, "title"));
                 writer.write(blob2);
                 writer.write(html);
                 writer.write(blob3);

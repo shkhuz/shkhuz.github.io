@@ -16,7 +16,14 @@ Welcome to my home on the web. This is a dumping-ground for all my endeavours.
 &nbsp;&nbsp;<a href='mental_math/'>Mental Math Trainer</a>
 &nbsp;&nbsp;<a href='starfield/'>Starfield</a>
 &nbsp;&nbsp;<a href='literal-sandbox/'>Literal Sandbox</a>))
-&nbsp;(diary <a href='diary/'>diary/</a>))
+&nbsp;(interests (
+&nbsp;&nbsp;low-level programming
+&nbsp;&nbsp;compilers
+&nbsp;&nbsp;osdev
+&nbsp;&nbsp;gamedev
+&nbsp;&nbsp;piano
+&nbsp;&nbsp;webdesign))
+&nbsp;(journal <a href='journal/'>journal/</a>))
 </pre>
 </div>
 

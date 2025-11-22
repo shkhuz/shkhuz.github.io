@@ -240,7 +240,7 @@ public class Parser {
                 while (i < extra.length()
                        && extra.charAt(i) != ')') {
                     if (extra.charAt(i) == '\n' || extra.charAt(i) == '\0') 
-                        System.err.println("Unterminated '('");
+                        System.err.println("parser: code_filepath: Unterminated '('");
                     i++;
                 }
                 filepath = extra.substring(beg, i);
@@ -293,7 +293,7 @@ public class Parser {
 
     private static final Set<String> HTML_BLOCK_TAGS = Set.of(
         "div", "section", "article", "table", "pre", "script",
-        "style", "ul", "ol", "li", "video", "img"
+        "style", "ul", "ol", "li", "video", "img", "span"
     );
 
     private boolean isHtmlBlockStart() {

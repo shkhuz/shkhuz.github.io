@@ -285,7 +285,7 @@ public class Lexer {
         start = current;
         while (!match(']')) {
             if (is('\n') || is('\0')) {
-                System.err.println("Unterminated '['");
+                System.err.println("lexer: anchor Unterminated '['");
                 return;
             }
             current++;
@@ -296,7 +296,7 @@ public class Lexer {
         start = current;
         while (!match(')')) {
             if (is('\n') || is('\0')) {
-                System.err.println("Unterminated '('");
+                System.err.println("lexer: anchor Unterminated '('");
                 return;
             }
             current++;

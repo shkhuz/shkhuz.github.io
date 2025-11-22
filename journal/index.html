@@ -4,7 +4,7 @@
 <meta charset='utf-8'>
 <meta name='viewport' content='width=device-width, initial-scale=1'>
 
-<title></title>
+<title>Journal</title>
 <link rel='apple-touch-icon' sizes='180x180' href='/assets/apple-touch-icon.png'>
 <link rel='icon' type='image/png' sizes='32x32' href='/assets/favicon-32x32.png'>
 <link rel='icon' type='image/png' sizes='16x16' href='/assets/favicon-16x16.png'>
@@ -45,13 +45,17 @@
 <body>
 <article>
   <nav id='main-nav'>
-    <h1><a href='/'>~/</a> Diary</h1>
+    <h1><a href='/'>~/</a> Journal</h1>
   </nav>
   <p>
   </p>
-  <h2>
-    20.11.25
-  </h2>
+  <p>
+    Here are my daily thoughts, organized by date. Stuff not terribly important go in here rather than the <a href='/'>blog</a>. 
+  </p>
+  <span class='journal-year'>2025</span>
+  <h3>
+    Nov 20: Implementing a YAML Parser
+  </h3>
   <p>
     Today I wanted to make some changes to my markdown format which I use for my blog. Specifically, I wanted a cleaner way to specify metadata for a page. Right now to specify the title, I just use a heading H1 tag (<code>#</code>). It cannot show tags, date or anything else. 
   </p>
@@ -69,14 +73,14 @@
       <sup>1</sup>Fun fact: The author of the article inspite of bashing YAML to the point of creating <a href='https://github.com/ruuda/rcl'>his own markup language</a>, still uses YAML, in hypenated blocks at the top of his posts. 
     </p>
   </aside>
-  <h2>
-    11.11.25
-  </h2>
+  <h3>
+    Nov 11: Making a 4-cylinder engine in SolidWorks
+  </h3>
   <p>
     While browsing YouTube today I came across some SolidWorks videos in my recommended partly because yesterday after a long time I revisited my CAD itch. While watching some of them (one of them was a CAD 1v1 contest!) a video on a 4-cylinder engine popped up. When I saw the pistons moving in the preview, I knew I'd spend the next three hours modeling it myself. This was the blueprint that was shown at the beginning of the video:
   </p>
   <p>
-    <img src='20251110001.jpg' alt=''>
+    <img src='4-cylinder-engine-blueprint.jpg' alt=''>
   </p>
   <p>
     I first had to model the individual parts of the engine (piston head, connecting rod, rod cap, crankshaft, etc). After modeling every part, the next step is assembling all the parts into an assembly.
@@ -85,32 +89,32 @@
     Three hours in, I finally made it. 
   </p>
   <p>
-    <img src='20251110002.jpg' alt=''>
+    <img src='4-cylinder-engine-in-sldworks.jpg' alt=''>
   </p>
   <p>
     Time to rotate the crankshaft and see the engine come to life!
   </p>
   <video autoplay loop>
-      <source src="20251110003.mp4" type="video/mp4" />
+      <source src="4-cylinder-engine-anim.mp4" type="video/mp4" />
       4 Cylinder Engine
   </video>
   <p>
-    Nice! It would be better if the schematic also included parts of the engine head (camshaft, valves, etc). Nonetheless, I had fun making it; maybe I'll measure out and model the head parts myself. <a href='4CylinderEngine.zip'>Here</a> are my CAD files for reference.
+    Nice! It would be better if the schematic also included parts of the engine head (camshaft, valves, etc). Nonetheless, I had fun making it; maybe I'll measure out and model the head parts myself. <a href='4-cylinder-engine-cad.zip'>Here</a> are my CAD files for reference.
   </p>
-  <h2>
-    02.11.25
-  </h2>
+  <h3>
+    Nov 2: A breadboard number guessing game
+  </h3>
   <p>
     For my end semester DE/AC project, I chose to make a simple number guessing game using nothing but a few primitive ICs.
   </p>
   <p>
-    <img src='20251102001.jpg' alt=''>
+    <img src='breadboard-number-guessing-game.jpg' alt=''>
   </p>
   <p>
     Hold the "roll" button to roll numbers 0-9 on the 7-segment display. When released, the counter starts slowing down until it lands on a number that the user needs to guess. Here it is in action:
   </p>
   <video autoplay loop>
-  <source src="20251102002.mp4" type="video/mp4" />
+  <source src="breadboard-number-guessing-game-demo.mp4" type="video/mp4" />
      Example Run
   </video>
   <p>
@@ -134,11 +138,11 @@
     For completeness, here is the circuit diagram I made to verify the circuit before putting it on the breadboard:
   </p>
   <p>
-    <img src='20251102003.jpg' alt=''>
+    <img src='breadboard-number-guessing-game-schematic.jpg' alt=''>
   </p>
-  <h2>
-    20.10.25
-  </h2>
+  <h3>
+    Oct 20: Seb's Digital Logic Simulator
+  </h3>
   <p>
     'How Do Aircraft Systems Communicate?'. It's been a while since I got a Ben Eater video recommended in my YT feed. Aha! I totally forgot about designing my own 8-bit "Computer" back when I blazed through his breadboard computer videos! 
   </p>
@@ -151,9 +155,9 @@
   <p>
     I wondered how much work would it take to recreate his Logic Simulator in C with SDL/raylib. So I setup a hello-world raylib project with a 2D camera and some zooming/panning. Tomorrow I'll work on the graphics side for a bit before starting on the main simulator code. 
   </p>
-  <h2>
-    18.10.25
-  </h2>
+  <h3>
+    Oct 18: WM Hopping
+  </h3>
   <p>
     When I distro-hopped from Arch to NixOS about two months ago, for fun I also changed my WM from openbox to qtile. I last used a tiling WM about two years ago (dwm from suckless) and migrated to openbox then 'cuz I didn't appreciate the philosophy. I've now used qtile for about two months, and I'm going back to openbox.
   </p>
@@ -169,9 +173,9 @@
   <p>
     There is a subtle bug where when I download something from firefox and click the button to open the containing folder, it opens the terminal emulator, not the file manager (PCManFM). Yet when I start the file manager beforehand and then click the button in firefox, it correcly opens in it. I'll have to look into it.
   </p>
-  <h2>
-    14.10.25
-  </h2>
+  <h3>
+    Oct 14: College Math
+  </h3>
   <p>
     To even begin reading Spivak's Calculus, I need to have a few prerequisites under my belt:
   </p>
@@ -189,9 +193,9 @@
   <p>
     Currently I'm working on finishing the 2nd part. Even though I'm in Semester III in my college which involves Calc III, I feel like we weren't taught stuff properly, which is why I'm relying on Paul's notes to get basics of Calc 2 and 3 out of the way so that I can move on to step 3. 
   </p>
-  <h2>
-    29.9.25
-  </h2>
+  <h3>
+    Sep 29: Learning the keyboard -- and math
+  </h3>
   <p>
     On the first few lessons from the Udemy piano course. Before this I could play melodies with single hand without movement. Now the first full lesson incorporates some bass notes too. What helped me was to individually practice both hands until I'm fairly confident that I could play them without thinking too much. Then after however many tries, playing with both hands should be much easier.
   </p>

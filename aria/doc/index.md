@@ -1,4 +1,6 @@
-# Aria language reference
+---
+title: Aria language reference
+---
 
 ## Hello world
 

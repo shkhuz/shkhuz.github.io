@@ -59,7 +59,10 @@ public class Renderer {
             if (meta.containsKey("title")) {
                 System.out.println("INDEX ? " + isIndex);
                 String tilde = !isIndex ? "<a href='/'>~/</a> " : "";
-                out.append("\n    <h1>" + tilde + Utils.getValueStr(meta, "title") + "</h1>");
+                out.append("\n    <h1>" + 
+                           tilde + 
+                           Utils.getValueStr(meta, "title") + 
+                           "</h1>");
             }
 
             if (meta.containsKey("nav")) {
@@ -77,6 +80,13 @@ public class Renderer {
                     out.append("\n      </li>");
                 }
                 out.append("\n    </ul>");
+            }
+
+            if (meta.containsKey("date")) {
+                out.append("\n    <span class='info'>Published on " + 
+                           Utils.formatIsoDate(Utils.getValueStr(meta, "date")) + 
+                           " by <a href='mailto:shk.huz@gmail.com'>shkhuz</a></span>"
+                );
             }
 
             out.append("\n  </nav>");

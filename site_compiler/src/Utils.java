@@ -1,6 +1,8 @@
 import java.io.*;
 import java.nio.file.*;
 import java.util.*;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 
 public class Utils {
 
@@ -28,5 +30,11 @@ public class Utils {
         Object o = map.get(key);
         if (o != null) return o.toString();
         else return "";
+    }
+
+    public static String formatIsoDate(String isoDate) {
+        LocalDate date = LocalDate.parse(isoDate);  // parses YYYY-MM-DD
+        DateTimeFormatter fmt = DateTimeFormatter.ofPattern("MMM d, yyyy");
+        return date.format(fmt);
     }
 }

@@ -1,8 +1,12 @@
 ---
-title: Diary
+title: Journal
 ---
 
-## 20.11.25
+Here are my daily thoughts, organized by date. Stuff not terribly important go in here rather than the [blog](/). 
+
+<span class='journal-year'>2025</span>
+
+### Nov 20: Implementing a YAML Parser
 
 Today I wanted to make some changes to my markdown format which I use for my blog. Specifically, I wanted a cleaner way to specify metadata for a page. Right now to specify the title, I just use a heading H1 tag (`#`). It cannot show tags, date or anything else. 
 
@@ -16,37 +20,37 @@ I knew about some of the drawbacks of YAML beforehand. But after reading the art
 <sup>1</sup>Fun fact: The author of the article inspite of bashing YAML to the point of creating [his own markup language](https://github.com/ruuda/rcl), still uses YAML, in hypenated blocks at the top of his posts. 
 ]]]
 
-## 11.11.25
+### Nov 11: Making a 4-cylinder engine in SolidWorks
 
 While browsing YouTube today I came across some SolidWorks videos in my recommended partly because yesterday after a long time I revisited my CAD itch. While watching some of them (one of them was a CAD 1v1 contest!) a video on a 4-cylinder engine popped up. When I saw the pistons moving in the preview, I knew I'd spend the next three hours modeling it myself. This was the blueprint that was shown at the beginning of the video:
 
-![](20251110001.jpg)
+![](4-cylinder-engine-blueprint.jpg)
 
 I first had to model the individual parts of the engine (piston head, connecting rod, rod cap, crankshaft, etc). After modeling every part, the next step is assembling all the parts into an assembly.
 
 Three hours in, I finally made it. 
 
-![](20251110002.jpg)
+![](4-cylinder-engine-in-sldworks.jpg)
 
 Time to rotate the crankshaft and see the engine come to life!
 
 <video autoplay loop>
-    <source src="20251110003.mp4" type="video/mp4" />
+    <source src="4-cylinder-engine-anim.mp4" type="video/mp4" />
     4 Cylinder Engine
 </video>
 
-Nice! It would be better if the schematic also included parts of the engine head (camshaft, valves, etc). Nonetheless, I had fun making it; maybe I'll measure out and model the head parts myself. [Here](4CylinderEngine.zip) are my CAD files for reference.
+Nice! It would be better if the schematic also included parts of the engine head (camshaft, valves, etc). Nonetheless, I had fun making it; maybe I'll measure out and model the head parts myself. [Here](4-cylinder-engine-cad.zip) are my CAD files for reference.
 
-## 02.11.25
+### Nov 2: A breadboard number guessing game
 
 For my end semester DE/AC project, I chose to make a simple number guessing game using nothing but a few primitive ICs.
 
-![](20251102001.jpg)
+![](breadboard-number-guessing-game.jpg)
 
 Hold the "roll" button to roll numbers 0-9 on the 7-segment display. When released, the counter starts slowing down until it lands on a number that the user needs to guess. Here it is in action:
 
 <video autoplay loop>
-<source src="20251102002.mp4" type="video/mp4" />
+<source src="breadboard-number-guessing-game-demo.mp4" type="video/mp4" />
    Example Run
 </video>
 
@@ -60,9 +64,9 @@ Here are few of the components I used:
 
 For completeness, here is the circuit diagram I made to verify the circuit before putting it on the breadboard:
 
-![](20251102003.jpg)
+![](breadboard-number-guessing-game-schematic.jpg)
 
-## 20.10.25
+### Oct 20: Seb's Digital Logic Simulator
 
 'How Do Aircraft Systems Communicate?'. It's been a while since I got a Ben Eater video recommended in my YT feed. Aha! I totally forgot about designing my own 8-bit "Computer" back when I blazed through his breadboard computer videos! 
 
@@ -72,7 +76,7 @@ Lague's videos on his Logic Simulator were very well thought out and executed. E
 
 I wondered how much work would it take to recreate his Logic Simulator in C with SDL/raylib. So I setup a hello-world raylib project with a 2D camera and some zooming/panning. Tomorrow I'll work on the graphics side for a bit before starting on the main simulator code. 
 
-## 18.10.25
+### Oct 18: WM Hopping
 
 When I distro-hopped from Arch to NixOS about two months ago, for fun I also changed my WM from openbox to qtile. I last used a tiling WM about two years ago (dwm from suckless) and migrated to openbox then 'cuz I didn't appreciate the philosophy. I've now used qtile for about two months, and I'm going back to openbox.
 
@@ -84,7 +88,7 @@ Of course, I also changed some things along with the WM. qtile had it's own stat
 
 There is a subtle bug where when I download something from firefox and click the button to open the containing folder, it opens the terminal emulator, not the file manager (PCManFM). Yet when I start the file manager beforehand and then click the button in firefox, it correcly opens in it. I'll have to look into it.
 
-## 14.10.25
+### Oct 14: College Math
 
 To even begin reading Spivak's Calculus, I need to have a few prerequisites under my belt:
 
@@ -94,7 +98,7 @@ To even begin reading Spivak's Calculus, I need to have a few prerequisites unde
 
 Currently I'm working on finishing the 2nd part. Even though I'm in Semester III in my college which involves Calc III, I feel like we weren't taught stuff properly, which is why I'm relying on Paul's notes to get basics of Calc 2 and 3 out of the way so that I can move on to step 3. 
 
-## 29.9.25
+### Sep 29: Learning the keyboard -- and math
 
 On the first few lessons from the Udemy piano course. Before this I could play melodies with single hand without movement. Now the first full lesson incorporates some bass notes too. What helped me was to individually practice both hands until I'm fairly confident that I could play them without thinking too much. Then after however many tries, playing with both hands should be much easier.
 
@@ -133,4 +137,3 @@ y &= f'(r) \frac{r \cdot 3 - \vec{r} \cdot \frac{\vec{r}}{r}}{r^2}
 \end{align*}$$
 
 QED.
-
