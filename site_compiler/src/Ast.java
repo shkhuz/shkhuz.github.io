@@ -3,9 +3,11 @@ import java.util.List;
 interface Node {}
 
 class RootNode implements Node {
+    List<Node> header;
     List<Node> children;
 
-    public RootNode(List<Node> children) {
+    public RootNode(List<Node> header, List<Node> children) {
+        this.header = header;
         this.children = children; 
     }
 }

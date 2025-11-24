@@ -5,15 +5,11 @@ import java.util.*;
 public class Renderer {
     StringBuilder out = new StringBuilder();
     Node root;
-    Map<String, Object> meta;
-    boolean isIndex = false;
     Path filePath;
 
-    public Renderer(Path filePath, Node root, Map<String, Object> meta, boolean isIndex) {
+    public Renderer(Path filePath, Node root) {
         this.filePath = filePath;
         this.root = root;
-        this.meta = meta;
-        this.isIndex = isIndex;
     }
 
     public boolean isInlineNode(Node node) {
@@ -47,51 +43,29 @@ public class Renderer {
         }
     }
 
-    @SuppressWarnings("unchecked")
     private void renderNode(Node node, Node prev, int indent) {
         String pad = "  ".repeat(indent);
 
         if (node instanceof RootNode) {
             RootNode r = (RootNode) node;
             out.append("<article>");
+
             out.append("\n  <nav id='main-nav'>");
-
-            if (meta.containsKey("title")) {
-                System.out.println("INDEX ? " + isIndex);
-                String tilde = !isIndex ? "<a href='/'>~/</a> " : "";
-                out.append("\n    <h1>" + 
-                           tilde + 
-                           Utils.getValueStr(meta, "title") + 
-                           "</h1>");
-            }
-
-            if (meta.containsKey("nav")) {
-                List<Object> navList = (List<Object>) meta.get("nav");
-                out.append("\n    <ul>");
-                for (Object o: navList) {
-                    Map<String, Object> anchor = (Map<String, Object>) o; 
-                    out.append("\n      <li>");
-                    out.append("\n        <a href='" + 
-                               Utils.getValueStr(anchor, "url") + 
-                               "'>" + 
-                               Utils.getValueStr(anchor, "label") + 
-                               "</a>"
-                    );
-                    out.append("\n      </li>");
-                }
-                out.append("\n    </ul>");
-            }
-
-            if (meta.containsKey("date")) {
-                out.append("\n    <span class='info'>Published on " + 
-                           Utils.formatIsoDate(Utils.getValueStr(meta, "date")) + 
-                           " by <a href='mailto:shk.huz@gmail.com'>shkhuz</a></span>"
+            for (int i = 0; i < r.header.size(); i++) {
+                renderNode(
+                    r.header.get(i), 
+                    i == 0 ? node : r.header.get(i-1), 
+                    indent + 2
                 );
             }
-
             out.append("\n  </nav>");
+
             for (int i = 0; i < r.children.size(); i++) {
-                renderNode(r.children.get(i), i == 0 ? node : r.children.get(i-1), indent + 1);
+                renderNode(
+                    r.children.get(i), 
+                    i == 0 ? node : r.children.get(i-1), 
+                    indent + 1
+                );
             }
             out.append("\n" + pad + "</article>");
         }
@@ -99,7 +73,11 @@ public class Renderer {
             ParagraphNode p = (ParagraphNode) node;
             out.append("\n" + pad + "<p>");
             for (int i = 0; i < p.children.size(); i++) {
-                renderNode(p.children.get(i), i == 0 ? node : p.children.get(i-1), indent + 1);
+                renderNode(
+                    p.children.get(i), 
+                    i == 0 ? node : p.children.get(i-1), 
+                    indent + 1
+                );
             }
             out.append("\n" + pad + "</p>");
         }
@@ -107,7 +85,11 @@ public class Renderer {
             AsideNode a = (AsideNode) node;
             out.append("\n" + pad + "<aside>");
             for (int i = 0; i < a.children.size(); i++) {
-                renderNode(a.children.get(i), i == 0 ? node : a.children.get(i-1), indent + 1);
+                renderNode(
+                    a.children.get(i), 
+                    i == 0 ? node : a.children.get(i-1), 
+                    indent + 1
+                );
             }
             out.append("\n" + pad + "</aside>");
         }
@@ -115,7 +97,11 @@ public class Renderer {
             HeadingNode h = (HeadingNode) node;
             out.append("\n" + pad + "<h" + h.level + ">");
             for (int i = 0; i < h.children.size(); i++) {
-                renderNode(h.children.get(i), i == 0 ? node : h.children.get(i-1), indent + 1);
+                renderNode(
+                    h.children.get(i), 
+                    i == 0 ? node : h.children.get(i-1), 
+                    indent + 1
+                );
             }
             out.append("\n" + pad + "</h" + h.level + ">");
         }
@@ -123,7 +109,11 @@ public class Renderer {
             ListNode l = (ListNode) node;
             out.append("\n" + pad + (l.ordered ? "<ol>" : "<ul>"));
             for (int i = 0; i < l.items.size(); i++) {
-                renderNode(l.items.get(i), i == 0 ? node : l.items.get(i-1), indent + 1);
+                renderNode(
+                    l.items.get(i), 
+                    i == 0 ? node : l.items.get(i-1), 
+                    indent + 1
+                );
             }
             out.append("\n" + pad + (l.ordered ? "</ol>" : "</ul>"));
         }
@@ -131,7 +121,11 @@ public class Renderer {
             ListItemNode li = (ListItemNode) node;
             out.append("\n" + pad + "<li>");
             for (int i = 0; i < li.children.size(); i++) {
-                renderNode(li.children.get(i), i == 0 ? node : li.children.get(i-1), indent + 1);
+                renderNode(
+                    li.children.get(i), 
+                    i == 0 ? node : li.children.get(i-1), 
+                    indent + 1
+                );
             }
             out.append("\n" + pad + "</li>");
         }
@@ -177,7 +171,11 @@ public class Renderer {
             nlIndentIfNotDone(node, prev, indent);
             out.append(e.strong ? "<strong>" : "<em>");
             for (int i = 0; i < e.children.size(); i++) {
-                renderNode(e.children.get(i), i == 0 ? node : e.children.get(i-1), indent + 1);
+                renderNode(
+                    e.children.get(i), 
+                    i == 0 ? node : e.children.get(i-1), 
+                    indent + 1
+                );
             }
             out.append(e.strong ? "</strong>" : "</em>");
         }

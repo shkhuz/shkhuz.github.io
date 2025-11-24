@@ -2,9 +2,15 @@
 title: Journal
 ---
 
+<style>
+h3 {
+    color: #c3e2f5;
+}
+</style>
+
 Here are my daily thoughts, organized by date. Stuff not terribly important go in here rather than the [blog](/). 
 
-<span class='journal-year'>2025</span>
+<div class='journal-year'>2025</div>
 
 ### Nov 20: Implementing a YAML Parser
 

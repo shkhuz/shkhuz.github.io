@@ -51,6 +51,10 @@ public class Lexer {
         return Character.isLetterOrDigit(c);
     }
 
+    private boolean isInBounds() {
+        return current < srcfile.length();
+    }
+
     private char at(int idx) {
         if (idx >= 0 && idx < srcfile.length()) {
             return srcfile.charAt(idx);
@@ -296,7 +300,7 @@ public class Lexer {
         start = current;
         while (!match(')')) {
             if (is('\n') || is('\0')) {
-                System.err.println("lexer: anchor Unterminated '('");
+                System.err.println("lexer: anchor Unterminated '(' at " + tokens.size());
                 return;
             }
             current++;
@@ -313,20 +317,20 @@ public class Lexer {
             if (current == srcfile.length()) {
                 fin();
                 appendTok(TKind.eof, 1); 
-                // for (int i = 0; i < tokens.size(); i++) {
-                //     Token t = tokens.get(i);
-                //     System.out.println(
-                //             i 
-                //             + " "
-                //             + (t.indent > 0 ? "|" + t.indent + " " : "")
-                //             + t.kind 
-                //             + "(" 
-                //             + t.count 
-                //             + (t.extra != null ? ", " + t.extra : "") 
-                //             + ") " 
-                //             + escape(t.lexeme)
-                //     );
-                // }
+                for (int i = 0; i < tokens.size(); i++) {
+                    Token t = tokens.get(i);
+                    System.out.println(
+                            i 
+                            + " "
+                            + (t.indent > 0 ? "|" + t.indent + " " : "")
+                            + t.kind 
+                            + "(" 
+                            + t.count 
+                            + (t.extra != null ? ", " + t.extra : "") 
+                            + ") " 
+                            + escape(t.lexeme)
+                    );
+                }
                 return tokens;
             }
 
@@ -430,6 +434,9 @@ public class Lexer {
                         if (state == State.metablock) {
                             state = State.other;
                             current = idx; 
+                            while (isInBounds() && Character.isWhitespace(at(current)))
+                                current++;
+                            start = current;
                         }
                         else {
                             current = idx; 

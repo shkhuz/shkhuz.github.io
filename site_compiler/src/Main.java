@@ -118,9 +118,9 @@ public class Main {
             Map<String, Object> meta = fms.get(f);
             Lexer l = new Lexer(markdown);
             List<Token> tokens = l.lex();
-            Parser p = new Parser(markdown, tokens, l.indentsList, l.newlineList);
+            Parser p = new Parser(markdown, tokens, l.indentsList, l.newlineList, meta, isIndex);
             Node root = p.parse();
-            Renderer r = new Renderer(f, root, meta, isIndex);
+            Renderer r = new Renderer(f, root);
             String html = r.render();
 
             try (FileWriter writer = new FileWriter(Utils.changeExt(filePath, ".html"))) {

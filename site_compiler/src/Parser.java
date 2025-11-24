@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import java.util.Deque;
 import java.util.ArrayDeque;
 import java.util.Set;
+import java.util.Map;
 
 public class Parser {
     int current = 0;
@@ -13,17 +14,23 @@ public class Parser {
     List<Token> tokens;
     List<Integer> indentsList;
     List<Integer> newlineList;
+    Map<String, Object> meta;
+    boolean isIndex;
 
     public Parser(
             String srcfile, 
             List<Token> tokens, 
             List<Integer> indentsList, 
-            List<Integer> newlineList
+            List<Integer> newlineList,
+            Map<String, Object> meta,
+            boolean isIndex
     ) {
         this.srcfile = srcfile;
         this.tokens = tokens;
         this.indentsList = indentsList;
         this.newlineList = newlineList;
+        this.meta = meta;
+        this.isIndex = isIndex;
     }
 
     private Token at(int idx) {
@@ -293,7 +300,7 @@ public class Parser {
 
     private static final Set<String> HTML_BLOCK_TAGS = Set.of(
         "div", "section", "article", "table", "pre", "script",
-        "style", "ul", "ol", "li", "video", "img", "span"
+        "style", "ul", "ol", "li", "video", "img"
     );
 
     private boolean isHtmlBlockStart() {
@@ -446,12 +453,53 @@ public class Parser {
         }
     }
 
+    @SuppressWarnings("unchecked")
     public Node parse() {
+        List<Node> header = new ArrayList<>();
+
+        if (meta.containsKey("title")) {
+            List<Node> headingChildren = new ArrayList<>();
+            if (!isIndex) {
+                headingChildren.add(new AnchorNode(false, "~/", "/"));
+                headingChildren.add(new TextNode(" "));
+            }
+            headingChildren.add(
+                new TextNode(Utils.getValueStr(meta, "title"))
+            );
+            header.add(new HeadingNode(1, headingChildren));
+        }
+
+        if (meta.containsKey("nav")) {
+            List<Object> navListData = (List<Object>) meta.get("nav");
+            List<ListItemNode> list = new ArrayList<>();
+            for (Object o: navListData) {
+                Map<String, Object> omap = (Map<String, Object>) o; 
+                List<Node> liChildren = new ArrayList<>();
+                AnchorNode a = new AnchorNode(
+                    false,
+                    Utils.getValueStr(omap, "label"),
+                    Utils.getValueStr(omap, "url")
+                );
+                liChildren.add(a);
+                list.add(new ListItemNode(liChildren));
+            }
+            header.add(new ListNode(false, list));
+        }
+
+        if (meta.containsKey("date")) {
+            header.add(new HtmlBlockNode(
+                "<span class='info'>Published on " + 
+                Utils.formatIsoDate(Utils.getValueStr(meta, "date")) + 
+                " by <a href='mailto:shk.huz@gmail.com'>shkhuz</a></span>"
+            ));
+        }
+
         List<Node> blocks = new ArrayList<>();
         while (!is(TKind.eof) && at() != null) {
             blocks.add(parseBlock());
         }
-        RootNode root = new RootNode(blocks);
+
+        RootNode root = new RootNode(header, blocks);
         printNode(root, 0);
         return root;
     }
