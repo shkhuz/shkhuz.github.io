@@ -12,6 +12,12 @@ Here are my daily thoughts, organized by date. Stuff not terribly important go i
 
 <div class='journal-year'>2025</div>
 
+### Dec 17: Starting work on a new factory-builder game
+
+It's been a while since my last journal entry. Due to my endsems I didn't get much free time to work on my projects. Anyway, I recently decided to make a small game similar to those automation games like [Factorio](https://store.steampowered.com/app/427520/Factorio/). I don't have much experience in gamedev apart from small beginner games in Unity, so it will be fun to make something playable on my own. 
+
+![](screenshot-blender-game-17122025.jpg)
+
 ### Nov 20: Implementing a YAML Parser
 
 Today I wanted to make some changes to my markdown format which I use for my blog. Specifically, I wanted a cleaner way to specify metadata for a page. Right now to specify the title, I just use a heading H1 tag (`#`). It cannot show tags, date or anything else. 
