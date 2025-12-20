@@ -12,11 +12,19 @@ Here are my daily thoughts, organized by date. Stuff not terribly important go i
 
 <div class='journal-year'>2025</div>
 
+### Dec 20: Conveyor Belts!
+
+A good conveyor belt system is the beating heart of a factory-builder game. So I put in a lot of time to make the belts look good. I use a pipeline similar to Factorio where every in-game entity is first modeled in Blender, then pre-rendered into a 2D spritesheet with all the lighting baked in. It took me two days to figure out how to make the belts tileable, animatable, and rendered correctly. Today I completed the counter-clockwise section of the belt, and tomorrow I will finish the clockwise section. The tileability will need to be taken into account for both. This is difficult because of the curvature of the belt -- the tiledness changes between turns of the belt.
+
+While rendering the models into a spritesheet, I ran into a "bug". The portion where the model was clipped from the background was repeatedly rendering with a blurry edge even though I put a Holdout object for it. After debugging the issue for three hours, it turned out that due to sub-pixel limitations, the orthographic scale has to be set _just_ right for it to be completely opaque. I still don't fully understand the reason, but I'll look into it tomorrow.
+
+![](screenshot-blender-game-20251220.jpg)
+
 ### Dec 17: Starting work on a new factory-builder game
 
 It's been a while since my last journal entry. Due to my endsems I didn't get much free time to work on my projects. Anyway, I recently decided to make a small game similar to those automation games like [Factorio](https://store.steampowered.com/app/427520/Factorio/). I don't have much experience in gamedev apart from small beginner games in Unity, so it will be fun to make something playable on my own. 
 
-![](screenshot-blender-game-17122025.jpg)
+![](screenshot-blender-game-20251217.jpg)
 
 ### Nov 20: Implementing a YAML Parser
 
