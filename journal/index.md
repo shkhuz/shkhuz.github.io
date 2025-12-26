@@ -12,6 +12,19 @@ Here are my daily thoughts, organized by date. Stuff not terribly important go i
 
 <div class='journal-year'>2025</div>
 
+### Dec 27: Belts Done! 
+
+My work on making the belts is done (at least for now). I made some changes to the rendering pipeline because of some difficulties I faced:
+
+- I no longer render at 20 degrees -- it is top-down for now. There were issues with tiling the curved and straight belts, so I scrapped 3D-projection and instead went 0 degrees straight down. 
+- Shadows and shading are removed. I just render one curved section and a straight section and flip/rotate the sprite in the engine to permutate all possible ways to route belts. So when flipping/rotating, shadows changed their angle, which was incorrect, so I removed them altogether for now. I could render the shadows separately, but it's not the most important thing right now.
+
+PS: In Blender, to place the curved-modifier object at the curve's starting position, you need to align the origins of both of them before adding the modifier to the object.
+
+![](screenshot-blender-game-20251227.png)
+
+![](screenshot-topdowngame-20251227.jpg)
+
 ### Dec 20: Conveyor Belts!
 
 A good conveyor belt system is the beating heart of a factory-builder game. So I put in a lot of time to make the belts look good. I use a pipeline similar to Factorio where every in-game entity is first modeled in Blender, then pre-rendered into a 2D spritesheet with all the lighting baked in. It took me two days to figure out how to make the belts tileable, animatable, and rendered correctly. Today I completed the counter-clockwise section of the belt, and tomorrow I will finish the clockwise section. The tileability will need to be taken into account for both. This is difficult because of the curvature of the belt -- the tiledness changes between turns of the belt.

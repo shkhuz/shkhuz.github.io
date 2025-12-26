@@ -59,6 +59,29 @@
   </p>
   <div class='journal-year'>2025</div>
   <h3>
+    Dec 27: Belts Done! 
+  </h3>
+  <p>
+    My work on making the belts is done (at least for now). I made some changes to the rendering pipeline because of some difficulties I faced:
+  </p>
+  <ul>
+    <li>
+      I no longer render at 20 degrees -- it is top-down for now. There were issues with tiling the curved and straight belts, so I scrapped 3D-projection and instead went 0 degrees straight down. 
+    </li>
+    <li>
+      Shadows and shading are removed. I just render one curved section and a straight section and flip/rotate the sprite in the engine to permutate all possible ways to route belts. So when flipping/rotating, shadows changed their angle, which was incorrect, so I removed them altogether for now. I could render the shadows separately, but it's not the most important thing right now.
+    </li>
+  </ul>
+  <p>
+    PS: In Blender, to place the curved-modifier object at the curve's starting position, you need to align the origins of both of them before adding the modifier to the object.
+  </p>
+  <p>
+    <img src='screenshot-blender-game-20251227.png' alt=''>
+  </p>
+  <p>
+    <img src='screenshot-topdowngame-20251227.jpg' alt=''>
+  </p>
+  <h3>
     Dec 20: Conveyor Belts!
   </h3>
   <p>
