@@ -12,6 +12,21 @@ Here are my daily thoughts, organized by date. Stuff not terribly important go i
 
 <div class='journal-year'>2025</div>
 
+### Dec 28: Raylib and porting to Android
+
+Today I used the sprites I made yesterday in Raylib just to test out the waters. I moved away from Godot due to some technical limitations:
+
+- Using a general game engine for this type of game (factory-builder) which will mainly be procedurally generated and modified by the user, is the wrong choice. Instead I could work much faster with a lean game framework like Raylib where it doesn't fight me every step of the way.
+- There are too many things in Godot which are node-based and costly for objects on conveyor belts which could run into hundreds of thousands. So the traditional node/object-based approach is not going to cut it for this style of large sprite-count game. 
+
+I also implemented a simple panning/zooming camera controller for mobile gameplay. Due to this, I also had to port this game to Android. Fortunately, I had some scripts lying around to make it really easy to build an .apk from a Raylib codebase (I was working on a different game not too long ago just for fun), so it was really easy to build it for mobile. The controller's still finicky<sup>1</sup>, but I'll fix it tomorrow. I'm tired.
+
+![](screenshot-terminal-20251228.png)
+
+[[[
+<sup>1</sup> When I repeatedly alternate between two of my fingers on the screen, the camera sometimes jumps from one finger position to another. I guess the reason is that while in the update part of the game loop, the finger alternates and the game registers that finger 0 has moved to so and so, when in actuality it's a different finger altogether. But the game could not know this, because it polls once per frame.
+]]]
+
 ### Dec 27: Belts Done! 
 
 My work on making the belts is done (at least for now). I made some changes to the rendering pipeline because of some difficulties I faced:
