@@ -12,6 +12,23 @@ Here are my daily thoughts, organized by date. Stuff not terribly important go i
 
 <div class='journal-year'>2025</div>
 
+### Dec 31: Input system and beyond
+
+Just finished work on the cross-platform input-system for the game I've been working on. I had some previous input-handling code lying around from a previous test project, but it wasn't very good at things like gestures like pinching, pinch-pan, etc. For this game I wanted full control of the camera to place stuff around the game world, so controlling the camera effectively is crucial.
+
+The previous code was not much better than spagetti code I wrote in a day, so instead I scrapped it and rewrote most of the system. This new input-system handles input in three layers:
+
+- Raw input: here the input supplied to us from Raylib is taken and modified so that it is cross-platform and resolution-independent. I use a 1000 by 560 coordinate system independent of the user's resolution, and Raylib gives us pixel positions, so this layer converts it into virtual coordinates. 
+- Gestures/PointerEv: raw input is fed here and the result we get is a gesture/pointer_event structure. Gesture can be one of PAN, PINCH, NONE, and the pointer_event can be one of PRESS, RELEASE, NONE. I don't tackle keyboard input yet as I primarily develop this game for mobile first.
+- Usage: the gestures are used to pan the camera, zoom in/out, scroll lists, etc.
+
+Pretty happy with how the system turned out. Here is a rec of the game in action:
+
+<video autoplay loop>
+    <source src="screenrecord-topdowngame-20251231.mp4" type="video/mp4" />
+    Input system testing
+</video>
+
 ### Dec 28: Raylib and porting to Android
 
 Today I used the sprites I made yesterday in Raylib just to test out the waters. I moved away from Godot due to some technical limitations:
