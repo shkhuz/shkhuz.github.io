@@ -62,17 +62,17 @@
     Dec 31: Input system and beyond
   </h3>
   <p>
-    Just finished work on the cross-platform input-system for the game I've been working on. I had some previous input-handling code lying around from a previous test project, but it wasn't very good at things like gestures like pinching, pinch-pan, etc. For this game I wanted full control of the camera to place stuff around the game world, so controlling the camera effectively is crucial.
+    Just finished work on the cross-platform input-system for the game I've been working on. I had some previous input-handling code lying around from a previous test project, but it wasn't very good at gestures like pinching, pinch-pan, etc. For this game I wanted full control of the camera to place stuff around the game world, so controlling the camera effectively was crucial.
   </p>
   <p>
-    The previous code was not much better than spagetti code I wrote in a day, so instead I scrapped it and rewrote most of the system. This new input-system handles input in three layers:
+    The previous system was also not much better code-wise. I exclusively used global variables as states and modified them in various functions. So instead I scrapped all of it and rewrote most of the system again, only this time I really focused on the architecture of the whole system. This new input-system handles input in three layers:
   </p>
   <ul>
     <li>
-      Raw input: here the input supplied to us from Raylib is taken and modified so that it is cross-platform and resolution-independent. I use a 1000 by 560 coordinate system independent of the user's resolution, and Raylib gives us pixel positions, so this layer converts it into virtual coordinates. 
+      Raw input: the input supplied to us from Raylib is modified so that it's cross-platform and resolution-independent. I use a 1000 by 560 coordinate system independent of the user's resolution, and Raylib gives us pixel positions, so this layer converts it into virtual coordinates that the game can use. 
     </li>
     <li>
-      Gestures/PointerEv: raw input is fed here and the result we get is a gesture/pointer<em>event structure. Gesture can be one of PAN, PINCH, NONE, and the pointer</em>event can be one of PRESS, RELEASE, NONE. I don't tackle keyboard input yet as I primarily develop this game for mobile first.
+      Gestures/PointerEvent: raw input is fed here and the result is a gesture/pointerevent structure. Gesture can be one of PAN, PINCH, NONE, and the pointerevent can be one of PRESS, RELEASE, NONE. I don't tackle keyboard input yet as I primarily intend to develop this game for mobile for now.
     </li>
     <li>
       Usage: the gestures are used to pan the camera, zoom in/out, scroll lists, etc.
