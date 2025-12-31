@@ -10,6 +10,18 @@ h3 {
 
 Here are my daily thoughts, organized by date. Stuff not terribly important go in here rather than the [blog](/). 
 
+<div class='journal-year'>2026</div>
+
+### Jan 01: New year, new game assets
+
+Happy new year! Today I mostly worked on creating some new game assets for my factory-builder game. I started by making a grass texture in GIMP. The test texture I've been using was pulled from the internet, and in this project I mostly aim to make all of the assets myself. Next I wanted to test out entities spanning multiple tiles, so I needed an entity that's not a belt (belts are single-tiled). So I decided to model a mining drill in Blender. I have never modeled a machine in Blender before, so the entire process was a good exercise of my rudimentary Blender skills.
+
+Here are both of them, the drill unfinished:
+
+![](screenshot-gimp-grasstexture-20260101.png)
+
+![](screenshot-blender-miningdrill-20260101.png)
+
 <div class='journal-year'>2025</div>
 
 ### Dec 31: Input system and beyond
