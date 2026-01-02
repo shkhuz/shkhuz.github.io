@@ -12,6 +12,21 @@ Here are my daily thoughts, organized by date. Stuff not terribly important go i
 
 <div class='journal-year'>2026</div>
 
+### Jan 03: Programmers are bad at deadlines...
+
+Some news. I decided to, for now, put this automation game for hold. I know, I know. I was pretty ecstatic about it when I started working on it, thinking it will be finished in 6 months, at most. But boy I was in for a reality check. The primary thing holding me back was the game assets. It took forever to model and texture the machines, not counting my lack of experience in Blender. It took me ten days to model a conveyor belt and a mining drill, which weren't even textured properly and were the first draft. 
+
+I've been playing some [Undertale](https://store.steampowered.com/app/391540/Undertale/) these past few days, and looking at the game in its entirety, from the visuals to the writing to the music, it just feels so indie, so made from love. I've always wanted to build my own adventure RPG game, and I think this could be a good checkpoint to divert me to make it. Granted I'm not Toby Fox, I'm pretty bad at art, writing is not too high up, and don't even talk about music. But I think it's just the project to propel me forward into the fantastic world of gamedev. And about the scope of the project: it won't be too big; just something I can finish in 6-8 months of spare time every day. 
+
+Wrapping up, today didn't get a whole lot done. Just played around in [Aseprite](https://www.aseprite.org/) making some test game assets. Here is one I'm proud of (granted I referenced some sample sprites online):
+
+<video autoplay loop>
+    <source src="screenrecord-aseprite-20260103.mp4" type="video/mp4" />
+    Aseprite character animation
+</video>
+
+Also, about the game engine: I'm thinking of Godot as I don't want to waste time reinventing the wheel here. For the factory-builder game I chose Raylib due to the constrains of that project, but here it's a simple RPG, so Godot's fine. 
+
 ### Jan 01: New year, new game assets
 
 Happy new year! Today I mostly worked on creating some new game assets for my factory-builder game. I started by making a grass texture in GIMP. The test texture I've been using was pulled from the internet, and in this project I mostly aim to make all of the assets myself. Next I wanted to test out entities spanning multiple tiles, so I needed an entity that's not a belt (belts are single-tiled). So I decided to model a mining drill in Blender. I have never modeled a machine in Blender before, so the entire process was a good exercise of my rudimentary Blender skills.
