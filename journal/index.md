@@ -12,6 +12,18 @@ Here are my daily thoughts, organized by date. Stuff not terribly important go i
 
 <div class='journal-year'>2026</div>
 
+### Jan 04: Learning Pixel Art
+
+I'm pretty bad at art. Even more at animating art. So when I took on the challenge to make a RPG by myself, I was kind of freaking out inside. The reason is that when I first thought of this idea, I put a limit on myself to make the base sprite 8x8, making the art workflow easier. But as I looked at references online, I was in awe of what some people can create just by moving some pixels around.
+
+I then thought, okay, let's change the size of the base sprite to 16x16, which should give me enough resolution to work in the little details. But once again, I looked at some of the more fine works of others and just couldn't even see myself half-assing those with the size limitations I set on myself. So here I am with a 32x32 player character, dreading at the humongous environments I have to make, for pixels to scale consistently. 
+
+But, I think I have a plan that could work... well let's talk about that tomorrow.
+
+Here is today's progress:
+
+![](screenrecord-aseprite-20260104.gif)
+
 ### Jan 03: Programmers are bad at deadlines...
 
 Some news. I decided to, for now, put this automation game for hold. I know, I know. I was pretty ecstatic about it when I started working on it, thinking it will be finished in 6 months, at most. But boy I was in for a reality check. The primary thing holding me back was the game assets. It took forever to model and texture the machines, not counting my lack of experience in Blender. It took me ten days to model a conveyor belt and a mining drill, which weren't even textured properly and were the first draft. 
