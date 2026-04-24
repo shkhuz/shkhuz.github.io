@@ -4,10 +4,7 @@ date: 2025-11-19
 synopsis: >
   C is pretty cool. What's not cool about it is the lack of a good standard
   library. And what's the most important data structure a library can offer? 
-  Of course, the vector/buffer/arraylist! C's apparent lack of type-safe 
-  generics is another thing to be bummed out about, but that doesn't stop us
-  from writing a buffer implementation that doesn't perform
-  half as bad as some other C implementations.
+  Of course, the vector/buffer/arraylist!
 ---
 
 If you’ve spent time in Java or C++, you get used to the convenience of standard dynamic containers. `ArrayList` and `std::vector` are taken for granted and are treated as being always there for you when you need it. When you move to C, that comfort disappears. The language gives you raw pointers, `malloc`, `realloc`, and little else. There’s no standard dynamic array type, no generic container, and no unified pattern for managing capacity. You quickly realize that something as basic as “append an element” requires a bit of manual work. That absence becomes noticeable, even annoying.

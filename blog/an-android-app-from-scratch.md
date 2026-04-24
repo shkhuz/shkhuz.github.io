@@ -2,11 +2,7 @@
 title: An android app from scratch
 date: 2025-09-27
 synopsis: >
-  "To understand any system, you must be able to build it yourself." I intend to 
-  capture the same spirit for building an Android app. Today's developers think 
-  it's cool to use the latest build systems, CI tools, agile development, etc. 
-  But it's just a facade, waiting for something wrong to happen. How can you 
-  fix errors with your app if you don't even know how it's being built?
+  To understand any system, you must be able to build it yourself.
 ---
 
 For quite some time now, I have wanted to create a Java Android app entirely from scratch--without using build systems like Gradle or an IDE. Why?
