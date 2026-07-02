@@ -12,6 +12,20 @@ Here are my daily thoughts, organized by date. Stuff not terribly important go i
 
 <div class='journal-year'>2026</div>
 
+### Jul 02: The Tale of the Forgotten Books
+
+i.e. this blog. It's been roughly five months (six?) since I wrote a journal entry here. The reason for this long departure isn't what it seems; I was learning new stuff at the same pace as I was before, but for some reason I unintentionally decided to stricten my criteria for what was worthy of a journal entry. And probably because I forgot about it. 
+
+To summarize what I've been doing these past few months:
+
+- Researched some techniques for memory management and multi-stage programming for a better C language. I love everything about it except header files & null-terminated strings. Oh and probably those pesky text-substitution macros. Ewww.
+- Looked into re3 GTA 3 open-source decompiled engine. I was very fascinated by the approach the Rockstar (or Criterion?) team took for their various subsystems, cause you'd be surprised to know that the GTA3 engine ran on a meager 32MB of RAM. I compiled the engine locally and played it on my linux system, and aside from a minor texture format error, everything ran smoothly, even the audio!
+- For a month I worked on a college endsem project titled "Stall Condition Sensing and Recovery". To give you an outline we designed and printed a 3D model of a Boeing aircraft, added our homemade angle sensor to it, added some more sensors for miscellaneous data, and added a servo to model a stalling plane and it's autonomous recovery using flight controls. 
+- Learnt some more of linux internals (memory, pagetables, etc).
+- Researched some stuff about GPU architectures and programming.
+
+Probably more entries that I don't remember.
+
 ### Jan 04: Learning Pixel Art
 
 I'm pretty bad at art. Even more at animating art. So when I took on the challenge to make a RPG by myself, I was kind of freaking out inside. The reason is that when I first thought of this idea, I put a limit on myself to make the base sprite 8x8, making the art workflow easier. But as I looked at references online, I was in awe of what some people can create just by moving some pixels around.
