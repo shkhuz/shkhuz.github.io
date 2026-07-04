@@ -58,12 +58,37 @@
     </ul>
   </nav>
   <p>
-    Aria is an experimental systems programming language built to improve on C.
+    Aria is everything I wanted C to be. I think Zig/Rust/Odin come close to being a better C but there were some things they lacked or their vision wasn't totally aligned on how I did things. Partly the fault lies in me: I just wanted something that I fully understand and have total control over. Think of this a fork of Zig. This is my contribution for it.
   </p>
-  <div class='code lang-aria'><pre><span class='keyword'>import</span> std;
+  <p>
+    Some things I took inspiration from:
+  </p>
+  <ul>
+    <li>
+      Zig: <code>||</code> clause was pretty neat. It's usage for optionals, slices, switches without a lexical keyword really made it a good fit for that syntax. <code>comptime</code> is another one. Compile-time evaluation without macros is a godsend once you use it. This multi-stage programming model fares much better that any AST-substitution macro technique I know.
+    </li>
+    <li>
+      Go: <code>defer</code> but instead of deferring on function-scope, it defers on block-scope.
+    </li>
+    <li>
+      Rust: clean syntax.
+    </li>
+    <li>
+      Jai: Anonymous literals <code>.{}</code>.
+    </li>
+    <li>
+      ...
+    </li>
+  </ul>
+  <div class='code lang-aria'><pre><span class='keyword'>imm</span> std = <span class='keyword'>struct</span>(<span class='string'>"std"</span>);
 
-<span class='keyword'>fn</span> main() {
+<span class='keyword'>fn</span> main() <span class='keyword'>void</span> {
     std.print(<span class='string'>"Hello World!"</span>);
+}
+
+std :: <span class='keyword'>struct</span>(<span class='string'>"std"</span>);
+main :: <span class='keyword'>fn</span>() {
+    std.print(<span class='string'>"Hello world!"</span>);
 }
 </pre></div>
   <div class='code-snippet-filename'>hello_world.ar</div>
