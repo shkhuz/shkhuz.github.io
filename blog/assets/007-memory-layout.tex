@@ -1,0 +1,48 @@
+\documentclass[tikz,border=5pt]{standalone}
+\usetikzlibrary{positioning}
+
+\definecolor{def}{RGB}{70, 110, 140}
+\definecolor{unused}{RGB}{40, 40, 40}
+\definecolor{other}{RGB}{122, 98, 102}
+
+\nopagecolor
+\pagecolor{black!90} 
+
+\begin{document}
+
+\begin{tikzpicture}[
+    cell/.style={
+        draw=white, 
+        text=white,
+        minimum height=1cm, 
+        font=\scriptsize\ttfamily, 
+        inner sep=0pt,
+        outer sep=0pt,
+        node distance=0pt
+    },  
+    info/.style={text=white, font=\scriptsize\ttfamily},    
+    def/.style={cell, inner xsep=5pt, fill=def},
+    rest/.style={cell, minimum width=170pt} 
+]
+
+\node[rest, draw=none] (rest) {};
+\draw[white] (rest.north east) -- (rest.north west) -- (rest.south west) -- (rest.south east);
+\node[def, fill=def, anchor=west, inner xsep=10] (hdr1) at (rest.west) {};
+\node[info] at (hdr1.center) {hdr};
+\node[def, fill=def, inner xsep=15pt, right=of hdr1] (data1) {};
+\node[info] at (data1.center) {data};
+\node[def, fill=unused, inner xsep=25pt, anchor=west] (data1) at (rest.west) {};
+\node[def, fill=other, right=of data1] (other1) {};
+\node[def, fill=other, right=of other1] (other2) {};
+\node[def, fill=def, inner xsep=10, right=of other2] (hdr2) {};
+\node[info] at (hdr2.center) {hdr};
+\node[def, fill=unused, inner xsep=30pt, right=of hdr2] (data2) {};
+\node[def, draw=none, fill=def, inner xsep=15pt, right=of hdr2] (data2used) {};
+\draw[white] (data2used.north east) -- (data2used.north west) -- (data2used.south west) -- (data2used.south east);
+\node[info] at (data2.center) {data};
+\draw[->, >=stealth, white, rounded corners=3pt] (hdr1.south) -- ++(0,-10pt) -| (hdr2.south);
+
+
+\end{tikzpicture}
+
+\end{document}
