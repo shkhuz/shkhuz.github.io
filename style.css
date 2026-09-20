@@ -150,12 +150,11 @@ figure {
 
 img {
   padding: 2px;
-  border: dashed 2px #444;
+  border: solid 1px #444;
+  border-radius: 5px;
   display: block;
-  max-width: 90%;
-  width: auto;
+  width: 80%;
   height: auto;
-  max-height: 600px;
   margin: 1em auto;
 }
 
