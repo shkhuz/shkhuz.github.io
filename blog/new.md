@@ -1,8 +1,8 @@
 ---
-title: New
+title: How to (mostly) solve memory fragmentation without crying yourself to sleep
 date: 2026-07-17
 synopsis: >
-  ...
+  "Ooo-ieeee!" for the Ghost of the Heap shrieked! "Here's another hole from me!"
 ---
 
 Sometime ago I wrote an article on creating generic arraylists using C macros. Because they are "the" building block of other data structures, it is impossible to overstate their value. But there is one non-trivial problem that normal arraylists can't solve -- let me show you what I mean.
@@ -160,3 +160,159 @@ This brings us to a caveat of this data structure: any time you'd want to access
 </tbody></table>
 
 A chunked arraylist approach combines benefits of both a standard arraylist and a linked list. This novel structure is a great fit for long-running service daemons, which require minimal memory fragmentation to minimize allocation failures. By now you must be somewhat inclined to see how this works in action. Let's get to the implementation.
+
+```c
+typedef struct {
+    Arena* arena;
+    void** chunks;
+    usize cap;
+    usize len;
+    u32 chunkcount;
+    u32 chunkcap;
+} listhdr;
+```
+
+Similar to an arena's header, we store some state info in the arraylist header. Note that `chunks` is a growable table of chunk pointers, hence the `chunkcount` and `chunkcap`, similar to an arraylist's count and capacity. 
+
+```c*
+} listhdr;
+
+// hlt-start
+listhdr* _listhdr(const void* list) { 
+    return (listhdr*)((char*)list - sizeof(listhdr)); 
+}
+// hlt-end
+```
+
+Returns a pointer to the header given a list pointer. `list` is a pointer to the end of the header similar to stretchy buffers we implemented in the previous article, so we use pointer math to subtract the length of the header to arrive at the beginning.
+
+```c*
+    return (listhdr*)((char*)list - sizeof(listhdr)); 
+}
+
+// hlt-start
+usize listlen(const void* list) {
+    if (list) return _listhdr(list)->len;
+    assert(0);
+    return 0;
+}
+
+usize listcap(const void* list) {
+    if (list) return _listhdr(list)->cap;
+    assert(0);
+    return 0;
+}
+// hlt-end
+```
+
+Some helper functions to get a list's length and capacity. These are defined as functions not macros, so they can be used inside a debugger.
+
+```c*
+} listhdr;
+
+// hlt-start
+#define listinit(arena, p) ((p) = _listgrow((arena), NULL, 0, sizeof(ListType((p)))))
+// hlt-end
+
+listhdr* _listhdr(const void* list) { 
+```
+
+This macro is used to initialise a list. `p` is a pointer type indicating a list. The type is a little different compared to our stretchy buffer implementation, but we'll get to it later. Here we call `_listgrow`, which handles both initialisation and growing. Let's look at it next.
+
+```c*
+    return 0;
+}
+
+// hlt-start
+void* _listgrow(Arena* arena, const void* list, usize new_len, usize elem_size) {
+    listhdr* hdr = list ? _listhdr(list) : NULL;
+// hlt-end
+    ...
+```
+
+Pretty self-explanatory. In case of a new list as opposed to growing a list, `list` & `new_len` are `NULL` & `0` respectively. For `elem_size` notice we used `sizeof(ListType(p))` earlier in `listinit`. Using some macro magic we can find out a list's item type without using templates or generics. We'll see how `ListType` is implemented later.
+
+```c*
+    listhdr* hdr = list ? _listhdr(list) : NULL;
+    
+    // hlt-start
+    if (!hdr) {
+        hdr = (listhdr*)arena_push(arena, sizeof(listhdr));
+        hdr->arena = arena;
+        hdr->len = 0;
+        hdr->cap = 0;
+        hdr->chunkcap = 0;
+        hdr->chunkcount = 0;
+        hdr->chunks = NULL;
+    }
+    // hlt-end
+    ...
+```
+
+Again pretty simple -- the `if` clause runs on first initialisation to allocate a header.
+
+```c*
+    }
+    
+// hlt-start
+    while (new_len > hdr->cap) {
+// hlt-end
+    ...
+```
+
+Now the main chunk allocation loop begins. The loop allocates one chunk per cycle until the list capacity is greater than `new_len` requested by the user. By default we pass 0 for `new_len`, so at least one chunk is allocated by running the loop.
+
+The chunk pointer table is not stored in the header, it is stored separately. Why? When we first initialise a list, we allocate a table of 4 pointers by default. But when the list needs another chunk, the pointer table must also be resized, which cannot be done in place. The easiest solution I've found is to just allocate a new table of pointers, copying the previous table and updating the header to this table. Yes we waste 8 bytes per chunk per list on table resize, but I feel this to be trivial especially if the maximum chunk capacity is moderately large. For example with 65536 elements per chunk, and chunk count doubling after the initial 4 chunks, you'd only lose 96 bytes to store a million elements.
+
+```c*
+    while (new_len > hdr->cap) {
+// hlt-start
+        if (hdr->chunkcount >= hdr->chunkcap) {
+            u32 oldcap = hdr->chunkcap;
+            hdr->chunkcap = hdr->chunkcap == 0 ? 4 : hdr->chunkcap * 2;
+            void** newchunks = arena_push(hdr->arena, hdr->chunkcap*sizeof(void*));
+            if (oldcap > 0) memcpy(newchunks, hdr->chunks, oldcap*sizeof(void*));
+            hdr->chunks = newchunks;
+        }
+// hlt-end
+        ...
+```
+
+This is the code responsible for the aforementioned pointer table allocation. We check if `chunkcap` less than or equal to `chunkcount`, and accordingly allocate a new table using our ol' friend `arena_push`. If the capacity is non-zero, we copy over the previous table using `memcpy`.
+
+```c*
+        }
+        // hlt-start
+        hdr->cap += LIST_CHUNK_SIZE;
+        hdr->chunks[hdr->chunkcount] = arena_push(hdr->arena, LIST_CHUNK_SIZE * elem_size);
+        hdr->chunkcount++;
+    }
+    return (void*)((char*)hdr + sizeof(listhdr));
+}
+// hlt-end
+```
+
+The actual chunk allocation. We increase the list capacity and allocate a chunk, adding it to our pointer table. Let's also define `LIST_CHUNK_SIZE` somewhere:
+
+```c*
+// hlt-start
+#define LIST_CHUNK_SHIFT 16
+#define LIST_CHUNK_SIZE  (1ULL << LIST_CHUNK_SHIFT)
+#define LIST_CHUNK_MASK  (LIST_CHUNK_SIZE - 1)
+// hlt-end
+
+typedef struct {
+```
+
+Why do we use bit-shifting and masking to define the chunk size? To answer this question, we'll need to look at how elements are accessed in this chunked-list architecture. 
+
+We cannot access elements using the `[]` because our list is not contiguous. To access an element at a particular index, we first need to find the corresponding chunk in which it's stored. We use our handy table of pointers for this. For example, if our element is stored at index 70384, we know it's stored in the second chunk because the first chunk ends at index 65535. To make this math fast on a CPU, instead of division we use bit-shifting and masking.
+
+Instead of treating the array index as an index into contiguous memory, we split the index in two: 
+
+![](assets/007-index-split.svg)
+
+On 64-bit systems, the chunk index can store 48 bits, but you'll rarely need to use more than a few bits of it. The 16-bit element index is then used to `[]`-index into a chunk to finally retrieve the element. 
+
+Because we use bit-operations to calculate the chunk and element indices, chunk size has to be a power-of-2 (in our case \(2^{16}\) or 65536). That way we won't have to resort to the slower division method which is really expensive for an operation which needs to happen millions of times a second.
+

@@ -1,0 +1,55 @@
+\documentclass[tikz,border=5pt]{standalone}
+\usetikzlibrary{positioning, calc}
+
+\definecolor{myblue}{RGB}{204, 204, 255}
+\definecolor{myyellow}{RGB}{255, 255, 204}
+
+\nopagecolor
+\pagecolor{black!90} 
+
+
+\begin{document}
+\begin{tikzpicture}[
+    cell/.style={
+        draw=white, 
+        thick,
+        minimum height=1.3cm,
+        align=center,
+        font=\scriptsize\ttfamily,
+        inner sep=4pt,
+        text=white,
+        outer sep=0pt,
+        node distance=0pt
+    },
+    % 3:1 width ratio for 48-bit vs 16-bit
+    bluecell/.style={cell, fill=none, minimum width=4.5cm},
+    yellowcell/.style={cell, fill=none, minimum width=2.2cm}, % 2.2cm gives comfortable padding for "Element Index"
+    dimline/.style={draw=white, thin},
+    dimlabel/.style={text=white, font=\scriptsize\sffamily, inner sep=3pt},
+    bitnum/.style={font=\scriptsize\ttfamily, text=white}
+]
+
+% 48-bit Chunk Index
+\node[bluecell] (chunk) {Chunk Index \\ (48 bits)};
+
+% 16-bit Element Index
+\node[yellowcell, right=of chunk] (element) {Element Index \\ (16 bits)};
+
+\node[bitnum, below=2pt of chunk.south west]   {63};
+\node[bitnum, below=2pt of element.south west, xshift=6pt] {15};
+\node[bitnum, below=2pt of element.south east] {0};
+\node[bitnum, below=2pt of chunk.south east, xshift=-6pt] {16};
+
+
+
+% 64-bit bracket dimension line across the entire top
+%\draw[dimline] (chunk.north west) -- ++(0, 4mm) -- node[dimlabel] {64 bits} ([yshift=4mm]element.north east) -- (element.north east);
+
+%\draw[dimline] (chunk.north west) -- ++(0, 4mm) -- node[above, text=white, font=\scriptsize\sffamily] (lbl) {64 bits Total} ([yshift=4mm]element.north east) -- (element.north east);
+    
+\node[text=white, font=\scriptsize\sffamily] (L) at ([yshift=4mm]$(chunk.north west)!0.5!(element.north east)$) {64 bits};
+\draw[dimline] (chunk.north west) |- (L) (element.north east) |- (L);
+       
+
+\end{tikzpicture}
+\end{document}

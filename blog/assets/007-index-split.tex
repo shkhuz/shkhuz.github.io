@@ -1,0 +1,47 @@
+\documentclass[tikz,border=5pt]{standalone}
+\usetikzlibrary{calc,positioning}
+
+%\nopagecolor
+%\pagecolor{black!90} 
+
+\begin{document}
+\begin{tikzpicture}[
+    dim/.style={draw=white, thin},
+    bitfont/.style={
+        font=\ttfamily\normalsize,
+        text=white,
+        inner sep=2pt
+    },
+    dimlabel/.style={
+        font=\scriptsize\sffamily,
+        text=white,
+        align=center,
+        inner xsep=4pt,
+        inner ysep=0pt
+    }
+]
+
+% 48-bit section (Chunk)
+\node[bitfont] (chunk) {0110 1011 0010 \dots\ 1101 0011 1010};
+
+% 16-bit section (Element)
+\node[bitfont, right=8pt of chunk] (element) {1101 \dots\ 0011};
+
+% Bracket above Chunk Index (starts 2mm above the text)
+\path (chunk.north west) -- coordinate[midway] (c_mid) (chunk.north east);
+\node[dimlabel] (c_lbl) at ([yshift=5mm]c_mid) {Chunk Index \\ (48 bits)};
+\draw[dim] ([yshift=2mm]chunk.north west) |- (c_lbl) ([yshift=2mm]chunk.north east) |- (c_lbl);
+
+% Bracket above Element Index (starts 2mm above the text)
+\path (element.north west) -- coordinate[midway] (e_mid) (element.north east);
+\node[dimlabel] (e_lbl) at ([yshift=5mm]e_mid) {Element Index \\ (16 bits)};
+\draw[dim] ([yshift=2mm]element.north west) |- (e_lbl) ([yshift=2mm]element.north east) |- (e_lbl);
+
+% Bit boundary numbers below
+\node[font=\tiny\ttfamily, text=white, below=1pt of chunk.south west]   {63};
+\node[font=\tiny\ttfamily, text=white, below=1pt of chunk.south east]   {16};
+\node[font=\tiny\ttfamily, text=white, below=1pt of element.south west] {15};
+\node[font=\tiny\ttfamily, text=white, below=1pt of element.south east] {0};
+
+\end{tikzpicture}
+\end{document}

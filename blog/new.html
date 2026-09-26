@@ -4,7 +4,7 @@
 <meta charset='utf-8'>
 <meta name='viewport' content='width=device-width, initial-scale=1'>
 
-<title>New</title>
+<title>How to (mostly) solve memory fragmentation without crying yourself to sleep</title>
 <link rel='apple-touch-icon' sizes='180x180' href='/assets/apple-touch-icon.png'>
 <link rel='icon' type='image/png' sizes='32x32' href='/assets/favicon-32x32.png'>
 <link rel='icon' type='image/png' sizes='16x16' href='/assets/favicon-16x16.png'>
@@ -46,7 +46,7 @@
 <article>
   <nav id='main-nav'>
     <h1>
-      <a href='/'>~/</a> New
+      <a href='/'>~/</a> How to (mostly) solve memory fragmentation without crying yourself to sleep
     </h1>
     <span class='info'>Published on Jul 17, 2026 by <a href='mailto:shk.huz@gmail.com'>shkhuz</a></span>
   </nav>
@@ -240,6 +240,166 @@
   </tbody></table>
   <p>
     A chunked arraylist approach combines benefits of both a standard arraylist and a linked list. This novel structure is a great fit for long-running service daemons, which require minimal memory fragmentation to minimize allocation failures. By now you must be somewhat inclined to see how this works in action. Let's get to the implementation.
+  </p>
+  <div class='code lang-c'><pre><span class='keyword'>typedef</span> <span class='keyword'>struct</span> {
+    Arena* arena;
+    <span class='keyword'>void</span>** chunks;
+    <span class='keyword'>usize</span> cap;
+    <span class='keyword'>usize</span> len;
+    u32 chunkcount;
+    u32 chunkcap;
+} listhdr;
+</pre></div>
+  <p>
+    Similar to an arena's header, we store some state info in the arraylist header. Note that <code>chunks</code> is a growable table of chunk pointers, hence the <code>chunkcount</code> and <code>chunkcap</code>, similar to an arraylist's count and capacity. 
+  </p>
+  <div class='code lang-c'><pre class='before'>} listhdr;
+
+</pre>
+<pre class='callout'>listhdr* _listhdr(const <span class='keyword'>void</span>* list) { 
+    <span class='keyword'>return</span> (listhdr*)((<span class='keyword'>char</span>*)list - sizeof(listhdr)); 
+}
+</pre>
+<pre class='after'>
+</pre></div>
+  <p>
+    Returns a pointer to the header given a list pointer. <code>list</code> is a pointer to the end of the header similar to stretchy buffers we implemented in the previous article, so we use pointer math to subtract the length of the header to arrive at the beginning.
+  </p>
+  <div class='code lang-c'><pre class='before'>    <span class='keyword'>return</span> (listhdr*)((<span class='keyword'>char</span>*)list - sizeof(listhdr)); 
+}
+
+</pre>
+<pre class='callout'><span class='keyword'>usize</span> listlen(const <span class='keyword'>void</span>* list) {
+    <span class='keyword'>if</span> (list) <span class='keyword'>return</span> _listhdr(list)-&gt;len;
+    assert(<span class='const'>0</span>);
+    <span class='keyword'>return</span> <span class='const'>0</span>;
+}
+
+<span class='keyword'>usize</span> listcap(const <span class='keyword'>void</span>* list) {
+    <span class='keyword'>if</span> (list) <span class='keyword'>return</span> _listhdr(list)-&gt;cap;
+    assert(<span class='const'>0</span>);
+    <span class='keyword'>return</span> <span class='const'>0</span>;
+}
+</pre>
+<pre class='after'>
+</pre></div>
+  <p>
+    Some helper functions to get a list's length and capacity. These are defined as functions not macros, so they can be used inside a debugger.
+  </p>
+  <div class='code lang-c'><pre class='before'>} listhdr;
+
+</pre>
+<pre class='callout'><span class='intrinsic'>#define</span> listinit(arena, p) ((p) = _listgrow((arena), <span class='const'>NULL</span>, <span class='const'>0</span>, sizeof(ListType((p)))))
+</pre>
+<pre class='after'>
+
+listhdr* _listhdr(const <span class='keyword'>void</span>* list) { 
+</pre></div>
+  <p>
+    This macro is used to initialise a list. <code>p</code> is a pointer type indicating a list. The type is a little different compared to our stretchy buffer implementation, but we'll get to it later. Here we call <code>_listgrow</code>, which handles both initialisation and growing. Let's look at it next.
+  </p>
+  <div class='code lang-c'><pre class='before'>    <span class='keyword'>return</span> <span class='const'>0</span>;
+}
+
+</pre>
+<pre class='callout'><span class='keyword'>void</span>* _listgrow(Arena* arena, const <span class='keyword'>void</span>* list, <span class='keyword'>usize</span> new_len, <span class='keyword'>usize</span> elem_size) {
+    listhdr* hdr = list ? _listhdr(list) : <span class='const'>NULL</span>;
+</pre>
+<pre class='after'>
+    ...
+</pre></div>
+  <p>
+    Pretty self-explanatory. In case of a new list as opposed to growing a list, <code>list</code> & <code>new_len</code> are <code>NULL</code> & <code>0</code> respectively. For <code>elem_size</code> notice we used <code>sizeof(ListType(p))</code> earlier in <code>listinit</code>. Using some macro magic we can find out a list's item type without using templates or generics. We'll see how <code>ListType</code> is implemented later.
+  </p>
+  <div class='code lang-c'><pre class='before'>    listhdr* hdr = list ? _listhdr(list) : <span class='const'>NULL</span>;
+    
+</pre>
+<pre class='callout'>    <span class='keyword'>if</span> (!hdr) {
+        hdr = (listhdr*)arena_push(arena, sizeof(listhdr));
+        hdr-&gt;arena = arena;
+        hdr-&gt;len = <span class='const'>0</span>;
+        hdr-&gt;cap = <span class='const'>0</span>;
+        hdr-&gt;chunkcap = <span class='const'>0</span>;
+        hdr-&gt;chunkcount = <span class='const'>0</span>;
+        hdr-&gt;chunks = <span class='const'>NULL</span>;
+    }
+</pre>
+<pre class='after'>
+    ...
+</pre></div>
+  <p>
+    Again pretty simple -- the <code>if</code> clause runs on first initialisation to allocate a header.
+  </p>
+  <div class='code lang-c'><pre class='before'>    }
+    
+</pre>
+<pre class='callout'>    <span class='keyword'>while</span> (new_len &gt; hdr-&gt;cap) {
+</pre>
+<pre class='after'>
+    ...
+</pre></div>
+  <p>
+    Now the main chunk allocation loop begins. The loop allocates one chunk per cycle until the list capacity is greater than <code>new_len</code> requested by the user. By default we pass 0 for <code>new_len</code>, so at least one chunk is allocated by running the loop.
+  </p>
+  <p>
+    The chunk pointer table is not stored in the header, it is stored separately. Why? When we first initialise a list, we allocate a table of 4 pointers by default. But when the list needs another chunk, the pointer table must also be resized, which cannot be done in place. The easiest solution I've found is to just allocate a new table of pointers, copying the previous table and updating the header to this table. Yes we waste 8 bytes per chunk per list on table resize, but I feel this to be trivial especially if the maximum chunk capacity is moderately large. For example with 65536 elements per chunk, and chunk count doubling after the initial 4 chunks, you'd only lose 96 bytes to store a million elements.
+  </p>
+  <div class='code lang-c'><pre class='before'>    <span class='keyword'>while</span> (new_len &gt; hdr-&gt;cap) {
+</pre>
+<pre class='callout'>        <span class='keyword'>if</span> (hdr-&gt;chunkcount &gt;= hdr-&gt;chunkcap) {
+            u32 oldcap = hdr-&gt;chunkcap;
+            hdr-&gt;chunkcap = hdr-&gt;chunkcap == <span class='const'>0</span> ? <span class='const'>4</span> : hdr-&gt;chunkcap * <span class='const'>2</span>;
+            <span class='keyword'>void</span>** newchunks = arena_push(hdr-&gt;arena, hdr-&gt;chunkcap*sizeof(<span class='keyword'>void</span>*));
+            <span class='keyword'>if</span> (oldcap &gt; <span class='const'>0</span>) memcpy(newchunks, hdr-&gt;chunks, oldcap*sizeof(<span class='keyword'>void</span>*));
+            hdr-&gt;chunks = newchunks;
+        }
+</pre>
+<pre class='after'>
+        ...
+</pre></div>
+  <p>
+    This is the code responsible for the aforementioned pointer table allocation. We check if <code>chunkcap</code> less than or equal to <code>chunkcount</code>, and accordingly allocate a new table using our ol' friend <code>arena_push</code>. If the capacity is non-zero, we copy over the previous table using <code>memcpy</code>.
+  </p>
+  <div class='code lang-c'><pre class='before'>        }
+</pre>
+<pre class='callout'>        hdr-&gt;cap += LIST_CHUNK_SIZE;
+        hdr-&gt;chunks[hdr-&gt;chunkcount] = arena_push(hdr-&gt;arena, LIST_CHUNK_SIZE * elem_size);
+        hdr-&gt;chunkcount++;
+    }
+    <span class='keyword'>return</span> (<span class='keyword'>void</span>*)((<span class='keyword'>char</span>*)hdr + sizeof(listhdr));
+}
+</pre>
+<pre class='after'>
+</pre></div>
+  <p>
+    The actual chunk allocation. We increase the list capacity and allocate a chunk, adding it to our pointer table. Let's also define <code>LIST_CHUNK_SIZE</code> somewhere:
+  </p>
+  <div class='code lang-c'><pre class='before'></pre>
+<pre class='callout'><span class='intrinsic'>#define</span> LIST_CHUNK_SHIFT <span class='const'>16</span>
+<span class='intrinsic'>#define</span> LIST_CHUNK_SIZE  (<span class='const'>1</span>ULL &lt;&lt; LIST_CHUNK_SHIFT)
+<span class='intrinsic'>#define</span> LIST_CHUNK_MASK  (LIST_CHUNK_SIZE - <span class='const'>1</span>)
+</pre>
+<pre class='after'>
+
+<span class='keyword'>typedef</span> <span class='keyword'>struct</span> {
+</pre></div>
+  <p>
+    Why do we use bit-shifting and masking to define the chunk size? To answer this question, we'll need to look at how elements are accessed in this chunked-list architecture. 
+  </p>
+  <p>
+    We cannot access elements using the <code>[]</code> because our list is not contiguous. To access an element at a particular index, we first need to find the corresponding chunk in which it's stored. We use our handy table of pointers for this. For example, if our element is stored at index 70384, we know it's stored in the second chunk because the first chunk ends at index 65535. To make this math fast on a CPU, instead of division we use bit-shifting and masking.
+  </p>
+  <p>
+    Instead of treating the array index as an index into contiguous memory, we split the index in two: 
+  </p>
+  <p>
+    <img src='assets/007-index-split.svg' alt=''>
+  </p>
+  <p>
+    On 64-bit systems, the chunk index can store 48 bits, but you'll rarely need to use more than a few bits of it. The 16-bit element index is then used to <code>[]</code>-index into a chunk to finally retrieve the element. 
+  </p>
+  <p>
+    Because we use bit-operations to calculate the chunk and element indices, chunk size has to be a power-of-2 (in our case \(2^{16}\) or 65536). That way we won't have to resort to the slower division method which is really expensive for an operation which needs to happen millions of times a second.
   </p>
 </article>
 </body>
