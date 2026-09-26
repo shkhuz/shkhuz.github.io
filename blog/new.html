@@ -401,6 +401,18 @@ listhdr* _listhdr(const <span class='keyword'>void</span>* list) {
   <p>
     Because we use bit-operations to calculate the chunk and element indices, chunk size has to be a power-of-2 (in our case \(2^{16}\) or 65536). That way we won't have to resort to the slower division method which is really expensive for an operation which needs to happen millions of times a second.
   </p>
+  <div class='code lang-c'><pre class='before'><span class='intrinsic'>#define</span> listinit(arena, p) ((p) = _listgrow((arena), <span class='const'>NULL</span>, <span class='const'>0</span>, sizeof(ListType((p)))))
+
+</pre>
+<pre class='callout'><span class='intrinsic'>#define</span> listget(p, i) (((ListType((p))*)(_listhdr((p))-&gt;chunks[(i) &gt;&gt; LIST_CHUNK_SHIFT]))[(i) &amp; LIST_CHUNK_MASK])
+</pre>
+<pre class='after'>
+
+listhdr* _listhdr(const <span class='keyword'>void</span>* list) { 
+</pre></div>
+  <p>
+    <img src='assets/007-list-components.svg' alt=''>
+  </p>
 </article>
 </body>
 </html>

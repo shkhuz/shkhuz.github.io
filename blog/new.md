@@ -316,3 +316,14 @@ On 64-bit systems, the chunk index can store 48 bits, but you'll rarely need to 
 
 Because we use bit-operations to calculate the chunk and element indices, chunk size has to be a power-of-2 (in our case \(2^{16}\) or 65536). That way we won't have to resort to the slower division method which is really expensive for an operation which needs to happen millions of times a second.
 
+```c*
+#define listinit(arena, p) ((p) = _listgrow((arena), NULL, 0, sizeof(ListType((p)))))
+
+// hlt-start
+#define listget(p, i) (((ListType((p))*)(_listhdr((p))->chunks[(i) >> LIST_CHUNK_SHIFT]))[(i) & LIST_CHUNK_MASK])
+// hlt-end
+
+listhdr* _listhdr(const void* list) { 
+```
+
+![](assets/007-list-components.svg)
