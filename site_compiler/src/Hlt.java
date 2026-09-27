@@ -267,9 +267,12 @@ public class Hlt {
                 break;
         }
 
-        if (callout) code = calloutHighlight(code);
-        else if (!lang.equals("diff"))
+        if (callout) 
+            code = calloutHighlight(code);
+        if (!lang.equals("diff") && !callout)
             code = "<pre>" + code + "</pre>";
+        if (!callout) 
+            code = "<pre class='before'></pre>" + code + "<pre class='after'></pre>";
 
         return code;
     }

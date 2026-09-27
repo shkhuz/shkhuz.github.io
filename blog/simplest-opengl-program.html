@@ -53,7 +53,7 @@
   <p>
     This is a single-file OpenGL "hello world" boilerplate implementation. It assumes that SDL and GLEW are already installed.
   </p>
-  <div class='code lang-cpp'><pre><span class='intrinsic'>#include</span> &lt;GL/glew.h&gt;
+  <div class='code lang-cpp'><pre class='before'></pre><pre><span class='intrinsic'>#include</span> &lt;GL/glew.h&gt;
 <span class='intrinsic'>#include</span> &lt;SDL2/SDL.h&gt;
 <span class='intrinsic'>#include</span> &lt;stdio.h&gt;
 <span class='intrinsic'>#include</span> &lt;string&gt;
@@ -238,13 +238,13 @@ bool build_shader_program(const <span class='keyword'>char</span>* vs, const <sp
     SDL_Quit();
     <span class='keyword'>return</span> <span class='const'>0</span>;
 }
-</pre></div>
+</pre><pre class='after'></pre></div>
   <div class='code-snippet-filename'>sdl2-opengl.cpp</div>
   <p>
     Compile with:
   </p>
-  <div class='code lang-console'><pre><span class='console-prompt'>$ </span><span class='console-input'>g++ sdl2-opengl.cpp -Wall -lSDL2 -lGL -lGLEW</span>
-</pre></div>
+  <div class='code lang-console'><pre class='before'></pre><pre><span class='console-prompt'>$ </span><span class='console-input'>g++ sdl2-opengl.cpp -Wall -lSDL2 -lGL -lGLEW</span>
+</pre><pre class='after'></pre></div>
   <p>
     <img src='assets/opengl-hello-world-triangle.png' alt=''>
   </p>

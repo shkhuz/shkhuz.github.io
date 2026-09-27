@@ -73,8 +73,8 @@
   <p>
     Firstly, let's define how we want the user to use our buffer implementation. I always start with this part because this gives it a structure and makes the implementation easier. We want something like this:
   </p>
-  <div class='code lang-c'><pre><span class='keyword'>int</span>* list = <span class='const'>NULL</span>;
-</pre></div>
+  <div class='code lang-c'><pre class='before'></pre><pre><span class='keyword'>int</span>* list = <span class='const'>NULL</span>;
+</pre><pre class='after'></pre></div>
   <p>
      
   </p>
@@ -120,11 +120,11 @@ bufinsert(list, <span class='const'>1</span>, <span class='const'>2</span>);
   <p>
     Running this we get:
   </p>
-  <div class='code lang-console'><pre>1
+  <div class='code lang-console'><pre class='before'></pre><pre>1
 2
 3
 9
-</pre></div>
+</pre><pre class='after'></pre></div>
   <aside>
     <p>
       One caution: because these are macros, arguments may be evaluated multiple times, so avoid passing expressions with side effects into <code>bufpush</code>, <code>bufinsert</code>, etc.
@@ -163,12 +163,12 @@ printf(<span class='string'>"%d\n"</span>, list[<span class='const'>3</span>]);
   <p>
     We first define the layout of the buffer:
   </p>
-  <div class='code lang-c'><pre><span class='keyword'>typedef</span> <span class='keyword'>struct</span> {
+  <div class='code lang-c'><pre class='before'></pre><pre><span class='keyword'>typedef</span> <span class='keyword'>struct</span> {
     <span class='keyword'>usize</span> cap;
     <span class='keyword'>usize</span> len;
     <span class='keyword'>char</span> data[];
 } bufhdr;
-</pre></div>
+</pre><pre class='after'></pre></div>
   <p>
     The data is stored as a <code>char</code> array in <code>bufhdr</code>. We define a handy macro to get the <code>bufhdr</code> struct from a <code>data</code> pointer:
   </p>
@@ -320,7 +320,7 @@ printf(<span class='string'>"%d\n"</span>, list[<span class='const'>3</span>]);
   <p>
     And with that, the buffer implementation is ready to be used! As an exercise, I suggest you to implement <code>bufremove</code> which removes an item at a specific index. Here is the whole implementation as a single file:
   </p>
-  <div class='code lang-c'><pre><span class='intrinsic'>#include</span> &lt;stdint.h&gt;
+  <div class='code lang-c'><pre class='before'></pre><pre><span class='intrinsic'>#include</span> &lt;stdint.h&gt;
 <span class='intrinsic'>#include</span> &lt;stdlib.h&gt;
 
 <span class='intrinsic'>#define</span> MIN(a, b) (a &lt; b ? a : b)
@@ -381,7 +381,7 @@ printf(<span class='string'>"%d\n"</span>, list[<span class='const'>3</span>]);
     new_hdr-&gt;cap = new_cap;
     <span class='keyword'>return</span> new_hdr-&gt;data;
 }
-</pre></div>
+</pre><pre class='after'></pre></div>
 </article>
 </body>
 </html>

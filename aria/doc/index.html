@@ -49,196 +49,135 @@
       <a href='/'>~/</a> Aria language reference
     </h1>
   </nav>
-  <h2>
-    Hello world
-  </h2>
-  <div class='code'><pre>import std;
+  <p>
+    This is an informal dump of my design of the language.
+  </p>
+  <div class='code lang-aria'><pre class='before'></pre><pre><span class='comment'>// Hello World</span>
+<span class='keyword'>imm</span> std = <span class='keyword'>struct</span>(<span class='string'>"std"</span>);
 
-fn main() {
-    std.print("Hello world!\n");
+pub <span class='keyword'>fn</span> main() {
+    std.print(<span class='string'>"Hello world!"</span>);
 }
-</pre></div>
-  <h2>
-    Variables
-  </h2>
-  <div class='code'><pre>imm a = 1;
-mut b = 2;
-imm c: u32 = 2;
-</pre></div>
-  <h2>
-    Functions
-  </h2>
-  <div class='code'><pre>fn b() {}
-fn b(a: u32) {}
-fn c() u8 {}
-</pre></div>
-  <h2>
-    Arrays
-  </h2>
-  <div class='code'><pre>imm a = .{1, 2, 3};
-mut c = b[0];
-mut sz = b.len;
-</pre></div>
-  <h2>
-    Pointers
-  </h2>
-  <div class='code'><pre>mut a: usize = 1;
-mut p: *usize = &amp;a;
-mut immp: *imm usize = &amp;a;
-mut b = p.*;
-</pre></div>
-  <h2>
-    Slices
-  </h2>
-  <div class='code'><pre>imm a: [3]u8 = .{1, 2, 3};
-mut b: []u8 = &amp;a;
-mut c = b[0];
-mut sz = b.len;
-</pre></div>
-  <h2>
-    Expression blocks
-  </h2>
-  <div class='code'><pre>imm a = {
-    imm b = 1;
+
+<span class='comment'>// Variables</span>
+<span class='keyword'>imm</span> a = <span class='const'>1</span>;
+<span class='keyword'>mut</span> b = <span class='const'>2</span>;
+<span class='keyword'>imm</span> c: u32 = <span class='const'>2</span>;
+
+<span class='comment'>// Functions</span>
+<span class='keyword'>fn</span> b() {}
+<span class='keyword'>fn</span> b(a: u32) {}
+<span class='keyword'>fn</span> b(a: u32 = <span class='const'>1</span>) {}                     <span class='comment'>// optional parameter value</span>
+<span class='keyword'>fn</span> c() u8 {}
+
+<span class='comment'>// Arrays</span>
+<span class='keyword'>imm</span> a = .{<span class='const'>1</span>, <span class='const'>2</span>, <span class='const'>3</span>};
+<span class='keyword'>mut</span> c = b[<span class='const'>0</span>];
+<span class='keyword'>mut</span> sz = b.len;
+
+<span class='comment'>// Pointers</span>
+<span class='keyword'>mut</span> a: usize = <span class='const'>1</span>;
+<span class='keyword'>mut</span> p: *usize = &amp;a;
+<span class='keyword'>mut</span> immp: *<span class='keyword'>imm</span> usize = &amp;a;
+<span class='keyword'>mut</span> b = p.*;
+
+<span class='comment'>// Slices</span>
+<span class='keyword'>imm</span> a: [<span class='const'>3</span>]u8 = .{<span class='const'>1</span>, <span class='const'>2</span>, <span class='const'>3</span>};
+<span class='keyword'>mut</span> b: []u8 = &amp;a;
+<span class='keyword'>mut</span> c = b[<span class='const'>0</span>];
+<span class='keyword'>mut</span> ptr = b.ptr;
+<span class='keyword'>mut</span> len = b.len;
+
+<span class='comment'>// Expression blocks</span>
+<span class='keyword'>imm</span> a = {
+    <span class='keyword'>imm</span> b = <span class='const'>1</span>;
     yield b;
 };
-</pre></div>
-  <h2>
-    Loops
-  </h2>
-  <div class='code'><pre>for (mut i = 0u8; i &lt; 10; i += 1) {}    // normal loop
-for (b; e) {}                           // iterating over slice
-for (b; *e) {}                          // iterating over slice with ptr
-for (b; *e, i) {}
-while (true) {}         
-while (a; n) {}                         // iterating while optional is 
-                                        // not null
-</pre></div>
-  <h2>
-    Continue & Break
-  </h2>
-  <div class='code'><pre>for (a; n, i) {
-    if (i == 10) break;
-    else if (i == 15) continue;
+
+<span class='comment'>// Loops</span>
+<span class='keyword'>for</span> (<span class='keyword'>mut</span> i = <span class='const'>0</span>u8; i &lt; <span class='const'>10</span>; i += <span class='const'>1</span>) {}    <span class='comment'>// normal loop</span>
+<span class='keyword'>for</span> e (b) {}                            <span class='comment'>// iterating over slice</span>
+<span class='keyword'>for</span> *e (b) {}                           <span class='comment'>// iterating over slice with ptr</span>
+<span class='keyword'>for</span> *e, i (b) {}
+<span class='keyword'>while</span> (<span class='const'>true</span>) {}         
+<span class='keyword'>while</span> n (a) {}                          <span class='comment'>// iterating while optional is not null</span>
+
+<span class='comment'>// Continue &amp; Break</span>
+<span class='keyword'>for</span> e, i (b) {
+    <span class='keyword'>if</span> (i == <span class='const'>10</span>) break;
+    <span class='keyword'>else</span> <span class='keyword'>if</span> (i == <span class='const'>15</span>) continue;
 }
-</pre></div>
-  <h2>
-    If 
-  </h2>
-  <div class='code'><pre>if (a) 1 else 0;
-if (a) {} else {}
-if (a) {} else if (b) {} else {}
-if (a; n) {}                            // unwrapping optional inside if
-</pre></div>
-  <h2>
-    Casts
-  </h2>
-  <div class='code'><pre>mut a: u8 = 1;
-mut b: u16 = 2;
-mut c: u16 = a + b;                     // implicit cast
-mut d: u8 = a + to(u8, b);              // explicit cast ??
-mut d: u8 = a + u8(b);                  // explicit cast ??
-</pre></div>
-  <h2>
-    Optionals
-  </h2>
-  <div class='code'><pre>mut a: ?u8 = 1;
-mut b: ?u8 = null;
-mut c: u8 = a orelse 0;                 // default value
-mut d: u8 = a catch return 0;           // do something on null
-</pre></div>
-  <h2>
-    Enums
-  </h2>
-  <div class='code'><pre>imm A = enum {
+
+<span class='comment'>// If </span>
+<span class='keyword'>if</span> (a) <span class='const'>1</span> <span class='keyword'>else</span> <span class='const'>0</span>;
+<span class='keyword'>if</span> (a) {} <span class='keyword'>else</span> {}
+<span class='keyword'>if</span> (a) {} <span class='keyword'>else</span> <span class='keyword'>if</span> (b) {} <span class='keyword'>else</span> {}
+<span class='keyword'>if</span> n (a) {}                             <span class='comment'>// unwrapping optional inside if</span>
+
+<span class='comment'>// Casts</span>
+<span class='keyword'>mut</span> a: u8 = <span class='const'>1</span>;
+<span class='keyword'>mut</span> b: u16 = <span class='const'>2</span>;
+<span class='keyword'>mut</span> c: u16 = a + b;                     <span class='comment'>// implicit cast</span>
+<span class='keyword'>mut</span> d: u8 = @cast(<span class='const'>3.00</span>f);               <span class='comment'>// explicit cast</span>
+<span class='keyword'>mut</span> d = @cast(u8, <span class='const'>3.00</span>f);               <span class='comment'>// explicit cast</span>
+
+<span class='comment'>// Enums</span>
+<span class='keyword'>imm</span> A = enum {
     a, b, c,
 };
 
-mut a = A.a;
-mut b = .b;
-</pre></div>
-  <h2>
-    Switch
-  </h2>
-  <div class='code'><pre>switch (a) {
+<span class='keyword'>mut</span> a = A.a;
+<span class='keyword'>mut</span> b = .b;
+
+<span class='comment'>// Switch</span>
+switch (a) {
     a, b, c =&gt; {},
-    else =&gt; {},
+    <span class='keyword'>else</span> =&gt; {},
 }
 
-switch (a) {
-    a, b, c (n) =&gt; {},
-    else (n) =&gt; {},
-}
-</pre></div>
-  <h2>
-    Structs
-  </h2>
-  <div class='code'><pre>imm a = struct {
+<span class='comment'>// Structs</span>
+<span class='keyword'>imm</span> a = <span class='keyword'>struct</span> {
     a: u8,
     b: u16,
     c: u32,
-    d: struct {},
+    d: <span class='keyword'>struct</span> {},
 
-    mut e: u8;
-    fn f() {}
+    <span class='keyword'>mut</span> e: u8;
+    <span class='keyword'>fn</span> f() {}
 };
-</pre></div>
-  <h2>
-    Unions
-  </h2>
-  <div class='code'><pre>imm a = union {
+
+<span class='comment'>// Unions</span>
+<span class='keyword'>imm</span> a = <span class='keyword'>union</span> {
     a: u8, 
     b: u16,
 };
-</pre></div>
-  <h2>
-    Tagged Unions
-  </h2>
-  <div class='code'><pre>imm a = union(enum) {
-    a: u8,
-    b: u16,
-}
-</pre></div>
-  <h2>
-    Imports
-  </h2>
-  <div class='code'><pre>import basil;                           // imports 'basil.ar' file in cwd
-import std;                             // if file not found in cwd, it checks
-                                        // inside the lib directory
-</pre></div>
-  <h2>
-    Type
-  </h2>
-  <div class='code'><pre>imm A = u32;
-imm B = u64;
 
-fn get(a: A, b: type) {}
-</pre></div>
-  <h2>
-    Function Pointers
-  </h2>
-  <div class='code'><pre>fn a() {}
-imm p: *imm fn() = &amp;a;
+<span class='comment'>// Imports</span>
+<span class='keyword'>imm</span> basil = <span class='keyword'>struct</span>(<span class='string'>"basil"</span>);            <span class='comment'>// imports 'basil.ar' file in cwd</span>
+                                        <span class='comment'>// if file not found in cwd, it checks</span>
+                                        <span class='comment'>// inside the lib directory</span>
+
+<span class='comment'>// Type</span>
+<span class='keyword'>imm</span> A = u32;
+<span class='keyword'>imm</span> B = u64;
+
+<span class='keyword'>fn</span> get(a: A, b: type) {}
+
+<span class='comment'>// Function Pointers</span>
+<span class='keyword'>fn</span> a() {}
+<span class='keyword'>imm</span> p: *<span class='keyword'>imm</span> <span class='keyword'>fn</span>() = &amp;a;
 p();
-</pre></div>
-  <h2>
-    Built-in functions
-  </h2>
-  <div class='code'><pre>imm img = %embedFile("img.bmp");
-</pre></div>
-  <h2>
-    Compile-time code evaluation
-  </h2>
-  <div class='code'><pre>fn add(a: u32, b: u32) u32 {
-    return a + b;
+
+<span class='comment'>// Static invocation at compile-time</span>
+<span class='keyword'>fn</span> add(a: u32, b: u32) u32 {
+    <span class='keyword'>return</span> a + b;
 }
 
-mut a = 2u32;
-mut b = 3u32;
-// 'c' is known at compile-time
-mut c = ct add(a, b);
-
-</pre></div>
+<span class='keyword'>mut</span> a = <span class='const'>2</span>u32;
+<span class='keyword'>mut</span> b = <span class='const'>3</span>u32;
+<span class='comment'>// 'c' is known at compile-time</span>
+<span class='keyword'>mut</span> c = siv add(a, b);
+</pre><pre class='after'></pre></div>
 </article>
 </body>
 </html>

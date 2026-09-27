@@ -112,17 +112,17 @@
   <p>
     But we're getting ahead of ourselves. Let's first see how a simple bump allocator is implemented.
   </p>
-  <div class='code lang-c'><pre><span class='keyword'>typedef</span> <span class='keyword'>struct</span> {
+  <div class='code lang-c'><pre class='before'></pre><pre><span class='keyword'>typedef</span> <span class='keyword'>struct</span> {
     const <span class='keyword'>char</span>* name;
     <span class='keyword'>char</span>* base;
     <span class='keyword'>usize</span> capacity;
     <span class='keyword'>usize</span> pos;
 } Arena;
-</pre></div>
+</pre><pre class='after'></pre></div>
   <p>
     We define a simple 4-field type for an <code>Arena</code> where <code>name</code> is the debug name for an arena, <code>base</code> is the starting address, <code>capacity</code> is the length in bytes, and <code>pos</code> is the current offset into the arena.
   </p>
-  <div class='code lang-c'><pre>Arena arena_create(const <span class='keyword'>char</span>* name, u64 reserve) {
+  <div class='code lang-c'><pre class='before'></pre><pre>Arena arena_create(const <span class='keyword'>char</span>* name, u64 reserve) {
     Arena arena = (Arena){};
     arena.name = name;
     <span class='keyword'>void</span>* ptr = mmap(<span class='const'>NULL</span>, reserve, PROT_READ | PROT_WRITE,
@@ -133,22 +133,22 @@
     }
     <span class='keyword'>return</span> arena;
 }
-</pre></div>
+</pre><pre class='after'></pre></div>
   <p>
     This creates an arena, taking in a name and a default size. Now we get to the interesting part. The <code>mmap()</code> call reserves a virtual address block (but not physical memory) of the specified size. Due to demand paging, even if the requested memory is orders of magnitude higher than the physical memory available, the kernel will not reserve any pages until a memory space is accessed. We also pass the <code>MAP_ANONYMOUS</code> flag because we do not need a backing storage <code>mmap</code>ed.
   </p>
-  <div class='code lang-c'><pre><span class='keyword'>void</span>* arena_push(Arena* arena, u64 size) {
+  <div class='code lang-c'><pre class='before'></pre><pre><span class='keyword'>void</span>* arena_push(Arena* arena, u64 size) {
     u64 aligned_size = (size + <span class='const'>7</span>) &amp; ~<span class='const'>7</span>;
     assert(arena-&gt;pos + aligned_size &lt;= arena-&gt;capacity &amp;&amp; <span class='string'>"Arena out of memory!"</span>);
     <span class='keyword'>void</span>* ptr = arena-&gt;base + arena-&gt;pos;
     arena-&gt;pos += aligned_size;
     <span class='keyword'>return</span> ptr;
 }
-</pre></div>
+</pre><pre class='after'></pre></div>
   <p>
     This function is equivalent to <code>malloc()</code> in use, as it accepts a size to allocate as an argument and returns a pointer to the allocated space, as opposed to copying the object onto the arena itself.
   </p>
-  <div class='code lang-c'><pre><span class='keyword'>void</span> arena_clear(Arena* arena) {
+  <div class='code lang-c'><pre class='before'></pre><pre><span class='keyword'>void</span> arena_clear(Arena* arena) {
     arena-&gt;pos = <span class='const'>0</span>;
 }
 
@@ -157,7 +157,7 @@
         munmap(arena-&gt;base, arena-&gt;capacity);
     }
 }
-</pre></div>
+</pre><pre class='after'></pre></div>
   <p>
     These trivial functions deal with clearing and deinitializing arenas. It clears/destroys the whole arena at once, which is primarily what an arena is used for. 
   </p>
@@ -190,9 +190,9 @@
   <p>
     Some of you may see the solution already. What if we store the individual pointers to chunks in the header? From our previous example, when an arraylist with length 128 is pushed to again, it would store the next free arena address in its header so it'd look something like:
   </p>
-  <div class='code'><pre>    Chunk #0 =&gt; 0xfffdffe0c24deb70 (the "default" chunk)
+  <div class='code'><pre class='before'></pre><pre>    Chunk #0 =&gt; 0xfffdffe0c24deb70 (the "default" chunk)
 --&gt; Chunk #1 =&gt; 0xfffdffe0c24ded30 (arena's next free spot)
-</pre></div>
+</pre><pre class='after'></pre></div>
   <p>
     The arraylist would tell the arena to reserve 128 elements from its current position, so the next 128 elements of the arraylist could be stored here. Also the pointers to these chunks could be stored in the header so we could access any element just by indexing into it's chunk pointer.
   </p>
@@ -241,7 +241,7 @@
   <p>
     A chunked arraylist approach combines benefits of both a standard arraylist and a linked list. This novel structure is a great fit for long-running service daemons, which require minimal memory fragmentation to minimize allocation failures. By now you must be somewhat inclined to see how this works in action. Let's get to the implementation.
   </p>
-  <div class='code lang-c'><pre><span class='keyword'>typedef</span> <span class='keyword'>struct</span> {
+  <div class='code lang-c'><pre class='before'></pre><pre><span class='keyword'>typedef</span> <span class='keyword'>struct</span> {
     Arena* arena;
     <span class='keyword'>void</span>** chunks;
     <span class='keyword'>usize</span> cap;
@@ -249,7 +249,7 @@
     u32 chunkcount;
     u32 chunkcap;
 } listhdr;
-</pre></div>
+</pre><pre class='after'></pre></div>
   <p>
     Similar to an arena's header, we store some state info in the arraylist header. Note that <code>chunks</code> is a growable table of chunk pointers, hence the <code>chunkcount</code> and <code>chunkcap</code>, similar to an arraylist's count and capacity. 
   </p>

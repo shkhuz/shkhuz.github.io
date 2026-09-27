@@ -8,7 +8,7 @@ build_sitecompiler:
 	# make -C site_compiler
 
 run: all
-	http-server -c-1 -p8080 .
+	python -m http.server 8080
 
 %.html: %.md
 
