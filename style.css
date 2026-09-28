@@ -150,8 +150,8 @@ figure {
 }
 
 img {
-  padding: 2px;
-  border: solid 1px #444;
+  /* padding: 2px; */
+  /* border: solid 1px #444; */
   border-radius: 5px;
   display: block;
   width: 90%;
@@ -160,8 +160,8 @@ img {
 }
 
 video {
-  padding: 2px;
-  border: dashed 2px #444;
+  /* padding: 2px; */
+  /* border: dashed 2px #444; */
   display: block;
   max-width: 90%;
   width: auto;

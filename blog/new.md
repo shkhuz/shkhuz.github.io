@@ -115,7 +115,9 @@ Some of you may see the solution already. What if we store the individual pointe
         Chunk #0 => 0xfffdffe0c24deb70 (the "default" chunk)
     --> Chunk #1 => 0xfffdffe0c24ded30 (arena's next free spot)
 
-The arraylist would tell the arena to reserve 128 elements from its current position, so the next 128 elements of the arraylist could be stored here. Also the pointers to these chunks could be stored in the header so we could access any element just by indexing into it's chunk pointer.
+The arraylist would tell the arena to reserve 128 elements from its current position, so more elements of the arraylist could be stored here. Also pointers to chunks could be stored in a table referenced in the header so any element could be accessed just by indexing into it's chunk pointer.
+
+![](assets/007-list-components.svg)
 
 This brings us to a caveat of this data structure: any time you'd want to access a particular element (random access), you'd first need to find the associated chunk pointer of that element (using some bitwise math) in the table stored in the header. Then another read would be required to load the element from the chunk. This indirect memory access would cause cache locality and access times to take a hit, but would be much better at appending/deleting items from/to the list. 
 
@@ -325,5 +327,3 @@ Because we use bit-operations to calculate the chunk and element indices, chunk 
 
 listhdr* _listhdr(const void* list) { 
 ```
-
-![](assets/007-list-components.svg)
