@@ -32,7 +32,7 @@ then this editor is not for you.
 
 ### Keybindings (Normal mode)
 
-<table><thead>
+<div class='table-wrapper'><table><thead>
   <tr>
     <th>Key</th>
     <th>Action</th>
@@ -124,7 +124,7 @@ then this editor is not for you.
     <td>`K`</td>
     <td>prev paragraph</td>
   </tr>
-</tbody></table>
+</tbody></table></div>
 
 <!--
 < -> open line above cursor
@@ -133,7 +133,7 @@ s -> undo / redo
 
 ### Keybindings (Insert mode)
 
-<table><thead>
+<div class='table-wrapper'><table><thead>
   <tr>
     <th>Key</th>
     <th>Action</th>
@@ -165,5 +165,4 @@ s -> undo / redo
     <td></td>
     <td></td>
   </tr>
-</tbody>
-</table>
+</tbody></table></div>

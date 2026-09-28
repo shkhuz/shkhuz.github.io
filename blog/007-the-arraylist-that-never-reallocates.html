@@ -4,7 +4,7 @@
 <meta charset='utf-8'>
 <meta name='viewport' content='width=device-width, initial-scale=1'>
 
-<title>How to (mostly) solve memory fragmentation without crying yourself to sleep</title>
+<title>The Arraylist that never reallocates</title>
 <link rel='apple-touch-icon' sizes='180x180' href='/assets/apple-touch-icon.png'>
 <link rel='icon' type='image/png' sizes='32x32' href='/assets/favicon-32x32.png'>
 <link rel='icon' type='image/png' sizes='16x16' href='/assets/favicon-16x16.png'>
@@ -46,12 +46,12 @@
 <article>
   <nav id='main-nav'>
     <h1>
-      <a href='/'>~/</a> How to (mostly) solve memory fragmentation without crying yourself to sleep
+      <a href='/'>~/</a> The Arraylist that never reallocates
     </h1>
     <span class='info'>Published on Jul 17, 2026 by <a href='mailto:shk.huz@gmail.com'>shkhuz</a></span>
   </nav>
   <p>
-    Sometime ago I wrote an article on creating generic arraylists using C macros. Because they are "the" building block of other data structures, it is impossible to overstate their value. But there is one non-trivial problem that normal arraylists can't solve -- let me show you what I mean.
+    Sometime ago I wrote an <a href='/blog/c-macros-as-a-poor-mans-std-vector.html'>article</a> on creating generic arraylists using C macros. Because they are "the" building block of other data structures, it is impossible to overstate their value. But there is one non-trivial problem that normal arraylists can't solve -- let me show you what I mean.
   </p>
   <p>
     Suppose we have a memory buffer like so:
@@ -202,7 +202,7 @@
   <p>
     This brings us to a caveat of this data structure: any time you'd want to access a particular element (random access), you'd first need to find the associated chunk pointer of that element (using some bitwise math) in the table stored in the header. Then another read would be required to load the element from the chunk. This indirect memory access would cause cache locality and access times to take a hit, but would be much better at appending/deleting items from/to the list. 
   </p>
-  <table><thead>
+  <div class='table-wrapper'><table><thead>
     <tr>
       <th>Operation</th>
       <th>Standard ArrayList</th>
@@ -240,7 +240,12 @@
       <td>Poor (elements sparsely spaced)</td>
       <td>Good to Excellent (continuous chunks separated in memory)</td>
     </tr>
-  </tbody></table>
+  </tbody></table></div>
+  <div class='table-wrapper'><table><thead>
+    <tr><th>Name</th></tr></thead>
+  <tbody>
+  <tr><td>Hello world</td></tr></thead>
+  </tbody></table></div>
   <p>
     A chunked arraylist approach combines benefits of both a standard arraylist and a linked list. This novel structure is a great fit for long-running service daemons, which require minimal memory fragmentation to minimize allocation failures. By now you must be somewhat inclined to see how this works in action. Let's get to the implementation.
   </p>

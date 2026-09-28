@@ -1,11 +1,11 @@
 ---
-title: How to (mostly) solve memory fragmentation without crying yourself to sleep
+title: The Arraylist that never reallocates
 date: 2026-07-17
 synopsis: >
   "Ooo-ieeee!" for the Ghost of the Heap shrieked! "Here's another hole from me!"
 ---
 
-Sometime ago I wrote an article on creating generic arraylists using C macros. Because they are "the" building block of other data structures, it is impossible to overstate their value. But there is one non-trivial problem that normal arraylists can't solve -- let me show you what I mean.
+Sometime ago I wrote an [article](/blog/c-macros-as-a-poor-mans-std-vector.html) on creating generic arraylists using C macros. Because they are "the" building block of other data structures, it is impossible to overstate their value. But there is one non-trivial problem that normal arraylists can't solve -- let me show you what I mean.
 
 Suppose we have a memory buffer like so:
 
@@ -121,7 +121,7 @@ The arraylist would tell the arena to reserve 128 elements from its current posi
 
 This brings us to a caveat of this data structure: any time you'd want to access a particular element (random access), you'd first need to find the associated chunk pointer of that element (using some bitwise math) in the table stored in the header. Then another read would be required to load the element from the chunk. This indirect memory access would cause cache locality and access times to take a hit, but would be much better at appending/deleting items from/to the list. 
 
-<table><thead>
+<div class='table-wrapper'><table><thead>
   <tr>
     <th>Operation</th>
     <th>Standard ArrayList</th>
@@ -159,7 +159,7 @@ This brings us to a caveat of this data structure: any time you'd want to access
     <td>Poor (elements sparsely spaced)</td>
     <td>Good to Excellent (continuous chunks separated in memory)</td>
   </tr>
-</tbody></table>
+</tbody></table></div>
 
 A chunked arraylist approach combines benefits of both a standard arraylist and a linked list. This novel structure is a great fit for long-running service daemons, which require minimal memory fragmentation to minimize allocation failures. By now you must be somewhat inclined to see how this works in action. Let's get to the implementation.
 
