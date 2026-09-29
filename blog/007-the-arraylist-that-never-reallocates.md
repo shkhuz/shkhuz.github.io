@@ -36,13 +36,13 @@ The memory layout finally looks like this:
 
 Notice a "hole" in the memory at the beginning. Multiply this operation a thousand times, and you get a fragmented memory space, where free and used blocks are interleaved. Even though there is enough total memory available, the memory is discontiguous enough that any sufficiently large request of memory will inevitably fail.
 
-A better way to manage memory allocations is by grouping them by their lifetimes. This is often called an Arena. For example, all the enemies in a particular level of a game can share an arena, and at the end of the level, that arena can be instantly deallocated without individually freeing all the enemy objects. This would free the whole arena memory, which could be reused for some other level.
+A better way to manage memory allocations is by grouping them by their lifetimes. This is often called an arena. For example, all the enemies in a particular level of a game can share an arena, and at the end of the level, the arena can be instantly deallocated without individually freeing all the enemy objects. This would free the whole arena memory, which could be reused for some other level.
 
-But arenas do not solve our problem entirely. Sometimes we cannot predict the amount of space we'd require ahead of time resulting in frequent reallocation of data. A good example is a tokenizer. We can't really predict the length of the `Token` array in advance, we could only have a calculated guess based on the length of the source code etc. 
+But arenas do not solve our problem entirely. Sometimes we cannot predict the amount of space we'd require ahead of time, resulting in frequent reallocation of data. A good example is a tokenizer. We can't really predict the amount of tokens we'd require in advance. We can only make a calculated guess based on some input, like the length of the source code for example.
 
 Another problem arises when we increase the number of arraylists in our program. If many of them use the same arena for their allocations, then the chances of collision when a list needs to expand increases. Or the arenas themselves can collide with each other if a sufficient gap between them is not kept. 
 
-But we're getting ahead of ourselves. Let's first see how a simple bump allocator is implemented.
+But we're getting ahead of ourselves. Let's first see how a simple arena allocator is implemented.
 
 ```c
 typedef struct {
@@ -97,29 +97,31 @@ void arena_destroy(Arena* arena) {
 
 These trivial functions deal with clearing and deinitializing arenas. It clears/destroys the whole arena at once, which is primarily what an arena is used for. 
 
-Our arena implementation is complete, but useless for us in this state. Why? Let me reiterate our problem statement. What we want is a collision-free way of allocating objects, where an arraylist can grow infinitely without colliding with another allocation. Some of you might think that this can be easily solved by `mmap`ing a huge 1TB block of virtual memory and segregating that block into granular address spaces for each arraylist. Thus the kernel won't allocate physical pages if the memory space is not written to. But this presents us with some problems:
+Our arena implementation is complete, but useless for us in this state. Why? Let me reiterate our problem statement. What we want is a collision-free way of allocating objects, where an arraylist can grow infinitely without colliding with another allocation. Some of you might think that this can be easily solved by `mmap`ing a huge 1TB block of virtual memory and segregating that block into granular address spaces for each arraylist. Thus the kernel won't have to allocate physical pages if the memory is not written to. But this presents us with a few problems:
 
 - Some embedded systems do not support demand paging, thus any allocation will commit physical RAM.
 - Even on desktop Linux (and other OSes) the overcommit behaviour depends on kernel flags like `vm.overcommit_memory`, where the kernel will not let you reserve virtual address spaces exceeding `swap + (ram * overcommit_ratio)` if the proper value is not set.
 - Modern kernels use 4 or 5-level page table hierarchies, where each page table consumes 4KB. If you write a single byte to an address far into the memory space, the kernel will have to allocate intermediate page table entries (PUD, PMD, and PTE) to map the physical page.
-- It puts some hard limit (depending on the granularity of division of 1TB space) on the size of arraylists. Maybe you need to store 10GB worth of stuff in one arraylist, but you won't be able to if the block size is only 1GB.
+- It puts a hard limit (depending on the granularity of division of 1TB space) on the size of arraylists. Maybe an application needs to store 10GB worth of stuff in one arraylist. But it won't be able to if the block size is restricted to only 1GB.
 
-So what can we do? Let's think about it for a moment. Let's assume we allocate a default size for every arraylist, say 128 elements. Then as the arraylist fills up, the length slowly increases to eventually equal 128, wherein no further elements can be stored. Now, we make a safe assumption that we cannot extend the capacity in place (collision with other allocations), but what if we set the next free pointer to the end of the arena? 
+So what can we do? Let's go through it step-by-step. Let's assume we allocate a default number of elements for every arraylist on initialisation, say 128. Then as the arraylist fills up, its length will eventually equal its maximum capacity. At this point, no further elements can be stored in it. We already know that we cannot extend the capacity in place (collision with other allocations), but what if start pushing new elements to the end of the arena? 
 
 ![](assets/007-memory-layout06.svg)
 
-Our arraylist now becomes discontinuous i.e. the elements are allocated in chunks with unrelated allocations sitting between them. This makes pushing elements to the list trivial, but what about accessing elements from the list? Currently we have no way of knowing where the elements 128 and above are stored. They might as well be garbage memory for all the arraylist cares. Now what?
+In other words, we keep the old data as it is, and carve out a new "chunk" of memory from the arena for new elements to be stored into. If this new chunk fills up then we repeat this process, requesting the arena for another block of memory. It doesn't matter if our chunks are discontiguous: that's the whole point. We reserve a whole chunk worth of memory from the arena even if only a single element needs to be stored. If later on any code that requests memory from the arena will get a block following our chunk. This is by design. The list is divided into chunks precisely for this reason.
 
-Some of you may see the solution already. What if we store the individual pointers to chunks in the header? From our previous example, when an arraylist with length 128 is pushed to again, it would store the next free arena address in its header so it'd look something like:
+This makes pushing elements to the list trivial, but what about accessing elements from the list? Currently we have no way of knowing where all of our chunks are located. They might as well be garbage memory for all the arraylist cares. Now what?
+
+Some of you may see the solution already. What if we store the individual pointers to chunks in the header? From our previous example, when an arraylist (which is at capacity) is pushed to again, it can request the arena for a chunk and store its address in its header, something like this:
 
         Chunk #0 => 0xfffdffe0c24deb70 (the "default" chunk)
-    --> Chunk #1 => 0xfffdffe0c24ded30 (arena's next free spot)
+    --> Chunk #1 => 0xfffdffe0c24ded30 (newly allocated chunk)
 
-The arraylist would tell the arena to reserve 128 elements from its current position, so more elements of the arraylist could be stored here. Also pointers to chunks could be stored in a table referenced in the header so any element could be accessed just by indexing into it's chunk pointer.
+Pointers to chunks would be stored in a table referenced in the header, so any element could be accessed just by indexing into its chunk pointer.
 
 ![](assets/007-list-components.svg)
 
-This brings us to a caveat of this data structure: any time you'd want to access a particular element (random access), you'd first need to find the associated chunk pointer of that element (using some bitwise math) in the table stored in the header. Then another read would be required to load the element from the chunk. This indirect memory access would cause cache locality and access times to take a hit, but would be much better at appending/deleting items from/to the list. 
+This brings us to a caveat of this data structure: any time you'd want to access a particular element (random access), you'd first need to find the associated chunk pointer of that element (using some bitwise math) stored in the header. After this, another read would be required to load the element from the chunk. This indirect memory access would cause cache locality and access times to take a hit, but would be much better at appending/deleting items from/to the list. 
 
 <div class='table-wrapper'><table><thead>
   <tr>
