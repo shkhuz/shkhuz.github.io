@@ -5,7 +5,7 @@ synopsis: >
   "Ooo-ieeee!" for the Ghost of the Heap shrieked! "Here's another hole from me!"
 ---
 
-Sometime ago I wrote an [article](/blog/c-macros-as-a-poor-mans-std-vector.html) on creating generic arraylists using C macros. Because they are "the" building block of other data structures, it is impossible to overstate their value. But there is one non-trivial problem that normal arraylists can't solve -- let me show you what I mean.
+Sometime ago I wrote an [article](/blog/c-macros-as-a-poor-mans-std-vector.html) on creating generic arraylists using C macros. Because they are _the_ building block of other data structures, it is impossible to overstate their value. But there is one non-trivial problem that normal arraylists can't solve -- let me show you what I mean.
 
 Suppose we have a memory buffer like so:
 
@@ -34,9 +34,9 @@ The memory layout finally looks like this:
 
 ![](assets/007-memory-layout05.svg)
 
-Notice a "hole" in the memory at the beginning. Multiply this operation a thousand times, and you get a fragmented memory space, where free and used blocks are interleaved. Even though there is enough total memory available, the memory is discontiguous enough that any sufficiently large request of memory will inevitably fail.
+Notice a "hole" in the memory at the beginning. Multiply this operation a thousand times, and you get a fragmented memory space, where free and used blocks are interleaved together. Even though there is enough total memory available, the memory is discontiguous enough that any sufficiently large request of memory will inevitably fail.
 
-A better way to manage memory allocations is by grouping them by their lifetimes. This is often called an arena. For example, all the enemies in a particular level of a game can share an arena, and at the end of the level, the arena can be instantly deallocated without individually freeing all the enemy objects. This would free the whole arena memory, which could be reused for some other level.
+A better way to manage memory allocations is to group them by their lifetimes. This is often called an arena. For example, all the enemies in a particular level of a game can share an arena, and at the end of the level, the arena can be instantly deallocated without individually freeing all the enemy objects. This would free the whole arena memory, which could be reused for some other level.
 
 But arenas do not solve our problem entirely. Sometimes we cannot predict the amount of space we'd require ahead of time, resulting in frequent reallocation of data. A good example is a tokenizer. We can't really predict the amount of tokens we'd require in advance. We can only make a calculated guess based on some input, like the length of the source code for example.
 
@@ -104,24 +104,24 @@ Our arena implementation is complete, but useless for us in this state. Why? Let
 - Modern kernels use 4 or 5-level page table hierarchies, where each page table consumes 4KB. If you write a single byte to an address far into the memory space, the kernel will have to allocate intermediate page table entries (PUD, PMD, and PTE) to map the physical page.
 - It puts a hard limit (depending on the granularity of division of 1TB space) on the size of arraylists. Maybe an application needs to store 10GB worth of stuff in one arraylist. But it won't be able to if the block size is restricted to only 1GB.
 
-So what can we do? Let's go through it step-by-step. Let's assume we allocate a default number of elements for every arraylist on initialisation, say 128. Then as the arraylist fills up, its length will eventually equal its maximum capacity. At this point, no further elements can be stored in it. We already know that we cannot extend the capacity in place (collision with other allocations), but what if start pushing new elements to the end of the arena? 
+So what _can_ we do? Let's go through it step-by-step. Let's assume that a default number of elements is allocated for every arraylist on initialisation (let's assume 128). Then, as the arraylist fills up, its length will eventually equal its maximum capacity. At this point, no further elements can be stored in it. We already know that capacity cannot be extended in place (collision with other allocations), but what if we start pushing new elements to the end of the arena? 
 
 ![](assets/007-memory-layout06.svg)
 
-In other words, we keep the old data as it is, and carve out a new "chunk" of memory from the arena for new elements to be stored into. If this new chunk fills up then we repeat this process, requesting the arena for another block of memory. It doesn't matter if our chunks are discontiguous: that's the whole point. We reserve a whole chunk worth of memory from the arena even if only a single element needs to be stored. If later on any code that requests memory from the arena will get a block following our chunk. This is by design. The list is divided into chunks precisely for this reason.
+In other words, we keep the old data as it is, and carve out a new "chunk" of memory from the arena for new elements to be stored into. If this new chunk fills up again then we repeat the process, requesting the arena for another block of memory. It doesn't matter if our chunks are discontiguous: that's the whole point. We reserve a whole chunk worth of memory from the arena even if only a single element needs to be stored. Later on, if any code requests memory from the arena, it will get a block following our chunk. The list is divided into chunks precisely for this purpose.
 
 This makes pushing elements to the list trivial, but what about accessing elements from the list? Currently we have no way of knowing where all of our chunks are located. They might as well be garbage memory for all the arraylist cares. Now what?
 
-Some of you may see the solution already. What if we store the individual pointers to chunks in the header? From our previous example, when an arraylist (which is at capacity) is pushed to again, it can request the arena for a chunk and store its address in its header, something like this:
+Some of you may see the solution already. What if we store individual pointers to chunks in the header? From our previous example, when an arraylist (which is at capacity) is pushed to again, it can request the arena for a chunk and store the chunk's address in its header, something like this:
 
         Chunk #0 => 0xfffdffe0c24deb70 (the "default" chunk)
     --> Chunk #1 => 0xfffdffe0c24ded30 (newly allocated chunk)
 
-Pointers to chunks would be stored in a table referenced in the header, so any element could be accessed just by indexing into its chunk pointer.
+Specifically, pointers to chunks would be stored in a table referenced in the header, so any element could be accessed just by indexing into its chunk pointer. This separation of header and table will prove useful later on in the article.
 
 ![](assets/007-list-components.svg)
 
-This brings us to a caveat of this data structure: any time you'd want to access a particular element (random access), you'd first need to find the associated chunk pointer of that element (using some bitwise math) stored in the header. After this, another read would be required to load the element from the chunk. This indirect memory access would cause cache locality and access times to take a hit, but would be much better at appending/deleting items from/to the list. 
+This brings us to a caveat of this data structure: any time you'd want to access a particular element (random access), you'd first need to find the associated chunk pointer of that element (using some bitwise math) stored in the pointer table. After this, another read would be required to load the element from the chunk. This indirect memory access would cause cache locality and access times to take a hit, but would be much better at appending/deleting items from/to the list. 
 
 <div class='table-wrapper'><table><thead>
   <tr>
@@ -188,7 +188,11 @@ listhdr* _listhdr(const void* list) {
 // hlt-end
 ```
 
-Returns a pointer to the header given a list pointer. `list` is a pointer to the end of the header similar to stretchy buffers we implemented in the previous article, so we use pointer math to subtract the length of the header to arrive at the beginning.
+Returns a pointer to the header given a list pointer. `list` is a pointer to the end of the header similar to stretchy buffers we implemented in the previous article, so we use pointer math to subtract the length of the header to arrive at the beginning. 
+
+[[[
+Unlike arraylists, `list` pointer pointing to the end of the header is arbitrary; we can't use `[]` to access any data because data is scattered in chunks. Might as well use `list` to point to the header directly.
+]]]
 
 ```c*
     return (listhdr*)((char*)list - sizeof(listhdr)); 
@@ -209,7 +213,7 @@ usize listcap(const void* list) {
 // hlt-end
 ```
 
-Some helper functions to get a list's length and capacity. These are defined as functions not macros, so they can be used inside a debugger.
+Some helper functions to get a list's length and capacity. These are defined as functions not macros, so they can be invoked inside a debugger.
 
 ```c*
 } listhdr;
@@ -234,7 +238,7 @@ void* _listgrow(Arena* arena, const void* list, usize new_len, usize elem_size) 
     ...
 ```
 
-Pretty self-explanatory. In case of a new list as opposed to growing a list, `list` & `new_len` are `NULL` & `0` respectively. For `elem_size` notice we used `sizeof(ListType(p))` earlier in `listinit`. Using some macro magic we can find out a list's item type without using templates or generics. We'll see how `ListType` is implemented later.
+Pretty self-explanatory. In case of a new list as opposed to growing a list, `list` & `new_len` will be `NULL` & `0` respectively. For `elem_size` notice we used `sizeof(ListType(p))` earlier in `listinit`. Using some macro magic we can find out a list's item type without using templates or generics. We'll see how `ListType` is implemented later.
 
 ```c*
     listhdr* hdr = list ? _listhdr(list) : NULL;

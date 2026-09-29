@@ -12,6 +12,16 @@ Here are my daily thoughts, organized by date. Stuff not terribly important go i
 
 <div class='journal-year'>2026</div>
 
+### Sep 29: The Tale of the Forgotten Books Volume 2
+
+Yeah, I know. Another few months and I'll beat Hunter x Hunter's hiatus record. But it's not like I have a lot to show for it. Things have been slow. I've been mainly tackling Aria's language design and seeing what works and what doesn't. The compiler is able to parse basic structures, but without finalizing the big design decisions, I am unable to work on it further.
+
+I have been writing a blog post on non-reallocatable arraylists, and today I took the task of editing `style.css` to make the website styling a bit better. Let me show you how the website looked five years ago compared to today:
+
+![](screencap-website-20260929.jpg)
+
+It's come a long way. I'll try to be more active on this journal in the future; it's cool to look back and see what you were working on 5-6 years ago.
+
 ### Jul 02: The Tale of the Forgotten Books
 
 i.e. this blog. It's been roughly five months (six?) since I wrote a journal entry here. The reason for this long departure isn't what it seems; I was learning new stuff at the same pace as I was before, but for some reason I unintentionally decided to stricten my criteria for what was worthy of a journal entry. And probably because I forgot about it. 
@@ -36,7 +46,7 @@ But, I think I have a plan that could work... well let's talk about that tomorro
 
 Here is today's progress:
 
-![](screenrecord-aseprite-20260104.gif)
+![](screencap-aseprite-20260104.gif)
 
 ### Jan 03: Programmers are bad at deadlines...
 
@@ -47,7 +57,7 @@ I've been playing some [Undertale](https://store.steampowered.com/app/391540/Und
 Wrapping up, today didn't get a whole lot done. Just played around in [Aseprite](https://www.aseprite.org/) making some test game assets. Here is one I'm proud of (granted I referenced some sample sprites online):
 
 <video autoplay loop>
-    <source src="screenrecord-aseprite-20260103.mp4" type="video/mp4" />
+    <source src="screencap-aseprite-20260103.mp4" type="video/mp4" />
     Aseprite character animation
 </video>
 
@@ -59,9 +69,9 @@ Happy new year! Today I mostly worked on creating some new game assets for my fa
 
 Here are both of them, the drill unfinished:
 
-![](screenshot-gimp-grasstexture-20260101.png)
+![](screencap-gimp-grasstexture-20260101.png)
 
-![](screenshot-blender-miningdrill-20260101.png)
+![](screencap-blender-miningdrill-20260101.png)
 
 <div class='journal-year'>2025</div>
 
@@ -78,7 +88,7 @@ The previous system was also not much better code-wise. I exclusively used globa
 Pretty happy with how the system turned out. Here is a rec of the game in action:
 
 <video autoplay loop>
-    <source src="screenrecord-topdowngame-20251231.mp4" type="video/mp4" />
+    <source src="screencap-topdowngame-20251231.mp4" type="video/mp4" />
     Input system testing
 </video>
 
@@ -91,7 +101,7 @@ Today I used the sprites I made yesterday in Raylib just to test out the waters.
 
 I also implemented a simple panning/zooming camera controller for mobile gameplay. Due to this, I also had to port this game to Android. Fortunately, I had some scripts lying around to make it really easy to build an .apk from a Raylib codebase (I was working on a different game not too long ago just for fun), so it was really easy to build it for mobile. The controller's still finicky<sup>1</sup>, but I'll fix it tomorrow. I'm tired.
 
-![](screenshot-terminal-20251228.png)
+![](screencap-terminal-20251228.png)
 
 [[[
 <sup>1</sup> When I repeatedly alternate between two of my fingers on the screen, the camera sometimes jumps from one finger position to another. I guess the reason is that while in the update part of the game loop, the finger alternates and the game registers that finger 0 has moved to so and so, when in actuality it's a different finger altogether. But the game could not know this, because it polls once per frame.
@@ -106,9 +116,9 @@ My work on making the belts is done (at least for now). I made some changes to t
 
 PS: In Blender, to place the curved-modifier object at the curve's starting position, you need to align the origins of both of them before adding the modifier to the object.
 
-![](screenshot-blender-game-20251227.png)
+![](screencap-blender-game-20251227.png)
 
-![](screenshot-topdowngame-20251227.jpg)
+![](screencap-topdowngame-20251227.jpg)
 
 ### Dec 20: Conveyor Belts!
 
@@ -116,13 +126,13 @@ A good conveyor belt system is the beating heart of a factory-builder game. So I
 
 While rendering the models into a spritesheet, I ran into a "bug". The portion where the model was clipped from the background was repeatedly rendering with a blurry edge even though I put a Holdout object for it. After debugging the issue for three hours, it turned out that due to sub-pixel limitations, the orthographic scale has to be set _just_ right for it to be completely opaque. I still don't fully understand the reason, but I'll look into it tomorrow.
 
-![](screenshot-blender-game-20251220.jpg)
+![](screencap-blender-game-20251220.jpg)
 
 ### Dec 17: Starting work on a new factory-builder game
 
 It's been a while since my last journal entry. Due to my endsems I didn't get much free time to work on my projects. Anyway, I recently decided to make a small game similar to those automation games like [Factorio](https://store.steampowered.com/app/427520/Factorio/). I don't have much experience in gamedev apart from small beginner games in Unity, so it will be fun to make something playable on my own. 
 
-![](screenshot-blender-game-20251217.jpg)
+![](screencap-blender-game-20251217.jpg)
 
 ### Nov 20: Implementing a YAML Parser
 
