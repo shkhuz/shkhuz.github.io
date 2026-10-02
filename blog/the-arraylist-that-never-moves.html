@@ -1,0 +1,617 @@
+<!DOCTYPE html>
+<html lang='en'>
+<head>
+<meta charset='utf-8'>
+<meta name='viewport' content='width=device-width, initial-scale=1'>
+
+<title>The Arraylist That Never Moves</title>
+<link rel='apple-touch-icon' sizes='180x180' href='/assets/apple-touch-icon.png'>
+<link rel='icon' type='image/png' sizes='32x32' href='/assets/favicon-32x32.png'>
+<link rel='icon' type='image/png' sizes='16x16' href='/assets/favicon-16x16.png'>
+<link rel='manifest' href='/assets/site.webmanifest'>
+<link rel='stylesheet' href='/style.css'>
+
+<!-- Google tag (gtag.js) -->
+<script async src='https://www.googletagmanager.com/gtag/js?id=G-QQS3D5BETB'></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'G-QQS3D5BETB');
+</script>
+
+<script data-host='https://microanalytics.io' data-dnt='false' src='https://microanalytics.io/js/script.js' id='ZwSg9rf6GA' async defer></script>
+
+<script id='MathJax-script' async src='https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js'></script>
+
+<script>
+(function() {
+  var h, a, f;
+  a = document.getElementsByTagName('link');
+  for (h = 0; h < a.length; h++) {
+    f = a[h];
+    if (f.rel.toLowerCase().match(/stylesheet/) && f.href) {
+      var g = f.href.replace(/(&|\?)rnd=\d+/, '');
+      f.href = g + (g.match(/\?/) ? '&' : '?');
+      f.href += 'rnd=' + (new Date().valueOf());
+    }
+  } // for
+})()
+</script>
+
+</head>
+
+<body>
+<article>
+  <nav id='main-nav'>
+    <h1>
+      <a href='/'>~/</a> The Arraylist That Never Moves
+    </h1>
+    <span class='info'>Published on Oct 2, 2026 by <a href='mailto:shk.huz@gmail.com'>shkhuz</a></span>
+  </nav>
+  <p>
+    Some time ago I wrote an <a href='/blog/c-macros-as-a-poor-mans-std-vector.html'>article</a> on creating generic arraylists using C macros. Because they are <em>the</em> building block of other data structures, it is impossible to overstate their value. But there is one non-trivial problem that normal arraylists can't solve -- let me show you what I mean.
+  </p>
+  <p>
+    Suppose we have a memory buffer like so:
+  </p>
+  <p>
+    <img src='assets/007-memory-layout01.svg' alt=''>
+  </p>
+  <p>
+    And assume that our memory buffer is managed by the C library <code>malloc</code>. Let's initialize our arraylist:
+  </p>
+  <p>
+    <img src='assets/007-memory-layout02.svg' alt=''>
+  </p>
+  <p>
+    Our memory allocator, in this case <code>malloc</code>, reserves a chunk of memory for <code>bufhdr</code> and the trailing data where our arraylist can store items. I've color-coded this so dark gray represents allocated but unused, because we haven't pushed any items into it yet. 
+  </p>
+  <p>
+    Now let's suppose that some other code requests <code>malloc</code> for a chunk of memory immediately after initializing our arraylist. The memory now looks like so: 
+  </p>
+  <p>
+    <img src='assets/007-memory-layout03.svg' alt=''>
+  </p>
+  <p>
+    So far so good. Now we push items into the arraylist until we hit the maximum capacity:
+  </p>
+  <p>
+    <img src='assets/007-memory-layout04.svg' alt=''>
+  </p>
+  <p>
+    Uh oh! We've reached the end of our allocated space, i.e. the arraylist is at capacity. Let's walk through what would happen if we try to push one more element:
+  </p>
+  <ul>
+    <li>
+      Our code checks to see if <code>bufcap(b) >= 1 + buflen(b)</code>. This returns false, so we call <code>_bufgrow</code>.
+    </li>
+    <li>
+      <code>_bufgrow</code> calculates the new capacity and <code>realloc</code>s the previously allocated data to a new location (it cannot be expanded in place due to other <code>malloc</code> calls).
+    </li>
+  </ul>
+  <p>
+    The memory layout finally looks like this:
+  </p>
+  <p>
+    <img src='assets/007-memory-layout05.svg' alt=''>
+  </p>
+  <p>
+    Notice a "hole" in the memory at the beginning. Repeat this operation a thousand times, and you get a fragmented memory space, where free and used blocks are interleaved. Even though there is enough total memory available, the memory is discontiguous enough that any sufficiently large request for memory may eventually fail.
+  </p>
+  <p>
+    A better way to manage memory allocations is to group them by their lifetimes. This is often called an arena. For example, all the enemies in a particular level of a game can share an arena, and at the end of the level, the arena can be instantly deallocated without individually freeing all the enemy objects. This would free the whole arena memory, which could be reused for some other level.
+  </p>
+  <p>
+    But arenas do not solve our problem entirely. Sometimes we cannot predict the amount of space we'd require ahead of time, resulting in frequent reallocation of data. A good example is a tokenizer. We can't really predict the number of tokens we'd require in advance. We can only make an educated guess based on some input, like the length of the source code for example.
+  </p>
+  <p>
+    Another problem arises when we increase the number of arraylists in our program. If many of them use the same arena for their allocations, then the chances of collision when a list needs to expand increase. Or the arenas themselves can collide with each other if a sufficient gap between them is not kept. 
+  </p>
+  <p>
+    But we're getting ahead of ourselves. Let's first see how a simple arena allocator is implemented.
+  </p>
+  <div class='code lang-c'><pre class='before'></pre><pre><span class='keyword'>typedef</span> <span class='keyword'>struct</span> {
+    const <span class='keyword'>char</span>* name;
+    <span class='keyword'>char</span>* base;
+    <span class='keyword'>usize</span> capacity;
+    <span class='keyword'>usize</span> pos;
+} Arena;
+</pre><pre class='after'></pre></div>
+  <p>
+    We define a simple four-field type for an <code>Arena</code> where <code>name</code> is the debug name for an arena, <code>base</code> is the starting address, <code>capacity</code> is the length in bytes, and <code>pos</code> is the current offset into the arena.
+  </p>
+  <div class='code lang-c'><pre class='before'></pre><pre>Arena arena_create(const <span class='keyword'>char</span>* name, u64 reserve) {
+    Arena arena = (Arena){};
+    arena.name = name;
+    <span class='keyword'>void</span>* ptr = mmap(<span class='const'>NULL</span>, reserve, PROT_READ | PROT_WRITE,
+        MAP_PRIVATE | MAP_ANONYMOUS | MAP_NORESERVE, <span class='const'>-1</span>, <span class='const'>0</span>);
+    <span class='keyword'>if</span> (ptr != MAP_FAILED) {
+        arena.base = ptr;
+        arena.capacity = reserve;
+    }
+    <span class='keyword'>return</span> arena;
+}
+</pre><pre class='after'></pre></div>
+  <p>
+    This creates an arena, taking in a name and a size to reserve. Now we get to the interesting part. The <code>mmap()</code> call reserves a virtual address block (but not physical memory) of the specified size. Due to demand paging, even if the requested memory is orders of magnitude higher than the physical memory available, the kernel will not reserve any pages until the memory is accessed. We also pass the <code>MAP_ANONYMOUS</code> flag because we don't need a file backing the mapping.
+  </p>
+  <div class='code lang-c'><pre class='before'></pre><pre><span class='keyword'>void</span>* arena_push(Arena* arena, u64 size) {
+    u64 aligned_size = (size + <span class='const'>7</span>) &amp; ~<span class='const'>7</span>;
+    assert(arena-&gt;pos + aligned_size &lt;= arena-&gt;capacity &amp;&amp; <span class='string'>"Arena out of memory!"</span>);
+    <span class='keyword'>void</span>* ptr = arena-&gt;base + arena-&gt;pos;
+    arena-&gt;pos += aligned_size;
+    <span class='keyword'>return</span> ptr;
+}
+</pre><pre class='after'></pre></div>
+  <p>
+    This works like <code>malloc()</code>: it takes a size and returns a pointer, rather than copying an object into the arena.
+  </p>
+  <div class='code lang-c'><pre class='before'></pre><pre><span class='keyword'>void</span> arena_clear(Arena* arena) {
+    arena-&gt;pos = <span class='const'>0</span>;
+}
+
+<span class='keyword'>void</span> arena_destroy(Arena* arena) {
+    <span class='keyword'>if</span> (arena-&gt;base) {
+        munmap(arena-&gt;base, arena-&gt;capacity);
+    }
+}
+</pre><pre class='after'></pre></div>
+  <p>
+    These trivial functions deal with clearing and deinitializing arenas. They clear/destroy the whole arena at once, which is primarily what an arena is used for. 
+  </p>
+  <p>
+    Our arena implementation is complete, but not enough for our purposes. Why? Let me reiterate our problem statement. What we want is a collision-free way of allocating objects, where an arraylist can grow infinitely without colliding with another allocation. Some of you might think that this can be easily solved by <code>mmap</code>ing a huge 1TB block of virtual memory and segregating that block into granular address spaces for each arraylist. The kernel then wouldn't allocate physical pages for memory that's never written to. But this presents us with a few problems:
+  </p>
+  <ul>
+    <li>
+      Some embedded systems do not support demand paging, so any allocation will commit physical RAM.
+    </li>
+    <li>
+      Even on desktop Linux (and other OSes) the overcommit behavior depends on kernel flags like <code>vm.overcommit_memory</code>, where the kernel will not let you reserve virtual address spaces exceeding <code>swap + (ram * overcommit_ratio)</code> if the proper value is not set.
+    </li>
+    <li>
+      Modern kernels use 4 or 5-level page table hierarchies, where each page table consumes 4KB. If you write a single byte to an address far into the memory space, the kernel will have to allocate intermediate page tables (PUD, PMD, and PTE) to map the physical page.
+    </li>
+    <li>
+      It puts a hard limit (depending on the granularity of division of 1TB space) on the size of arraylists. Maybe an application needs to store 10GB worth of stuff in one arraylist. But it won't be able to if the block size is restricted to only 1GB.
+    </li>
+  </ul>
+  <p>
+    So what <em>can</em> we do? Let's go through it step by step. Let's assume that a default number of elements is allocated for every arraylist on initialization. Then, as the arraylist fills up, its length will eventually equal its maximum capacity. At this point, no further elements can be stored in it. We already know that capacity cannot be extended in place (collision with other allocations), but what if we start pushing new elements to the end of the arena? 
+  </p>
+  <p>
+    <img src='assets/007-memory-layout06.svg' alt=''>
+  </p>
+  <p>
+    In other words, we keep the old data as it is, and carve out a new "chunk" of memory from the arena store new elements in. If this new chunk fills up again then we repeat the process, requesting another block from the arena. It doesn't matter if our chunks are discontiguous: that's the whole point. We reserve a whole chunk worth of memory from the arena even if only a single element needs to be stored. Later on, if any code requests memory from the arena, it will get a block following our chunk. This is exactly why the list is split into chunks.
+  </p>
+  <p>
+    This makes pushing elements to the list trivial, but what about accessing elements from the list? Currently we have no way of knowing where all of our chunks are located. As far as the arraylist is concerned, they might as well be garbage.
+  </p>
+  <p>
+    Some of you may see the solution already. What if we store individual pointers to chunks in the header? From our previous example, when a full arraylist is pushed to again, it can request the arena for a chunk and store the chunk's address in its header, something like this:
+  </p>
+  <div class='code'><pre class='before'></pre><pre>    Chunk #0 =&gt; 0xfffdffe0c24deb70 (the "default" chunk)
+--&gt; Chunk #1 =&gt; 0xfffdffe0c24ded30 (newly allocated chunk)
+</pre><pre class='after'></pre></div>
+  <p>
+    Specifically, pointers to chunks would be stored in a table referenced in the header, so any element could be accessed just by indexing into the table. This separation of header and table will prove useful later on in the article.
+  </p>
+  <p>
+    <img src='assets/007-list-components.svg' alt=''>
+  </p>
+  <p>
+    This brings us to a caveat of this data structure: whenever you need to access a particular element, you'd first need to find the associated chunk pointer of that element (using some bitwise math) stored in the pointer table. After this, another read would be required to load the element from the chunk. This indirect memory access would hurt cache locality and access times, but would be much better at appending and deleting items.
+  </p>
+  <div class='table-wrapper'><table><thead>
+    <tr>
+      <th>Operation</th>
+      <th>Standard ArrayList</th>
+      <th>LinkedList</th>
+      <th>Chunked ArrayList</th>
+    </tr></thead>
+  <tbody>
+    <tr>
+      <td>Random Access (get / set)</td>
+      <td>O(1) (fast pointer math)</td>
+      <td>O(n) (pointer traversal)</td>
+      <td>O(1) but slower compared to Standard ArrayList</td>
+    </tr>
+    <tr>
+      <td>Append</td>
+      <td>Amortized O(1) (expensive resize if full)</td>
+      <td>O(1) (fast)</td>
+      <td>O(1) (as fast as LinkedList; spawns a new chunk if full without copying over data)</td>
+    </tr>
+    <tr>
+      <td>Insert / Delete</td>
+      <td>O(n)</td>
+      <td>O(1) if pointer to element is known else O(n)</td>
+      <td>O(c) to O(n) for insertion, O(c) for deletion</td>
+    </tr>
+    <tr>
+      <td>Memory Overhead</td>
+      <td>Low</td>
+      <td>High (prev/next pointer for every element)</td>
+      <td>Slightly higher than Standard ArrayList (overhead per chunk not per element)</td>
+    </tr>
+    <tr>
+      <td>Cache Locality</td>
+      <td>Excellent (contiguous)</td>
+      <td>Poor (elements sparsely spaced)</td>
+      <td>Good to Excellent (contiguous chunks separated in memory)</td>
+    </tr>
+  </tbody></table></div>
+  <p>
+    A chunked arraylist approach combines the benefits of both a standard arraylist and a linked list. This lesser-known structure is a great fit for long-running service daemons, which require minimal memory fragmentation to avoid allocation failures. By now you're probably curious to see how it works in action, so let's check out the implementation.
+  </p>
+  <div class='code lang-c'><pre class='before'></pre><pre><span class='keyword'>typedef</span> <span class='keyword'>struct</span> {
+    Arena* arena;
+    <span class='keyword'>void</span>** chunks;
+    <span class='keyword'>usize</span> cap;
+    <span class='keyword'>usize</span> len;
+    u32 chunkcount;
+    u32 chunkcap;
+} listhdr;
+</pre><pre class='after'></pre></div>
+  <p>
+    Similar to an arena's header, we store some state info in the arraylist header. Note that <code>chunks</code> is a growable table of chunk pointers, hence the <code>chunkcount</code> and <code>chunkcap</code>, similar to an arraylist's length and capacity. 
+  </p>
+  <div class='code lang-c'><pre class='before'>} listhdr;
+
+</pre>
+<pre class='callout'>listhdr* _listhdr(const <span class='keyword'>void</span>* list) { 
+    <span class='keyword'>return</span> (listhdr*)((<span class='keyword'>char</span>*)list - sizeof(listhdr)); 
+}
+</pre>
+<pre class='after'>
+</pre></div>
+  <p>
+    Returns a pointer to the header given a list pointer. <code>list</code> is a pointer to the end of the header similar to stretchy buffers we implemented in the previous article, so we use pointer math to subtract the length of the header to arrive at the beginning. 
+  </p>
+  <aside>
+    <p>
+      Unlike arraylists, <code>list</code> pointing to the end of the header is arbitrary: we can't use <code>[]</code> to access any data because data is scattered in chunks. Might as well use <code>list</code> to point to the header directly.
+    </p>
+  </aside>
+  <div class='code lang-c'><pre class='before'>    <span class='keyword'>return</span> (listhdr*)((<span class='keyword'>char</span>*)list - sizeof(listhdr)); 
+}
+
+</pre>
+<pre class='callout'><span class='keyword'>usize</span> listlen(const <span class='keyword'>void</span>* list) {
+    <span class='keyword'>if</span> (list) <span class='keyword'>return</span> _listhdr(list)-&gt;len;
+    assert(<span class='const'>0</span>);
+    <span class='keyword'>return</span> <span class='const'>0</span>;
+}
+
+<span class='keyword'>usize</span> listcap(const <span class='keyword'>void</span>* list) {
+    <span class='keyword'>if</span> (list) <span class='keyword'>return</span> _listhdr(list)-&gt;cap;
+    assert(<span class='const'>0</span>);
+    <span class='keyword'>return</span> <span class='const'>0</span>;
+}
+</pre>
+<pre class='after'>
+</pre></div>
+  <p>
+    Some helper functions to get a list's length and capacity. These are defined as functions not macros, so they can be invoked inside a debugger.
+  </p>
+  <div class='code lang-c'><pre class='before'>} listhdr;
+
+</pre>
+<pre class='callout'><span class='intrinsic'>#define</span> listinit(arena, p) ((p) = _listgrow((arena), <span class='const'>NULL</span>, <span class='const'>0</span>, sizeof(ListType((p)))))
+</pre>
+<pre class='after'>
+
+listhdr* _listhdr(const <span class='keyword'>void</span>* list) { 
+</pre></div>
+  <p>
+    This macro is used to initialize a list. <code>p</code> is a pointer type indicating a list. The type is a little different compared to our stretchy buffer implementation, but we'll get to it later. Here we call <code>_listgrow</code>, which handles both initialization and growing. Let's look at it next.
+  </p>
+  <div class='code lang-c'><pre class='before'>    <span class='keyword'>return</span> <span class='const'>0</span>;
+}
+
+</pre>
+<pre class='callout'><span class='keyword'>void</span>* _listgrow(Arena* arena, const <span class='keyword'>void</span>* list, <span class='keyword'>usize</span> new_len, <span class='keyword'>usize</span> elem_size) {
+    listhdr* hdr = list ? _listhdr(list) : <span class='const'>NULL</span>;
+</pre>
+<pre class='after'>
+    ...
+</pre></div>
+  <p>
+    Pretty self-explanatory. For a new list as opposed to growing a list, <code>list</code> & <code>new_len</code> will be <code>NULL</code> & <code>1</code> respectively. As for <code>elem_size</code> notice that we used <code>sizeof(ListType(p))</code> earlier in <code>listinit</code>. Using some macro magic we can find out a list's item type without using templates or generics. We'll see how <code>ListType</code> is implemented later.
+  </p>
+  <div class='code lang-c'><pre class='before'>    listhdr* hdr = list ? _listhdr(list) : <span class='const'>NULL</span>;
+    
+</pre>
+<pre class='callout'>    <span class='keyword'>if</span> (!hdr) {
+        hdr = (listhdr*)arena_push(arena, sizeof(listhdr));
+        hdr-&gt;arena = arena;
+        hdr-&gt;len = <span class='const'>0</span>;
+        hdr-&gt;cap = <span class='const'>0</span>;
+        hdr-&gt;chunkcap = <span class='const'>0</span>;
+        hdr-&gt;chunkcount = <span class='const'>0</span>;
+        hdr-&gt;chunks = <span class='const'>NULL</span>;
+    }
+</pre>
+<pre class='after'>
+    ...
+</pre></div>
+  <p>
+    Again pretty simple -- the <code>if</code> clause runs on first initialization to allocate a header.
+  </p>
+  <div class='code lang-c'><pre class='before'>    }
+    
+</pre>
+<pre class='callout'>    <span class='keyword'>while</span> (new_len &gt; hdr-&gt;cap) {
+</pre>
+<pre class='after'>
+    ...
+</pre></div>
+  <p>
+    Now the main chunk allocation loop begins. The loop allocates one chunk per cycle until the list capacity is greater than or equal to <code>new_len</code> requested by the user. By default we pass 1 for <code>new_len</code>, so at least one chunk is allocated by running the loop.
+  </p>
+  <p>
+    The chunk pointer table is not stored in the header; it is stored separately. Why? When we first initialize a list, we allocate a table of 4 pointers by default. But when the list needs another chunk, the pointer table must also be resized, which cannot be done in place. The easiest solution I've found is to just allocate a new table of pointers, copying the previous table and updating the header to this table. Yes we waste 8 bytes per chunk per list on table resize, but I feel this is trivial especially if the maximum chunk capacity is moderately large. For example with 65536 elements per chunk, and chunk count doubling after the initial 4 chunks, you'd only lose 96 bytes to store a million elements.
+  </p>
+  <div class='code lang-c'><pre class='before'>    <span class='keyword'>while</span> (new_len &gt; hdr-&gt;cap) {
+</pre>
+<pre class='callout'>        <span class='keyword'>if</span> (hdr-&gt;chunkcount &gt;= hdr-&gt;chunkcap) {
+            u32 oldcap = hdr-&gt;chunkcap;
+            hdr-&gt;chunkcap = hdr-&gt;chunkcap == <span class='const'>0</span> ? <span class='const'>4</span> : hdr-&gt;chunkcap * <span class='const'>2</span>;
+            <span class='keyword'>void</span>** newchunks = arena_push(hdr-&gt;arena, hdr-&gt;chunkcap*sizeof(<span class='keyword'>void</span>*));
+            <span class='keyword'>if</span> (oldcap &gt; <span class='const'>0</span>) memcpy(newchunks, hdr-&gt;chunks, oldcap*sizeof(<span class='keyword'>void</span>*));
+            hdr-&gt;chunks = newchunks;
+        }
+</pre>
+<pre class='after'>
+        ...
+</pre></div>
+  <p>
+    This is the code responsible for the aforementioned pointer table allocation. We check whether <code>chunkcount</code> has reached <code>chunkcap</code>, and accordingly allocate a new table using our ol' friend <code>arena_push</code>. If the old capacity is non-zero, we copy over the previous table using <code>memcpy</code>.
+  </p>
+  <div class='code lang-c'><pre class='before'>        }
+</pre>
+<pre class='callout'>        hdr-&gt;cap += LIST_CHUNK_SIZE;
+        hdr-&gt;chunks[hdr-&gt;chunkcount] = arena_push(hdr-&gt;arena, LIST_CHUNK_SIZE * elem_size);
+        hdr-&gt;chunkcount++;
+    }
+    <span class='keyword'>return</span> (<span class='keyword'>void</span>*)((<span class='keyword'>char</span>*)hdr + sizeof(listhdr));
+}
+</pre>
+<pre class='after'>
+</pre></div>
+  <p>
+    The actual chunk allocation. We increase the list capacity and allocate a chunk, adding it to our pointer table. Let's also define <code>LIST_CHUNK_SIZE</code> somewhere:
+  </p>
+  <div class='code lang-c'><pre class='before'></pre>
+<pre class='callout'><span class='intrinsic'>#define</span> LIST_CHUNK_SHIFT <span class='const'>16</span>
+<span class='intrinsic'>#define</span> LIST_CHUNK_SIZE  (<span class='const'>1</span>ULL &lt;&lt; LIST_CHUNK_SHIFT)
+<span class='intrinsic'>#define</span> LIST_CHUNK_MASK  (LIST_CHUNK_SIZE - <span class='const'>1</span>)
+</pre>
+<pre class='after'>
+
+<span class='keyword'>typedef</span> <span class='keyword'>struct</span> {
+</pre></div>
+  <p>
+    Why do we use bit-shifting and masking to define the chunk size? To answer this question, we'll need to look at how elements are accessed in this chunked-list architecture. 
+  </p>
+  <p>
+    We cannot access elements using <code>[]</code> because our list is not contiguous. To access an element at a particular index, we first need to find the corresponding chunk in which it's stored. We use our handy table of pointers for this. For example, if our element is stored at index 70384, we know it's stored in the second chunk because the first chunk ends at index 65535. To make this math fast on a CPU, instead of division we use bit-shifting and masking.
+  </p>
+  <p>
+    Instead of treating the array index as an index into contiguous memory, we split the index in two: 
+  </p>
+  <p>
+    <img src='assets/007-index-split.svg' alt=''>
+  </p>
+  <p>
+    On 64-bit systems, the chunk index can store 48 bits, but you'll rarely need to use more than a few bits of it. The 16-bit element index is then used to <code>[]</code>-index into a chunk to finally retrieve the element. 
+  </p>
+  <p>
+    Because we use bitwise-operations to calculate the chunk and element indices, chunk size has to be a power of two (\(2^{16}\) or 65536 in this case). That way we won't have to resort to the slower division method, which is really expensive for an operation that needs to happen millions of times a second.
+  </p>
+  <div class='code lang-c'><pre class='before'><span class='intrinsic'>#define</span> listinit(arena, p) ((p) = _listgrow((arena), <span class='const'>NULL</span>, <span class='const'>0</span>, sizeof(ListType((p)))))
+
+</pre>
+<pre class='callout'><span class='intrinsic'>#define</span> listget(p, i) (((ListType((p))*)(_listhdr((p))-&gt;chunks[(i) &gt;&gt; LIST_CHUNK_SHIFT]))[(i) &amp; LIST_CHUNK_MASK])
+</pre>
+<pre class='after'>
+
+listhdr* _listhdr(const <span class='keyword'>void</span>* list) { 
+</pre></div>
+  <p>
+    Looks visually cluttered at first glance, but essentially does what I described above. <code>i >> LIST_CHUNK_SHIFT</code> gives us the chunk index, and <code>i & LIST_CHUNK_MASK</code> gives us the element index. But what's going on with <code>ListType(p)*</code>?
+  </p>
+  <p>
+    Imagine we want to store and retrieve some data from a normal unchunked arraylist:
+  </p>
+  <div class='code lang-c'><pre class='before'></pre><pre>    <span class='keyword'>int</span>* list = <span class='const'>NULL</span>;
+    <span class='keyword'>for</span> (<span class='keyword'>int</span> i = <span class='const'>0</span>; i &lt; <span class='const'>100000</span>; i++)
+        bufpush(list, <span class='const'>1</span>);
+    bufpush(list, <span class='const'>42</span>);
+</pre><pre class='after'></pre></div>
+  <p>
+    To retrieve an element we can simply use <code>[]</code>:
+  </p>
+  <div class='code lang-c'><pre class='before'>    bufpush(list, <span class='const'>42</span>);
+    
+</pre>
+<pre class='callout'>    assert(list[<span class='const'>100000</span>] == <span class='const'>42</span>);
+</pre>
+<pre class='after'>
+</pre></div>
+  <p>
+    Because <code>list</code> is of type <code>int*</code> and it points to the beginning of contiguous memory, the indexing operator knows to multiply the index by <code>sizeof(int)</code> to reach the specified element. 
+  </p>
+  <p>
+    But now consider our chunked-list approach using the same API:
+  </p>
+  <div class='code lang-c'><pre class='before'></pre><pre>    <span class='keyword'>int</span>* list = <span class='const'>NULL</span>;
+    listinit(permarena, list);
+    <span class='keyword'>for</span> (<span class='keyword'>int</span> i = <span class='const'>0</span>; i &lt; <span class='const'>100000</span>; i++)
+        listpush(list, <span class='const'>1</span>);
+    listpush(list, <span class='const'>42</span>);
+</pre><pre class='after'></pre></div>
+  <p>
+    Let's also retrieve the last element:
+  </p>
+  <div class='code lang-c'><pre class='before'>    listpush(list, <span class='const'>42</span>);
+    
+</pre>
+<pre class='callout'>    assert(listget(list, <span class='const'>100000</span>) == <span class='const'>42</span>);
+</pre>
+<pre class='after'>
+</pre></div>
+  <p>
+    This works, so what's the problem? Now imagine you're using this chunked implementation in a non-trivial application and do this by mistake:
+  </p>
+  <div class='code lang-c'><pre class='before'></pre>
+<pre class='callout'>    <span class='keyword'>if</span> (list[<span class='const'>100000</span>] == <span class='const'>42</span>) { 
+</pre>
+<pre class='after'>
+        ...
+</pre></div>
+  <p>
+    Can you spot the bug? (Cue the Dora arrow meme.) We forget to use <code>listget</code> and instead use <code>[]</code>, on a data structure that stores its elements in chunks scattered around in memory. The compiler doesn't catch this because the <code>list</code> is declared as an <code>int*</code>, so the expression is perfectly valid. But why did we need to declare <code>list</code> as <code>int*</code> in the first place?
+  </p>
+  <p>
+    Remember that the <code>[]</code> needs to know the size of the elements it indexes. By declaring our list as <code>int*</code> we encode that information into its type. But, as we saw earlier, this introduces a very subtle and hard-to-debug bug if we forget to use <code>listget</code>. 
+  </p>
+  <p>
+    I tried turning the list into a <code>struct</code>, but it didn't pan out. Every anonymous <code>struct</code> declaration creates a distinct type in C, so you can't pass lists to helper functions. What other type can encode an element type but reject <code>[]</code>? Drum roll... the function pointer!
+  </p>
+  <p>
+    Let's revisit the previous example, changing the pointer into a function pointer:
+  </p>
+  <div class='code lang-c'><pre class='before'></pre><pre>    <span class='keyword'>int</span> (*list)() = <span class='const'>NULL</span>;
+    listinit(permarena, list);
+    <span class='keyword'>for</span> (<span class='keyword'>int</span> i = <span class='const'>0</span>; i &lt; <span class='const'>100000</span>; i++)
+        listpush(list, <span class='const'>1</span>);
+    listpush(list, <span class='const'>42</span>);
+    
+    assert(list[<span class='const'>100000</span>] == <span class='const'>42</span>); <span class='comment'>// compile error!</span>
+</pre><pre class='after'></pre></div>
+  <p>
+    Cool. <code>ListType(p)</code> essentially extracts the return type of the function pointer. Here it is:
+  </p>
+  <div class='code lang-c'><pre class='before'>} listhdr;
+
+</pre>
+<pre class='callout'><span class='intrinsic'>#define</span> ListType(p) __typeof__((p)())
+</pre>
+<pre class='after'>
+
+<span class='intrinsic'>#define</span> listinit(arena, p) ((p) = _listgrow((arena), <span class='const'>NULL</span>, <span class='const'>0</span>, sizeof(ListType((p)))))
+</pre></div>
+  <p>
+    <code>__typeof__</code> yields the type of an expression without evaluating it, and <code>(p)()</code> is a call expression, so its type is the return type. Also note it's a GNU extension (standard <code>typeof</code> only since C23). To declare a list, we introduce a simple macro to save us from writing that ugly function pointer every time:
+  </p>
+  <div class='code lang-c'><pre class='before'></pre>
+<pre class='callout'><span class='intrinsic'>#define</span> DefineList(name, type) type (*name)()
+</pre>
+<pre class='after'>
+<span class='intrinsic'>#define</span> ListType(p) __typeof__((p)())
+</pre></div>
+  <p>
+    To actually push elements to the list we use the same macros we used for the standard arraylist:
+  </p>
+  <div class='code lang-c'><pre class='before'></pre>
+<pre class='callout'><span class='intrinsic'>#define</span> listfit(p, n) \
+    (((p) &amp;&amp; (listcap((p))) &gt;= (n)) ? <span class='const'>0</span> : \
+    ((p) = _listgrow(_listhdr((p))-&gt;arena, (p), (n), sizeof(ListType((p))))))
+
+<span class='intrinsic'>#define</span> listpush(p, ...) \
+    (listfit((p), <span class='const'>1</span> + listlen((p))), \
+    (listget((p), _listhdr((p))-&gt;len) = __VA_ARGS__), \
+    _listhdr((p))-&gt;len++)
+</pre>
+<pre class='after'>
+
+listhdr* _listhdr(const <span class='keyword'>void</span>* list) { 
+</pre></div>
+  <p>
+    <code>listpush</code> calls <code>listfit</code> to ensure there's room for one more element, then uses <code>listget</code> as an lvalue to store the argument! The core functionality is now complete; I'll leave pop, clear and other trivial functions as an exercise for the reader.
+  </p>
+  <p>
+    Here is the whole implementation as a single file:
+  </p>
+  <div class='code lang-c'><pre class='before'></pre><pre><span class='intrinsic'>#define</span> LIST_CHUNK_SHIFT <span class='const'>16</span>
+<span class='intrinsic'>#define</span> LIST_CHUNK_SIZE  (<span class='const'>1</span>ULL &lt;&lt; LIST_CHUNK_SHIFT)
+<span class='intrinsic'>#define</span> LIST_CHUNK_MASK  (LIST_CHUNK_SIZE - <span class='const'>1</span>)
+
+<span class='keyword'>typedef</span> <span class='keyword'>struct</span> {
+    Arena* arena;
+    <span class='keyword'>void</span>** chunks;
+    <span class='keyword'>usize</span> cap;
+    <span class='keyword'>usize</span> len;
+    u32 chunkcount;
+    u32 chunkcap;
+} listhdr;
+
+<span class='intrinsic'>#define</span> DefineList(name, type) type (*name)()
+<span class='intrinsic'>#define</span> ListType(p) __typeof__((p)())
+
+<span class='intrinsic'>#define</span> listinit(arena, p) ((p) = _listgrow((arena), <span class='const'>NULL</span>, <span class='const'>0</span>, sizeof(ListType((p)))))
+
+<span class='intrinsic'>#define</span> listget(p, i) (((ListType((p))*)(_listhdr((p))-&gt;chunks[(i) &gt;&gt; LIST_CHUNK_SHIFT]))[(i) &amp; LIST_CHUNK_MASK])
+
+<span class='intrinsic'>#define</span> listfit(p, n) \
+    (((p) &amp;&amp; (listcap((p))) &gt;= (n)) ? <span class='const'>0</span> : \
+    ((p) = _listgrow(_listhdr((p))-&gt;arena, (p), (n), sizeof(ListType((p))))))
+
+<span class='intrinsic'>#define</span> listpush(p, ...) \
+    (listfit((p), <span class='const'>1</span> + listlen((p))), \
+    (listget((p), _listhdr((p))-&gt;len) = __VA_ARGS__), \
+    _listhdr((p))-&gt;len++)
+
+<span class='intrinsic'>#define</span> listpop(p) (listlen((p)) &gt; <span class='const'>0</span> ? listget((p), --_listhdr((p))-&gt;len) : <span class='const'>0</span>)
+<span class='intrinsic'>#define</span> listclear(p) ((p) ? _listhdr((p))-&gt;len = <span class='const'>0</span> : <span class='const'>0</span>)
+
+listhdr* _listhdr(const <span class='keyword'>void</span>* list) { 
+    <span class='keyword'>return</span> (listhdr*)((<span class='keyword'>char</span>*)list - sizeof(listhdr)); 
+}
+
+<span class='keyword'>usize</span> listlen(const <span class='keyword'>void</span>* list) {
+    <span class='keyword'>if</span> (list) <span class='keyword'>return</span> _listhdr(list)-&gt;len;
+    assert(<span class='const'>0</span>);
+    <span class='keyword'>return</span> <span class='const'>0</span>;
+}
+
+<span class='keyword'>usize</span> listcap(const <span class='keyword'>void</span>* list) {
+    <span class='keyword'>if</span> (list) <span class='keyword'>return</span> _listhdr(list)-&gt;cap;
+    assert(<span class='const'>0</span>);
+    <span class='keyword'>return</span> <span class='const'>0</span>;
+}
+
+<span class='keyword'>void</span>* _listgrow(Arena* arena, const <span class='keyword'>void</span>* list, <span class='keyword'>usize</span> new_len, <span class='keyword'>usize</span> elem_size) {
+    listhdr* hdr = list ? _listhdr(list) : <span class='const'>NULL</span>;
+    <span class='keyword'>if</span> (!hdr) {
+        hdr = (listhdr*)arena_push(arena, sizeof(listhdr));
+        hdr-&gt;arena = arena;
+        hdr-&gt;len = <span class='const'>0</span>;
+        hdr-&gt;cap = <span class='const'>0</span>;
+        hdr-&gt;chunkcap = <span class='const'>0</span>;
+        hdr-&gt;chunkcount = <span class='const'>0</span>;
+        hdr-&gt;chunks = <span class='const'>NULL</span>;
+    }
+
+    <span class='keyword'>while</span> (new_len &gt; hdr-&gt;cap) {
+        <span class='keyword'>if</span> (hdr-&gt;chunkcount &gt;= hdr-&gt;chunkcap) {
+            u32 oldcap = hdr-&gt;chunkcap;
+            hdr-&gt;chunkcap = hdr-&gt;chunkcap == <span class='const'>0</span> ? <span class='const'>4</span> : hdr-&gt;chunkcap * <span class='const'>2</span>;
+            <span class='keyword'>void</span>** newchunks = arena_push(hdr-&gt;arena, hdr-&gt;chunkcap*sizeof(<span class='keyword'>void</span>*));
+            <span class='keyword'>if</span> (oldcap &gt; <span class='const'>0</span>) memcpy(newchunks, hdr-&gt;chunks, oldcap*sizeof(<span class='keyword'>void</span>*));
+            hdr-&gt;chunks = newchunks;
+        }
+        hdr-&gt;cap += LIST_CHUNK_SIZE;
+        hdr-&gt;chunks[hdr-&gt;chunkcount] = arena_push(hdr-&gt;arena, LIST_CHUNK_SIZE * elem_size);
+        hdr-&gt;chunkcount++;
+    }
+    <span class='keyword'>return</span> (<span class='keyword'>void</span>*)((<span class='keyword'>char</span>*)hdr + sizeof(listhdr));
+}
+</pre><pre class='after'></pre></div>
+</article>
+</body>
+</html>
