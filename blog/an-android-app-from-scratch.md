@@ -1,5 +1,5 @@
 ---
-title: An android app from scratch
+title: An Android App From Scratch
 date: 2025-09-27
 synopsis: >
   To understand any system, you must be able to build it yourself.
@@ -32,11 +32,11 @@ Hello world!
 
 Below is a diagram illustrating the process pipeline:
 
-![](assets/c_build_process.svg)
+![](assets/003-c-build-process.svg)
 
 In this case, the frontend C compiler abstracts the linking step of the executable. In reality, the frontend creates an object file and then uses a linker to combine it into an executable. The actual process looks something like this:
 
-![](assets/c_build_process_long.svg)
+![](assets/003-c-build-process-long.svg)
 
 [[[
 The process shown uses dynamic linking (which is the default in Linux) to link the standard C library (libc) and other shared libraries into the final output. In contrast, static linking does not require the dynamic linker (such as `ld-linux`) because the libraries are already included in the executable.
@@ -252,4 +252,4 @@ $ "$BUILD_TOOLS/apksigner" sign --ks keystore.jks \
 
 Done! We successfully created an APK manually without that pesky `gradle`! The diagram below illustrates the whole process:
 
-![](assets/apk_build_process.svg)
+![](assets/003-apk-build-process.svg)

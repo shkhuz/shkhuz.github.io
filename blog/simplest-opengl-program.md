@@ -1,5 +1,5 @@
 ---
-title: Simplest OpenGL program
+title: Simplest OpenGL Program
 date: 2024-05-20
 synopsis: >
   Whenever I revisit OpenGL after a few years to write something arcane, because
@@ -205,5 +205,5 @@ Compile with:
 $ g++ sdl2-opengl.cpp -Wall -lSDL2 -lGL -lGLEW
 ```
 
-![](assets/opengl-hello-world-triangle.png)
+![](assets/001-opengl-hello-world-triangle.png)
 

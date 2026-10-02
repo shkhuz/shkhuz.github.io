@@ -100,7 +100,7 @@ Other operations include `buflen`, `bufcap`, `bufpop`, `bufclear`, etc. Now that
 
 Most buffer implementations will generally store a header before the data that has the buffer length, capacity, etc. 
 
-![](assets/bufhdr-header-layout.svg)
+![](assets/005-bufhdr-header-layout.svg)
 
 The pointer the user is given does not point to the header, rather it points to data. That's why it can be used with the array operator to get any item at index.
 

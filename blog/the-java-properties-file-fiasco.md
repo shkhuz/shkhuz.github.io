@@ -1,5 +1,5 @@
 ---
-title: The Java .properties file fiasco
+title: The Java .properties File Fiasco
 date: 2025-09-06
 synopsis: >
   My apparent lack of experience in Java is nothing to laugh about.

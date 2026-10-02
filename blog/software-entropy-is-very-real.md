@@ -1,5 +1,5 @@
 ---
-title: Software entropy is very real
+title: Software Entropy is Very Real
 date: 2026-04-18
 synopsis: >
   Like a deck of cards on a game night.
