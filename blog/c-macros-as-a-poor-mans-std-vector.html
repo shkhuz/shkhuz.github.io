@@ -155,7 +155,7 @@ printf(<span class='string'>"%d\n"</span>, list[<span class='const'>3</span>]);
     Most buffer implementations will generally store a header before the data that has the buffer length, capacity, etc. 
   </p>
   <p>
-    <img src='assets/bufhdr-header-layout.svg' alt=''>
+    <img src='assets/005-bufhdr-header-layout.svg' alt=''>
   </p>
   <p>
     The pointer the user is given does not point to the header, rather it points to data. That's why it can be used with the array operator to get any item at index.

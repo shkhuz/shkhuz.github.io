@@ -268,7 +268,7 @@ Again pretty simple -- the `if` clause runs on first initialization to allocate 
     ...
 ```
 
-Now the main chunk allocation loop begins. The loop allocates one chunk per cycle until the list capacity is greater than or equal to `new_len` requested by the user. On initialization we pass 0 for `new_len`, so no chunks are allocated until data is pushed.
+Now the main chunk allocation loop begins. The loop allocates one chunk per cycle until the list capacity is greater than or equal to `new_len` requested by the user. On initialization we pass 0 for `new_len`, so no chunks are allocated until data is actually pushed.
 
 The chunk pointer table is not stored in the header; it is stored separately. Why? When we first initialize a list, we allocate a table of 4 pointers by default. But when the list needs another chunk, the pointer table must also be resized, which cannot be done in place. The easiest solution I've found is to just allocate a new table of pointers, copying the previous table and updating the header to this table. Yes we waste 8 bytes per chunk per list on table resize, but I feel this is trivial especially if the maximum chunk capacity is moderately large. For example with 65536 elements per chunk, and chunk count doubling after the initial 4 chunks, you'd only lose 96 bytes to store a million elements.
 

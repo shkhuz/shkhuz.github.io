@@ -320,7 +320,7 @@ listhdr* _listhdr(const <span class='keyword'>void</span>* list) {
     ...
 </pre></div>
   <p>
-    Pretty self-explanatory. For a new list as opposed to growing a list, <code>list</code> & <code>new_len</code> will be <code>NULL</code> & <code>1</code> respectively. As for <code>elem_size</code> notice that we used <code>sizeof(ListType(p))</code> earlier in <code>listinit</code>. Using some macro magic we can find out a list's item type without using templates or generics. We'll see how <code>ListType</code> is implemented later.
+    Pretty self-explanatory. For a new list as opposed to growing a list, <code>list</code> & <code>new_len</code> will be <code>NULL</code> & <code>0</code> respectively. As for <code>elem_size</code> notice that we used <code>sizeof(ListType(p))</code> earlier in <code>listinit</code>. Using some macro magic we can find out a list's item type without using templates or generics. We'll see how <code>ListType</code> is implemented later.
   </p>
   <div class='code lang-c'><pre class='before'>    listhdr* hdr = list ? _listhdr(list) : <span class='const'>NULL</span>;
     
@@ -350,7 +350,7 @@ listhdr* _listhdr(const <span class='keyword'>void</span>* list) {
     ...
 </pre></div>
   <p>
-    Now the main chunk allocation loop begins. The loop allocates one chunk per cycle until the list capacity is greater than or equal to <code>new_len</code> requested by the user. By default we pass 1 for <code>new_len</code>, so at least one chunk is allocated by running the loop.
+    Now the main chunk allocation loop begins. The loop allocates one chunk per cycle until the list capacity is greater than or equal to <code>new_len</code> requested by the user. On initialization we pass 0 for <code>new_len</code>, so no chunks are allocated until data is pushed.
   </p>
   <p>
     The chunk pointer table is not stored in the header; it is stored separately. Why? When we first initialize a list, we allocate a table of 4 pointers by default. But when the list needs another chunk, the pointer table must also be resized, which cannot be done in place. The easiest solution I've found is to just allocate a new table of pointers, copying the previous table and updating the header to this table. Yes we waste 8 bytes per chunk per list on table resize, but I feel this is trivial especially if the maximum chunk capacity is moderately large. For example with 65536 elements per chunk, and chunk count doubling after the initial 4 chunks, you'd only lose 96 bytes to store a million elements.
